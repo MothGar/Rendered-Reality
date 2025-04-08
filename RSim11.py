@@ -58,7 +58,16 @@ if len(xv) > 0:
         x=xv.flatten(),
         y=yv.flatten(),
         z=zv.flatten(),
-        alphahull=5,
+       go.Mesh3d(
+    x=xv.flatten(),
+    y=yv.flatten(),
+    z=zv.flatten(),
+    i=[],
+    j=[],
+    k=[],
+    opacity=0.5,
+    color='cyan'
+)
         opacity=0.5,
         color='cyan'
     )])
