@@ -56,11 +56,8 @@ st.sidebar.markdown(f"**Description:** {preset['desc']}")
 
 domain_scale = st.sidebar.slider("Grid Size (Visualization Scale)", 1.0, 30.0, 10.0, 1.0)
 # --- Grid Size Handling ---
-if "grid_size" in preset:
-    grid_size = preset["grid_size"]
-    st.sidebar.markdown(f"**Grid Size:** `{grid_size}` (preset locked)")
-else:
-    grid_size = st.sidebar.slider("Simulation Resolution", 20, 60, 40, 5)
+default_grid = preset.get("grid_size", 40)
+grid_size = st.sidebar.slider("Simulation Resolution", 1, 60, default_grid, 1)
 
 log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fx"], 0.1)
 log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fy"], 0.1)
@@ -74,7 +71,7 @@ threshold = st.sidebar.slider("Pattern Intensity Threshold", 0.0, 1.0, preset["t
 lock_strength = st.sidebar.slider("Precision Window", 0.0, 1.0, preset["lock"], 0.005)
 
 # Optional toggle
-view_mode = st.sidebar.radio("Visualization Mode", ["Geometry Only", "Wave Overlay"])
+view_mode = st.sidebar.radio("Visualization Mode", ["Geometry Only", "Wave Overlay"], index=1)
 
 fx, fy, fz = 10**log_fx, 10**log_fy, 10**log_fz
 x = np.linspace(0, domain_scale, grid_size)
