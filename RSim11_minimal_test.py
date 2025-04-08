@@ -4,10 +4,10 @@ import plotly.graph_objects as go
 import plotly.io as pio
 
 st.set_page_config(layout="wide")
-st.title("TRR Isoplane Geometry Simulator – RSim10 (Plotly Version)")
+st.title("Theory of Rendered Reality Isoplane Geometry Simulator V10")
 
 st.markdown("""
-This simulator shows how resonance waves in **X, Y, and Z** create **cymatic patterns**—stable 3D geometries that emerge when waves intersect just right.
+This simulator shows how resonance waves in **X, Y, and Z** create combined **cymatic patterns**—stable 3D geometries that emerge when resonance waves intersect.
 """)
 
 # --- Preset Definitions ---
@@ -152,7 +152,7 @@ st.markdown(f"**Threshold**: {threshold:.2f} ± {lock_strength:.3f} — Frequenc
 # --- Collapsible TRR Explanation ---
 with st.expander("📘 What Is TRR Isoplane Geometry?"):
     st.markdown("""
-    **TRR (Theory of Rendered Reality)** models how reality appears only when wave-based fields align into coherent patterns.
+    **TRR (Theory of Rendered Reality)** models how reality appears only when wave-based resonance fields align into coherent patterns.
 
     **Isoplane Geometry** happens when X, Y, and Z waves intersect *just right*—forming stable structures.
 
