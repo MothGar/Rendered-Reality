@@ -3,7 +3,7 @@ import numpy as np
 import plotly.graph_objects as go
 
 st.set_page_config(layout="wide")
-st.title("TRR Isoplane Geometry Simulator – RSim11 (Plotly 3D Surface Version)")
+st.title("TRR Isoplane Geometry Simulator – RSim11 (Plotly 3D Scatter Version)")
 st.markdown("""
 This simulator shows how resonance waves in **X, Y, and Z** create **cymatic patterns** that overlap to form **isoplanes**—stable zones of coherent energy in 3D.
 """)
@@ -53,31 +53,27 @@ lock_mask = ((field_norm > threshold - lock_strength) & (field_norm < threshold 
 
 xv, yv, zv = X[lock_mask], Y[lock_mask], Z[lock_mask]
 
+# Debug: show number of rendered points
+st.write("Points to render:", len(xv.flatten()))
+
 if len(xv) > 0:
-    fig = go.Figure(data=[go.Mesh3d(
+    fig = go.Figure(data=[go.Scatter3d(
         x=xv.flatten(),
         y=yv.flatten(),
         z=zv.flatten(),
-fig = go.Figure(data=[go.Scatter3d(
-    x=xv.flatten(),
-    y=yv.flatten(),
-    z=zv.flatten(),
-    mode='markers',
-    marker=dict(
-        size=2,
-        color='cyan',
-        opacity=0.5
-    )
-)])
-        opacity=0.5,
-        color='cyan'
+        mode='markers',
+        marker=dict(
+            size=2,
+            color='cyan',
+            opacity=0.5
+        )
     )])
     fig.update_layout(scene=dict(
         xaxis_title="X",
         yaxis_title="Y",
         zaxis_title="Z",
         bgcolor="black"
-    ), paper_bgcolor="black", margin=dict(l=0, r=0, t=0, b=0))
+    ), paper_bgcolor="black", margin=dict(l=0, r=0, t=0, b=0), height=800)
     st.plotly_chart(fig, use_container_width=True)
 else:
     st.warning("No visible isoplane geometry. Adjust threshold or frequency settings.")
