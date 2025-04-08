@@ -48,7 +48,7 @@ interference = np.abs(EX * EY * EZ)
 
 # Normalize field
 field_norm = (interference - np.min(interference)) / (np.max(interference) - np.min(interference))
-st.write("Marching on scalar field with shape:", field_norm.shape)
+st.write("Field range for marching:", float(field_norm.min()), float(field_norm.max()))
 
 # Run marching cubes
 try:
