@@ -152,7 +152,7 @@ st.markdown(f"**Threshold**: {threshold:.2f} ± {lock_strength:.3f} — Frequenc
 # --- Collapsible TRR Explanation ---
 with st.expander("📘 What Is TRR Isoplane Geometry?"):
     st.markdown("""
-    **TRR (Theory of Rendered Reality)** models how reality appears only when wave-based resonance fields align into coherent patterns.
+    **TRR (Theory of Rendered Reality)** models how reality appears when wave-based resonance fields align into coherent patterns.
 
     **Isoplane Geometry** happens when X, Y, and Z waves intersect *just right*—forming stable structures.
 
