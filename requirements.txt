@@ -4,3 +4,4 @@ stpyvista
 numpy
 plotly
 scipy
+scikit-image
