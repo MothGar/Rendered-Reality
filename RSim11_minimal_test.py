@@ -47,6 +47,31 @@ presets = {
         "threshold": 0.05, "lock": 0.01,
         "domain_scale": 30
     },
+    "Biofield Bloom": {
+    "desc": "A biological coherence pattern — local regions resonate while the surrounding field remains inert. Similar to consciousness arising in neurons.",
+    "fx": 2.5, "fy": 3.0, "fz": 2.8,
+    "px": 15, "py": 0, "pz": 30,
+    "threshold": 0.15, "lock": 0.03,
+    "grid_size": 28,
+    "domain_scale": 12.0
+    },
+    "Singularity Shell": {
+    "desc": "A black hole–inspired collapse field. All rendering is pushed to the outer fringe — the center is a void where nothing can render.",
+    "fx": 6.5, "fy": 6.5, "fz": 6.5,
+    "px": 0, "py": 180, "pz": 90,
+    "threshold": 0.35, "lock": 0.01,
+    "grid_size": 32,
+    "domain_scale": 20.0
+    },
+    "Quantum Limit": {
+    "desc": "This pattern sits just below the rendering threshold. Resonance threads emerge and vanish — a delicate dance at the edge of realization.",
+    "fx": 5.1, "fy": 4.9, "fz": 5.0,
+    "px": 180, "py": 0, "pz": 90,
+    "threshold": 0.48, "lock": 0.01,
+    "grid_size": 25,
+    "domain_scale": 15.0
+    }
+
 }
 
 selected = st.sidebar.selectbox("Choose TRR Demo Preset", list(presets.keys()))
