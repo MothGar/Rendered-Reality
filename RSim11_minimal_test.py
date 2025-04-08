@@ -13,25 +13,35 @@ This simulator shows how resonance waves in **X, Y, and Z** create **cymatic pat
 
 # --- Preset Definitions ---
 presets = {
-    "Stable Quantum Node": {
-        "desc": "All waves aligned with no phase offset. Creates a symmetrical core pattern.",
-        "fx": 0.0, "fy": 0.0, "fz": 0.0, "px": 0, "py": 0, "pz": 0, "threshold": 0.08, "lock": 0.02
+    "Resonant Core (Ψₐ ∩ Φₐ)": {
+        "desc": "A perfect match of internal and external waveforms—reality crystallizes at the center. This is the golden zone where rendering is guaranteed.",
+        "fx": 6.0, "fy": 6.0, "fz": 6.0,
+        "px": 0, "py": 0, "pz": 0,
+        "threshold": 0.05, "lock": 0.03
     },
-    "Decoherence Shift": {
-        "desc": "X wave shifted 45°. Mimics early-stage decoherence.",
-        "fx": 6.0, "fy": 6.0, "fz": 6.0, "px": 45, "py": 0, "pz": 0, "threshold": 0.05, "lock": 0.03
+    "Phase Rift": {
+        "desc": "One axis breaks coherence—TRR shows how a single misalignment disrupts what is rendered. Like trying to tune a radio with one knob off.",
+        "fx": 6.0, "fy": 6.0, "fz": 6.0,
+        "px": 45, "py": 0, "pz": 0,
+        "threshold": 0.05, "lock": 0.03
     },
-    "Waveplate Pattern": {
-        "desc": "Non-aligned frequencies create a classic cymatic interference.",
-        "fx": 3.0, "fy": 4.0, "fz": 4.0, "px": 0, "py": 0, "pz": 0, "threshold": 0.1, "lock": 0.05
+    "Cymatic Shell": {
+        "desc": "Layered wave harmonics generate cymatic-like structures. This preset mimics sound-driven geometry—where resonance creates shells of stillness.",
+        "fx": 3.0, "fy": 4.0, "fz": 4.0,
+        "px": 0, "py": 0, "pz": 0,
+        "threshold": 0.1, "lock": 0.05
     },
-    "Reality Fog": {
-        "desc": "Desynchronized waveforms — generates unstable render field.",
-        "fx": 5.5, "fy": 6.0, "fz": 6.5, "px": 90, "py": 45, "pz": 180, "threshold": 0.3, "lock": 0.15
+    "Render Fog": {
+        "desc": "Rendering is a struggle in this chaotic field. Fields are almost coherent, but never quite stabilize—like trying to see through shifting mist.",
+        "fx": 5.5, "fy": 6.0, "fz": 6.5,
+        "px": 90, "py": 45, "pz": 180,
+        "threshold": 0.3, "lock": 0.15
     },
-    "Observer Disruption": {
-        "desc": "All waves shifted 90° — perception destabilized.",
-        "fx": 7.0, "fy": 7.0, "fz": 7.0, "px": 90, "py": 90, "pz": 90, "threshold": 0.05, "lock": 0.01
+    "Perceptual Jam": {
+        "desc": "When your perception filter is 90° out of sync, nothing gets through. The system denies rendering—reality blinks out.",
+        "fx": 7.0, "fy": 7.0, "fz": 7.0,
+        "px": 90, "py": 90, "pz": 90,
+        "threshold": 0.05, "lock": 0.01
     },
 }
 
