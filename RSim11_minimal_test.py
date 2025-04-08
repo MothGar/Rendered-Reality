@@ -54,6 +54,8 @@ selected = st.sidebar.selectbox("Choose TRR Demo Preset", list(presets.keys()))
 preset = presets[selected]
 
 st.sidebar.markdown(f"**Description:** {preset['desc']}")
+
+domain_scale = st.sidebar.slider("Grid Size (Visualization Scale)", 1.0, 30.0, 10.0, 1.0)
 # --- Grid Size Handling ---
 if "grid_size" in preset:
     grid_size = preset["grid_size"]
@@ -61,8 +63,6 @@ if "grid_size" in preset:
 else:
     grid_size = st.sidebar.slider("Simulation Resolution", 20, 60, 40, 5)
 
-domain_scale = st.sidebar.slider("Grid Size (Visualization Scale)", 1.0, 30.0, 10.0, 1.0)
-grid_size = st.sidebar.slider("Simulation Resolution", 20, 60, 40, 5)
 
 log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fx"], 0.1)
 log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fy"], 0.1)
