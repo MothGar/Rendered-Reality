@@ -57,7 +57,7 @@ presets = {
     },
     "Singularity Shell": {
         "desc": "A black hole–inspired collapse field. All rendering is pushed to the outer fringe — the center is a void where nothing can render.",
-        "fx": -1.0, "fy": -1.0, "fz": 17,
+        "fx": -1.0, "fy": -1.0, "fz": 17.0,
         "px": 90, "py": 110, "pz": 40,
         "threshold": 0.04, "lock": 0.02,
         "grid_size": 60,
