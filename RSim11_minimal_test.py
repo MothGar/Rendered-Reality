@@ -15,7 +15,7 @@ This simulator shows how resonance waves in **X, Y, and Z** create **cymatic pat
 presets = {
     "Stable Quantum Node": {
         "desc": "All waves aligned with no phase offset. Creates a symmetrical core pattern.",
-        "fx": 6.0, "fy": 6.0, "fz": 6.0, "px": 0, "py": 0, "pz": 0, "threshold": 0.05, "lock": 0.03
+        "fx": 0.0, "fy": 0.0, "fz": 0.0, "px": 0, "py": 0, "pz": 0, "threshold": 0.08, "lock": 0.02
     },
     "Decoherence Shift": {
         "desc": "X wave shifted 45°. Mimics early-stage decoherence.",
