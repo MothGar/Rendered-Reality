@@ -66,10 +66,10 @@ presets = {
     "Quantum Limit": {
         "desc": "This pattern sits just below the rendering threshold. Resonance threads emerge and vanish — a delicate dance at the edge of realization.",
         "fx": 5.1, "fy": 4.9, "fz": 5.0,
-        "px": 180, "py": 0, "pz": 90,
-        "threshold": 0.49, "lock": 0.01,
-        "grid_size": 60,
-        "domain_scale": 22.0
+        "px": 0, "py": 0, "pz": 0,
+        "threshold": 0.01, "lock": 0.01,
+        "grid_size": 40,
+        "domain_scale": 1.0
     }
 
 }
