@@ -58,16 +58,17 @@ if len(xv) > 0:
         x=xv.flatten(),
         y=yv.flatten(),
         z=zv.flatten(),
-       go.Mesh3d(
+fig = go.Figure(data=[go.Scatter3d(
     x=xv.flatten(),
     y=yv.flatten(),
     z=zv.flatten(),
-    i=[],
-    j=[],
-    k=[],
-    opacity=0.5,
-    color='cyan'
-)
+    mode='markers',
+    marker=dict(
+        size=2,
+        color='cyan',
+        opacity=0.5
+    )
+)])
         opacity=0.5,
         color='cyan'
     )])
