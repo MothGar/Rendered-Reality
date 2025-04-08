@@ -1,4 +1,3 @@
-
 import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
@@ -62,8 +61,6 @@ if "grid_size" in preset:
     st.sidebar.markdown(f"**Grid Size:** `{grid_size}` (preset locked)")
 else:
     grid_size = st.sidebar.slider("Simulation Resolution", 20, 60, 40, 5)
-
-grid_size = st.sidebar.slider("Simulation Resolution", 20, 60, 40, 5)
 
 log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fx"], 0.1)
 log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fy"], 0.1)
