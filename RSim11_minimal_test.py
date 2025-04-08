@@ -17,35 +17,35 @@ presets = {
         "fx": 6.0, "fy": 6.0, "fz": 6.0,
         "px": 0, "py": 0, "pz": 0,
         "threshold": 0.05, "lock": 0.03,
-        "grid_size": 1,
+        "grid_size": 1
     },
     "Phase Rift": {
         "desc": "One axis breaks coherence—TRR shows how a single misalignment disrupts what is rendered. Like trying to tune a radio with one knob off.",
         "fx": 6.0, "fy": 6.0, "fz": 6.0,
         "px": 45, "py": 0, "pz": 0,
         "threshold": 0.05, "lock": 0.03,
-        "grid_size": 1,
+        "grid_size": 1
     },
     "Cymatic Shell": {
         "desc": "Layered wave harmonics generate cymatic-like structures. This preset mimics sound-driven geometry—where resonance creates shells of stillness.",
         "fx": 3.0, "fy": 4.0, "fz": 4.0,
         "px": 0, "py": 0, "pz": 0,
         "threshold": 0.1, "lock": 0.05,
-        "grid_size": 22,
+        "grid_size": 22
     },
     "Render Fog": {
         "desc": "Rendering is a struggle in this chaotic field. Fields are almost coherent, but never quite stabilize—like trying to see through shifting mist.",
         "fx": 5.5, "fy": 6.0, "fz": 6.5,
         "px": 90, "py": 45, "pz": 180,
         "threshold": 0.3, "lock": 0.15,
-        "grid_size": 3,
+        "grid_size": 3
     },
     "Perceptual Jam": {
         "desc": "When your perception filter is 90° out of sync, nothing gets through. The system denies rendering—reality blinks out.",
         "fx": 7.0, "fy": 7.0, "fz": 7.0,
         "px": 90, "py": 90, "pz": 90,
         "threshold": 0.05, "lock": 0.01,
-        "grid_size": 30,
+        "grid_size": 30
     },
 }
 
@@ -55,9 +55,16 @@ preset = presets[selected]
 st.sidebar.markdown(f"**Description:** {preset['desc']}")
 
 domain_scale = st.sidebar.slider("Grid Size (Visualization Scale)", 1.0, 30.0, 10.0, 1.0)
-# --- Grid Size Handling ---
-default_grid = preset.get("grid_size", 40)
-grid_size = st.sidebar.slider("Simulation Resolution", 1, 60, default_grid, 1)
+
+# --- Grid Size Slider that Defaults to Preset Value ---
+grid_size = st.sidebar.slider(
+    "Simulation Resolution", 
+    min_value=1, 
+    max_value=60, 
+    value=preset.get("grid_size", 40),  # defaults to preset value
+    step=1
+)
+
 
 log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fx"], 0.1)
 log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fy"], 0.1)
