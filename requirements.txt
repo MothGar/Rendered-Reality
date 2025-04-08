@@ -2,4 +2,5 @@ streamlit
 pyvista
 stpyvista
 numpy
+plotly
 scipy
