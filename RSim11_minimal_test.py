@@ -54,11 +54,12 @@ preset = presets[selected]
 
 st.sidebar.markdown(f"**Description:** {preset['desc']}")
 
+domain_scale_default = float(preset.get("domain_scale", 10.0))
 domain_scale = st.sidebar.slider(
     "Grid Size (Visualization Scale)",
     min_value=1.0,
     max_value=30.0,
-    value=preset.get("domain_scale", 10.0),
+    value=domain_scale_default,
     step=1.0
 )
 
