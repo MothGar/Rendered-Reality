@@ -57,11 +57,11 @@ presets = {
     },
     "Singularity Shell": {
     "desc": "A black hole–inspired collapse field. All rendering is pushed to the outer fringe — the center is a void where nothing can render.",
-    "fx": 6.5, "fy": 6.5, "fz": 6.5,
-    "px": 0, "py": 180, "pz": 90,
-    "threshold": 0.35, "lock": 0.01,
-    "grid_size": 32,
-    "domain_scale": 20.0
+    "fx": -0.20, "fy": -0.20, "fz": -0.20,
+    "px": 0, "py": 170, "pz": 180,
+    "threshold": 0.51, "lock": 0.33,
+    "grid_size": 60,
+    "domain_scale": 1.0
     },
     "Quantum Limit": {
     "desc": "This pattern sits just below the rendering threshold. Resonance threads emerge and vanish — a delicate dance at the edge of realization.",
