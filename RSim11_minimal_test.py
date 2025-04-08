@@ -3,8 +3,7 @@ import numpy as np
 import plotly.graph_objects as go
 
 st.set_page_config(layout="wide")
-st.title("TRR Isoplane Geometry Simulator – RSim11 (Diagnostic Version)")
-
+st.title("TRR Isoplane Geometry Simulator – RSim11")
 st.markdown("""
 This simulator shows how resonance waves in **X, Y, and Z** create **cymatic patterns** that overlap to form **isoplanes**—stable zones of coherent energy in 3D.
 """)
@@ -21,8 +20,9 @@ presets = {
 selected = st.sidebar.selectbox("Choose TRR Demo Preset", list(presets.keys()))
 preset = presets[selected]
 
+# UI sliders
 domain_scale = st.sidebar.slider("Visual Grid Scale", 1.0, 30.0, 10.0, 1.0)
-grid_size = st.sidebar.slider("Grid Resolution", 20, 60, 30, 5)
+grid_size = st.sidebar.slider("Grid Resolution", 20, 60, 40, 5)
 
 log_fx = st.sidebar.slider("X Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fx"], 0.1)
 log_fy = st.sidebar.slider("Y Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fy"], 0.1)
@@ -35,36 +35,35 @@ lock_strength = st.sidebar.slider("Resonance Lock Range", 0.0, 1.0, preset["lock
 
 fx, fy, fz = 10**log_fx, 10**log_fy, 10**log_fz
 
-# Grid
+# Grid setup
 x = np.linspace(0, domain_scale, grid_size)
 y = np.linspace(0, domain_scale, grid_size)
 z = np.linspace(0, domain_scale, grid_size)
 X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
 
-# Fields
+# Field computation
 EX = np.sin(fx * np.pi * X + phase_x)
 EY = np.sin(fy * np.pi * Y + phase_y)
 EZ = np.sin(fz * np.pi * Z + phase_z)
 interference = np.abs(EX * EY * EZ)
 
-# Normalize
+# Normalize and apply threshold
 field_norm = (interference - interference.min()) / (interference.max() - interference.min())
-st.write("Field norm range:", field_norm.min(), field_norm.max())
-
-# Lock mask
 lock_mask = ((field_norm > threshold - lock_strength) & (field_norm < threshold + lock_strength))
-st.write("Voxels in lock mask:", np.sum(lock_mask))
 
-# Fallback override if no voxels
+# Diagnostics
+st.write("Field norm range:", float(field_norm.min()), float(field_norm.max()))
+st.write("Voxels passing lock mask:", int(np.sum(lock_mask)))
+
+# Fallback if no voxels found
 if np.sum(lock_mask) == 0:
-    st.warning("No voxels matched lock mask. Using fallback plane.")
+    st.warning("No voxels matched lock mask. Using fallback Z-slice plane.")
     lock_mask = (np.abs(Z - Z.mean()) < (Z.max() - Z.min()) / 10)
 
-# Extract points
 xv, yv, zv = X[lock_mask], Y[lock_mask], Z[lock_mask]
 st.write("Points to render:", len(xv.flatten()))
 
-# Plot
+# Render
 if len(xv) > 0:
     fig = go.Figure(data=[go.Scatter3d(
         x=xv.flatten(),
