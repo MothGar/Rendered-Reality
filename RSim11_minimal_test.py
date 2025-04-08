@@ -54,6 +54,12 @@ selected = st.sidebar.selectbox("Choose TRR Demo Preset", list(presets.keys()))
 preset = presets[selected]
 
 st.sidebar.markdown(f"**Description:** {preset['desc']}")
+# --- Grid Size Handling ---
+if "grid_size" in preset:
+    grid_size = preset["grid_size"]
+    st.sidebar.markdown(f"**Grid Size:** `{grid_size}` (preset locked)")
+else:
+    grid_size = st.sidebar.slider("Simulation Resolution", 20, 60, 40, 5)
 
 domain_scale = st.sidebar.slider("Grid Size (Visualization Scale)", 1.0, 30.0, 10.0, 1.0)
 grid_size = st.sidebar.slider("Simulation Resolution", 20, 60, 40, 5)
