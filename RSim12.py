@@ -3,17 +3,15 @@ import numpy as np
 import plotly.graph_objects as go
 
 st.set_page_config(layout="wide")
-st.title("RAO-Triggered Photon Emerergence Simulator (TRR Prototype with Spectral RAO)")
+st.title("RAO-Triggered Photon Emergence Simulator (TRR + Spectral RAO + Auto Trigger)")
 
 st.markdown("""
-This enhanced TRR prototype simulates photon emergence using a true **frequency domain RAO filter**.
-An external waveguide field Φ(x,t) is Fourier transformed and filtered at the target resonance frequency νₑ, modeling:
+This simulation models local **photon emergence** using TRR principles and true **RAO spectral filtering**.
 
-> **R̂(ν) Φ(x,t) = φ(x,t) δ(ν₀ - νₑ)**
+The emitter Ψᵣ(x,t) is now optionally auto-positioned at the strongest overlap point with the RAO-filtered wave field Φ(x,t), maximizing photon event probability.
 
-Then, local rendering energy is computed from:
-
-> **|Ψᵣ · R̂(ν) Φ(x,t)|² > Tᵣ**
+TRR Render Condition (simplified):
+> **|Ψᵣ · R̂(ν) Φ|² > Tᵣ**
 """)
 
 # --- Domain setup ---
@@ -40,48 +38,50 @@ EY = np.sin(fy * np.pi * Y + phase_y)
 EZ = np.sin(fz * np.pi * Z + phase_z)
 Phi = EX * EY * EZ
 
-# --- Quantum Emitter Ψᵣ(x,t) ---
-st.sidebar.title("🧿 Quantum Emitter (Resonator)")
-cx = st.sidebar.slider("X Center (μm)", 0.0, domain_scale, domain_scale/2, 0.1)
-cy = st.sidebar.slider("Y Center (μm)", 0.0, domain_scale, domain_scale/2, 0.1)
-cz = st.sidebar.slider("Z Center (μm)", 0.0, domain_scale, domain_scale/2, 0.1)
-width = st.sidebar.slider("Emitter Width (μm)", 0.01, 1.0, 0.2, 0.01)
-
-Ψr = np.exp(-((X - cx)**2 + (Y - cy)**2 + (Z - cz)**2) / width**2)
-
-# --- Spectral RAO Filtering ---
-st.sidebar.title("🎚️ RAO Frequency Filtering (Fourier Space)")
+# --- RAO Spectral Filtering ---
+st.sidebar.title("🎚️ RAO Filtering (Fourier)")
 target_freq = st.sidebar.slider("Resonance Frequency (log₁₀ Hz)", 12.0, 16.0, 13.5, 0.1)
 target_wave_number = 10**target_freq * np.pi * domain_scale
-
-# Fourier transform external field
 Phi_k = np.fft.fftn(Phi)
 kspace = np.fft.fftfreq(grid_size, d=(domain_scale / grid_size))
 KX, KY, KZ = np.meshgrid(kspace, kspace, kspace, indexing='ij')
 Kmag = np.sqrt((KX**2 + KY**2 + KZ**2))
-
-# Apply Gaussian filter around target wave number (RAO)
-filter_bandwidth = target_wave_number * 0.05  # 5% bandwidth
+filter_bandwidth = target_wave_number * 0.05
 RAO_filter = np.exp(-((Kmag * 2 * np.pi - target_wave_number)**2) / (2 * filter_bandwidth**2))
-
-# Filter and inverse transform
 Phi_filtered = np.real(np.fft.ifftn(Phi_k * RAO_filter))
 
-# --- TRR Interaction Energy ---
+# --- TRR Energy Estimate (pre-emitter) ---
+auto_trigger = st.sidebar.checkbox("🔁 Auto-Trigger Emitter to Max Field", value=True)
+
+# --- Emitter Placement ---
+st.sidebar.title("🧿 Emitter Settings")
+width = st.sidebar.slider("Emitter Width (μm)", 0.01, 1.0, 0.2, 0.01)
+if auto_trigger:
+    max_loc = np.unravel_index(np.argmax(np.abs(Phi_filtered)), Phi_filtered.shape)
+    cx, cy, cz = X[max_loc], Y[max_loc], Z[max_loc]
+    st.sidebar.markdown(f"**Auto-Centered at:** ({cx:.2f}, {cy:.2f}, {cz:.2f}) μm")
+else:
+    cx = st.sidebar.slider("X Center (μm)", 0.0, domain_scale, domain_scale/2, 0.1)
+    cy = st.sidebar.slider("Y Center (μm)", 0.0, domain_scale, domain_scale/2, 0.1)
+    cz = st.sidebar.slider("Z Center (μm)", 0.0, domain_scale, domain_scale/2, 0.1)
+
+Ψr = np.exp(-((X - cx)**2 + (Y - cy)**2 + (Z - cz)**2) / width**2)
+
+# --- TRR Interaction ---
 Hres = Ψr * Phi_filtered
 render_energy = np.abs(Hres)**2
 
 # --- Thresholding ---
-st.sidebar.title("⚡ Photon Realization Threshold")
+st.sidebar.title("⚡ Photon Threshold")
 threshold = st.sidebar.slider("Render Threshold", 0.0, 1.0, 0.05, 0.01)
 photon_mask = render_energy > threshold
 
 # --- Full field toggle ---
 show_full_field = st.checkbox("🌀 Show Full Resonance Field Instead of Photon Events", value=False)
 
-# --- Visualization ---
+# --- Plotting ---
 if show_full_field:
-    st.subheader("🌀 Full Resonance Energy Field (Post-RAO)")
+    st.subheader("🌀 Full Resonance Energy Field (RAO + Emitter)")
     fig = go.Figure()
     fig.add_trace(go.Volume(
         x=X.flatten(), y=Y.flatten(), z=Z.flatten(),
@@ -91,7 +91,7 @@ if show_full_field:
         colorscale='Inferno'
     ))
 else:
-    st.subheader("✨ Photon Events (RAO-Collapsed Regions)")
+    st.subheader("✨ Photon Events (TRR Collapse)")
     if np.count_nonzero(photon_mask) > 0:
         xv, yv, zv = X[photon_mask], Y[photon_mask], Z[photon_mask]
         color_vals = render_energy[photon_mask]
@@ -107,7 +107,7 @@ else:
             )
         ))
     else:
-        st.warning("No photon events detected. Try tuning wave frequencies or lowering the threshold.")
+        st.warning("No photon events found. Try lowering threshold or adjusting frequencies.")
         fig = go.Figure()
 
 fig.update_layout(
@@ -121,12 +121,10 @@ fig.update_layout(
 st.plotly_chart(fig, use_container_width=True)
 
 st.markdown("""
-**RAO Filtering Explanation**:
-- The external field Φ(x,t) is decomposed into frequency space.
-- A Gaussian filter around your target resonance frequency νₑ is applied.
-- This simulates the Resonance Activation Operator R̂(ν).
-- Only field components that match νₑ survive and re-enter real space.
-- Then, photon emergence is tested using TRR’s resonance condition.
+**What's New:**
+- The emitter will auto-locate the zone of maximum field coherence if enabled.
+- This makes photon emergence more likely, especially when tuning is sharp.
+- Toggle full resonance field to see the emitter's effect even if no photons emerge.
 
-**This is literal quantum-tuned rendering.**
+This simulates **conscious tuning** or **adaptive coupling** in real time — when your field finds the light.
 """)
