@@ -8,7 +8,7 @@ st.title("RAO-Triggered Photon Emergence Simulator (TRR + Spectral RAO + Auto Tr
 st.markdown("""
 This simulation models local **photon emergence** using TRR principles and true **RAO spectral filtering**.
 
-The emitter Ψᵣ(x,t) is now optionally auto-positioned at the strongest overlap point with the RAO-filtered wave field Φ(x,t), maximizing photon event probability.
+The emitter Ψᵣ(x,t) is optionally auto-positioned at the strongest overlap point with the RAO-filtered wave field Φ(x,t), maximizing photon event probability.
 
 TRR Render Condition (simplified):
 > **|Ψᵣ · R̂(ν) Φ|² > Tᵣ**
@@ -56,8 +56,12 @@ auto_trigger = st.sidebar.checkbox("🔁 Auto-Trigger Emitter to Max Field", val
 # --- Emitter Placement ---
 st.sidebar.title("🧿 Emitter Settings")
 width = st.sidebar.slider("Emitter Width (μm)", 0.01, 1.0, 0.2, 0.01)
+Ψr = np.ones_like(Phi_filtered)  # temporary placeholder for render energy
+
 if auto_trigger:
-    max_loc = np.unravel_index(np.argmax(np.abs(Phi_filtered)), Phi_filtered.shape)
+    # First pass to find max render energy zone
+    Hres_preview = np.abs(Phi_filtered)
+    max_loc = np.unravel_index(np.argmax(Hres_preview), Hres_preview.shape)
     cx, cy, cz = X[max_loc], Y[max_loc], Z[max_loc]
     st.sidebar.markdown(f"**Auto-Centered at:** ({cx:.2f}, {cy:.2f}, {cz:.2f}) μm")
 else:
@@ -65,11 +69,13 @@ else:
     cy = st.sidebar.slider("Y Center (μm)", 0.0, domain_scale, domain_scale/2, 0.1)
     cz = st.sidebar.slider("Z Center (μm)", 0.0, domain_scale, domain_scale/2, 0.1)
 
+# Emitter profile
 Ψr = np.exp(-((X - cx)**2 + (Y - cy)**2 + (Z - cz)**2) / width**2)
 
 # --- TRR Interaction ---
 Hres = Ψr * Phi_filtered
 render_energy = np.abs(Hres)**2
+render_energy = (render_energy - render_energy.min()) / (render_energy.max() - render_energy.min())  # normalize
 
 # --- Thresholding ---
 st.sidebar.title("⚡ Photon Threshold")
@@ -119,12 +125,3 @@ fig.update_layout(
     scene_bgcolor='black'
 )
 st.plotly_chart(fig, use_container_width=True)
-
-st.markdown("""
-**What's New:**
-- The emitter will auto-locate the zone of maximum field coherence if enabled.
-- This makes photon emergence more likely, especially when tuning is sharp.
-- Toggle full resonance field to see the emitter's effect even if no photons emerge.
-
-This simulates **conscious tuning** or **adaptive coupling** in real time — when your field finds the light.
-""")
