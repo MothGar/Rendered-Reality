@@ -166,13 +166,13 @@ log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset
 log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fz"], 0.1)
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("### 🔄 Wave Phase Settings (Degrees)")
+st.sidebar.markdown("###Wave Phase Settings (Degrees)")
 st.sidebar.markdown("""
 **Phase Shift Help**
 - Affects the **starting point** of the wave
-- `0°` = aligned
-- `180°` = opposite (cancels)
-- `90° / 270°` = orthogonal, often incoherent
+- `0°` = Perfect Alignment
+- `180°` = Destructive Interference
+- `90° / 270°` = Orthogonal Field States, often incoherent
 """)
 
 phase_x = np.radians(st.sidebar.slider("X-Axis Phase (°)", 0, 360, preset["px"], 10))
