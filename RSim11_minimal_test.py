@@ -166,10 +166,15 @@ log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset
 log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fz"], 0.1)
 
 st.sidebar.markdown("---")
+st.sidebar.markdown("### 🔄 Wave Phase Settings (Degrees)")
+Adjust the phase angle for each axis.  
+This shifts the wave’s position in its cycle.
+""")
 
-phase_x = np.radians(st.sidebar.slider("X Wave Phase (°)", 0, 360, preset["px"], 10))
-phase_y = np.radians(st.sidebar.slider("Y Wave Phase (°)", 0, 360, preset["py"], 10))
-phase_z = np.radians(st.sidebar.slider("Z Wave Phase (°)", 0, 360, preset["pz"], 10))
+phase_x = np.radians(st.sidebar.slider("X-Axis Phase (°)", 0, 360, preset["px"], 10))
+phase_y = np.radians(st.sidebar.slider("Y-Axis Phase (°)", 0, 360, preset["py"], 10))
+phase_z = np.radians(st.sidebar.slider("Z-Axis Phase (°)", 0, 360, preset["pz"], 10))
+
 
 st.sidebar.markdown("---")
 
