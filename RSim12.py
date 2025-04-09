@@ -2,189 +2,76 @@
 import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
-import plotly.io as pio
-import matplotlib.pyplot as plt
 
 st.set_page_config(layout="wide")
-st.title("Theory of Rendered Reality Isoplane Geometry Simulator V10")
+st.title("RAO-Triggered Photon Emergence Simulator (TRR Prototype)")
 
-st.markdown("""
-This simulator shows how resonance waves in **X, Y, and Z** create combined **cymatic patterns**—stable 3D geometries that emerge when resonance waves intersect.
-""")
+st.markdown("This simulation models local photon emergence in a nanophotonic system using TRR principles. A waveguide field intersects with a quantum emitter's localized resonance mode. Where field overlap exceeds the resonance threshold, a photon is 'rendered'.")
 
-# --- Preset Definitions ---
-presets = {
-    "Resonant Core (Ψₐ ∩ Φₐ)": {
-        "desc": "A perfect match of internal and external waveforms—reality crystallizes at the center. This is the golden zone where rendering is guaranteed.",
-        "fx": 6.0, "fy": 6.0, "fz": 6.0,
-        "px": 0, "py": 0, "pz": 0,
-        "threshold": 0.05, "lock": 0.03,
-        "domain_scale": 1
-    },
-    "Phase Rift": {
-        "desc": "One axis breaks coherence—TRR shows how a single misalignment disrupts what is rendered. Like trying to tune a radio with one knob off.",
-        "fx": 6.0, "fy": 6.0, "fz": 6.0,
-        "px": 45, "py": 0, "pz": 0,
-        "threshold": 0.05, "lock": 0.03,
-        "domain_scale": 1
-    },
-    "Cymatic Shell": {
-        "desc": "Layered wave harmonics generate cymatic-like structures. This preset mimics sound-driven geometry—where resonance creates shells of stillness.",
-        "fx": 3.0, "fy": 4.0, "fz": 4.0,
-        "px": 0, "py": 0, "pz": 0,
-        "threshold": 0.1, "lock": 0.05,
-        "domain_scale": 22
-    },
-    "Render Fog": {
-        "desc": "Rendering is a struggle in this chaotic field. Fields are almost coherent, but never quite stabilize—like trying to see through shifting mist.",
-        "fx": 5.5, "fy": 6.0, "fz": 6.5,
-        "px": 90, "py": 45, "pz": 180,
-        "threshold": 0.3, "lock": 0.15,
-        "domain_scale": 3
-    },
-    "Perceptual Jam": {
-        "desc": "When your perception filter is 90° out of sync, nothing gets through. The system denies rendering—reality blinks out.",
-        "fx": 7.0, "fy": 7.0, "fz": 7.0,
-        "px": 90, "py": 90, "pz": 90,
-        "threshold": 0.05, "lock": 0.01,
-        "domain_scale": 30
-    },
-    "Biofield Bloom": {
-        "desc": "A biological coherence pattern — local regions resonate while the surrounding field remains inert. Similar to consciousness arising in neurons.",
-        "fx": 2.5, "fy": 3.0, "fz": 2.8,
-        "px": 50, "py": 0, "pz": 150,
-        "threshold": 0.15, "lock": 0.10,
-        "grid_size": 40,
-        "domain_scale": 17.0
-    },
-    "Singularity Shell": {
-        "desc": "A black hole–inspired collapse field. All rendering is pushed to the outer fringe — the center is a void where nothing can render.",
-        "fx": -1.0, "fy": -1.0, "fz": 17.0,
-        "px": 90, "py": 110, "pz": 40,
-        "threshold": 0.04, "lock": 0.02,
-        "grid_size": 60,
-        "domain_scale": 18.0
-    },
-    "Quantum Limit": {
-        "desc": "This pattern sits just below the rendering threshold. Resonance threads emerge and vanish — a delicate dance at the edge of realization.",
-        "fx": 5.1, "fy": 4.9, "fz": 5.0,
-        "px": 0, "py": 0, "pz": 0,
-        "threshold": 0.01, "lock": 0.01,
-        "grid_size": 40,
-        "domain_scale": 1.0
-    }
-}
-
-# Preset controls
-selected = st.sidebar.selectbox("Choose TRR Demo Preset", list(presets.keys()))
-preset = presets[selected]
-st.sidebar.markdown(f"**Description:** {preset['desc']}")
-
-domain_scale_default = float(preset.get("domain_scale", 10.0))
-domain_scale = st.sidebar.slider("Grid Size (Visualization Scale)", 1.0, 30.0, domain_scale_default, 1.0)
-grid_size = st.sidebar.slider("Simulation Resolution", 20, 60, 40, 5)
-
-log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fx"], 0.1)
-log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fy"], 0.1)
-log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fz"], 0.1)
-
-phase_x = np.radians(st.sidebar.slider("X Wave Phase (°)", 0, 360, preset["px"], 10))
-phase_y = np.radians(st.sidebar.slider("Y Wave Phase (°)", 0, 360, preset["py"], 10))
-phase_z = np.radians(st.sidebar.slider("Z Wave Phase (°)", 0, 360, preset["pz"], 10))
-
-threshold = st.sidebar.slider("Pattern Intensity Threshold", 0.0, 1.0, preset["threshold"], 0.01)
-lock_strength = st.sidebar.slider("Precision Window", 0.0, 1.0, preset["lock"], 0.005)
-view_mode = st.sidebar.radio("Visualization Mode", ["Geometry Only", "Wave Overlay"], index=1)
-
-# --- Debug Tools ---
-st.sidebar.markdown("---")
-st.sidebar.subheader("Debug Tools")
-isolate_axis = st.sidebar.radio("🔍 Isolate Single Axis Wave", ["None", "X only", "Y only", "Z only"], index=0)
-slice_dim = st.sidebar.radio("🪓 Slice Plane", ["None", "X", "Y", "Z"], index=0)
-slice_index = st.sidebar.slider("Slice Index", 0, grid_size - 1, grid_size // 2)
-
-# Domain setup
-fx, fy, fz = 10**log_fx, 10**log_fy, 10**log_fz
+# --- Domain setup ---
+grid_size = st.sidebar.slider("Grid Resolution", 20, 60, 40, 5)
+domain_scale = st.sidebar.slider("Domain Size (microns)", 0.1, 5.0, 1.0, 0.1)
 x = np.linspace(0, domain_scale, grid_size)
 y = np.linspace(0, domain_scale, grid_size)
 z = np.linspace(0, domain_scale, grid_size)
 X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
 
-# Calculate waveforms
+# --- Waveguide field (external Φ) ---
+log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", 12.0, 16.0, 13.5, 0.1)
+log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", 12.0, 16.0, 13.5, 0.1)
+log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", 12.0, 16.0, 13.5, 0.1)
+phase_x = np.radians(st.sidebar.slider("X Phase (°)", 0, 360, 0, 10))
+phase_y = np.radians(st.sidebar.slider("Y Phase (°)", 0, 360, 0, 10))
+phase_z = np.radians(st.sidebar.slider("Z Phase (°)", 0, 360, 0, 10))
+
+fx, fy, fz = 10**log_fx, 10**log_fy, 10**log_fz
 EX = np.sin(fx * np.pi * X + phase_x)
 EY = np.sin(fy * np.pi * Y + phase_y)
 EZ = np.sin(fz * np.pi * Z + phase_z)
+Phi = EX * EY * EZ  # External field
 
-if isolate_axis == "X only":
-    field_display = np.abs(EX)
-elif isolate_axis == "Y only":
-    field_display = np.abs(EY)
-elif isolate_axis == "Z only":
-    field_display = np.abs(EZ)
-else:
-    field_display = np.abs(EX * EY * EZ)
+# --- Quantum emitter field Ψᵣ(x,t) ---
+st.sidebar.markdown("### Emitter Location")
+cx = st.sidebar.slider("X Center (μm)", 0.0, domain_scale, domain_scale/2, 0.1)
+cy = st.sidebar.slider("Y Center (μm)", 0.0, domain_scale, domain_scale/2, 0.1)
+cz = st.sidebar.slider("Z Center (μm)", 0.0, domain_scale, domain_scale/2, 0.1)
+width = st.sidebar.slider("Emitter Width (μm)", 0.01, 1.0, 0.2, 0.01)
 
-# Normalize and threshold
-field_norm = (field_display - field_display.min()) / (field_display.max() - field_display.min())
-lock_mask = ((field_norm > threshold - lock_strength) & (field_norm < threshold + lock_strength))
-xv, yv, zv = X[lock_mask], Y[lock_mask], Z[lock_mask]
-color_vals = field_norm[lock_mask]
+Ψr = np.exp(-((X - cx)**2 + (Y - cy)**2 + (Z - cz)**2) / width**2)
 
-# --- 3D Plot ---
+# --- Resonance interaction ---
+Hres = Ψr * Phi
+render_energy = np.abs(Hres)**2
+
+threshold = st.sidebar.slider("Render Threshold", 0.0, 1.0, 0.05, 0.01)
+photon_mask = render_energy > threshold
+
+xv, yv, zv = X[photon_mask], Y[photon_mask], Z[photon_mask]
+color_vals = render_energy[photon_mask]
+
+# --- Plot ---
 if len(xv) > 0:
     fig = go.Figure()
     fig.add_trace(go.Scatter3d(
         x=xv.flatten(), y=yv.flatten(), z=zv.flatten(),
         mode='markers',
         marker=dict(
-            size=2,
-            color=color_vals if view_mode == "Wave Overlay" else "white",
-            colorscale='Viridis' if view_mode == "Wave Overlay" else None,
-            opacity=0.6,
+            size=3,
+            color=color_vals,
+            colorscale='Inferno',
+            opacity=0.8,
         )
     ))
     fig.update_layout(
-        scene=dict(xaxis_title="X", yaxis_title="Y", zaxis_title="Z"),
+        scene=dict(
+            xaxis_title="X (μm)", yaxis_title="Y (μm)", zaxis_title="Z (μm)"
+        ),
         margin=dict(l=0, r=0, b=0, t=0),
-        paper_bgcolor='black', scene_bgcolor='black'
+        paper_bgcolor='black',
+        scene_bgcolor='black'
     )
     st.plotly_chart(fig, use_container_width=True)
-    if st.button("📷 Save Snapshot"):
-        pio.write_image(fig, "TRR_snapshot.png", width=1000, height=800)
-        st.success("Snapshot saved as TRR_snapshot.png")
 else:
-    st.warning("No visible geometry. Adjust intensity threshold or wave parameters.")
+    st.warning("No photon events detected. Try adjusting field alignment or lowering the threshold.")
 
-# --- Slicer Plot ---
-if slice_dim != "None":
-    st.subheader(f"📊 {slice_dim}-Slice at Index {slice_index}")
-    if slice_dim == "X":
-        slice_data = field_norm[slice_index, :, :]
-    elif slice_dim == "Y":
-        slice_data = field_norm[:, slice_index, :]
-    elif slice_dim == "Z":
-        slice_data = field_norm[:, :, slice_index]
-    fig2, ax = plt.subplots(figsize=(6, 6))
-    ax.imshow(slice_data.T, origin='lower', cmap='viridis', aspect='auto')
-    ax.set_title(f"{slice_dim}-Slice (Threshold Visualization)")
-    ax.axis('off')
-    st.pyplot(fig2)
-
-# --- Footer ---
-st.markdown(f"**Threshold**: {threshold:.2f} ± {lock_strength:.3f} — Frequencies: X=10^{log_fx:.1f}Hz, Y=10^{log_fy:.1f}Hz, Z=10^{log_fz:.1f}Hz")
-with st.expander("📘 What Is TRR Isoplane Geometry?"):
-    st.markdown("""
-    **TRR (Theory of Rendered Reality)** models how reality appears when wave-based resonance fields align into coherent patterns.
-
-    **Isoplane Geometry** happens when X, Y, and Z waves intersect *just right*—forming stable structures.
-
-    **Simplified Equation:**
-    > `resonance_energy > threshold`  
-    > _When internal and external fields overlap enough, reality 'renders'._
-
-    This viewer shows you **where** that happens in space.
-
-    - High alignment = more structure
-    - Phase mismatch = less pattern
-    - Thresholds let you filter only the coherent zones
-    """)
+st.markdown("**Interpretation**: Points shown represent local zones where resonance between emitter and field exceeds the energy threshold for photon realization, per TRR.")
