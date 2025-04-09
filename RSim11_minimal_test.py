@@ -81,14 +81,14 @@ st.sidebar.markdown(f"**Description:** {preset['desc']}")
 
 domain_scale_default = float(preset.get("domain_scale", 10.0))
 domain_scale = st.sidebar.slider(
-    "Grid Size (Visualization Scale)",
+    "Display Domain Size",
     min_value=1.0,
     max_value=30.0,
     value=domain_scale_default,
     step=1.0
 )
 
-grid_size = st.sidebar.slider("Simulation Resolution", 20, 60, 40, 5)
+grid_size = st.sidebar.slider("Geometry Detail (Grid Resolution)", 20, 60, 40, 5)
 
 log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fx"], 0.1)
 log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fy"], 0.1)
@@ -98,8 +98,8 @@ phase_x = np.radians(st.sidebar.slider("X Wave Phase (°)", 0, 360, preset["px"]
 phase_y = np.radians(st.sidebar.slider("Y Wave Phase (°)", 0, 360, preset["py"], 10))
 phase_z = np.radians(st.sidebar.slider("Z Wave Phase (°)", 0, 360, preset["pz"], 10))
 
-threshold = st.sidebar.slider("Pattern Intensity Threshold", 0.0, 1.0, preset["threshold"], 0.01)
-lock_strength = st.sidebar.slider("Precision Window", 0.0, 1.0, preset["lock"], 0.005)
+threshold = st.sidebar.slider("Render Threshold", 0.0, 1.0, preset["threshold"], 0.01)
+lock_strength = st.sidebar.slider("Resonance Lock Range", 0.0, 1.0, preset["lock"], 0.005)
 
 # Optional toggle
 view_mode = st.sidebar.radio("Visualization Mode", ["Geometry Only", "Wave Overlay"], index=1)
