@@ -240,6 +240,22 @@ if len(xv) > 0:
 else:
     st.warning("No visible geometry. Adjust intensity threshold or wave parameters.")
 
+def format_hz(value):
+    if value < 1e3:
+        return f"{value:.2f} Hz"
+    elif value < 1e6:
+        return f"{value/1e3:.2f} kHz"
+    elif value < 1e9:
+        return f"{value/1e6:.2f} MHz"
+    elif value < 1e12:
+        return f"{value/1e9:.2f} GHz"
+    elif value < 1e15:
+        return f"{value/1e12:.2f} THz"
+    else:
+        return f"{value/1e15:.2f} PHz"
+
+fx, fy, fz = 10**log_fx, 10**log_fy, 10**log_fz
+
 st.markdown(f"""
 **Render Threshold:** {threshold:.2f}  
 **Resonance Lock Range:** ±{lock_strength:.3f}  
