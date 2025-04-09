@@ -142,7 +142,7 @@ helper_ranges = {
     "Schumann Phase Gate":          {"grid": "30",    "domain": "9–11"},
 }
 
-st.sidebar.markdown("### 🔧 Recommended Settings")
+st.sidebar.markdown("Recommended Settings")
 recommend = helper_ranges.get(selected, {})
 st.sidebar.markdown(f"**Domain Size:** {recommend.get('domain', '—')}")
 st.sidebar.markdown(f"**Grid Resolution:** {recommend.get('grid', '—')}")
