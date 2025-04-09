@@ -248,7 +248,7 @@ st.markdown(f"""
 - Y Axis: {format_hz(fy)}  
 - Z Axis: {format_hz(fz)}
 """)
-)
+
 st.markdown("""
 ---
 **TRR Equation of Rendered Geometry**
