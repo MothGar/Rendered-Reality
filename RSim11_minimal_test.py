@@ -167,6 +167,7 @@ log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 🔄 Wave Phase Settings (Degrees)")
+st.sidebar.markdown("""
 Adjust the phase angle for each axis.  
 This shifts the wave’s position in its cycle.
 """)
