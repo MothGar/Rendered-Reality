@@ -95,7 +95,7 @@ presets = {
         "threshold": 0.01, "lock": 0.01,
         "grid_size": 40,
         "domain_scale": 1.0
-    }
+    },
     "Solar Lattice": {
         "desc": "Photonic field interaction in the solar coherence band — modeling solar perception windows.",
         "fx": 14.8, "fy": 15.0, "fz": 15.2,
