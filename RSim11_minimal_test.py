@@ -9,6 +9,26 @@ st.title("Theory of Rendered Reality Isoplane Geometry Simulator V10")
 st.markdown("""
 This simulator shows how resonance waves in **X, Y, and Z** create combined **cymatic patterns**—stable 3D geometries that emerge when resonance waves intersect.
 """)
+with st.expander("🔊 What Are Cymatic Patterns in TRR?"):
+    st.markdown("""
+    **Cymatic patterns** are geometric shapes that emerge when **standing waves interact**—typically visualized in 2D with sand on vibrating plates.
+
+    In **TRR**, we simulate **3D cymatics** using **resonant wave interference across X, Y, and Z axes**.
+
+    These structures represent **rendered zones**—areas where internal and external fields overlap in a way that satisfies the rendering condition:
+    
+    > `|Ψᵣ · Φ|² > Tᵣ`
+
+    - Nodes (no movement) = voids in perception  
+    - Antinodes (intense overlap) = structured reality
+
+    Think of this as a **3D “Chladni field”** where **reality crystallizes** into visible form. Different presets simulate:
+    
+    - Phase alignment vs. decoherence
+    - Biological vs. cosmological rendering
+    - Perceptual jamming vs. structured emergence
+    """)
+
 
 # --- Preset Definitions ---
 presets = {
