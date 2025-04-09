@@ -217,10 +217,7 @@ if len(xv) > 0:
     )
     st.plotly_chart(fig, use_container_width=True)
 
-    if st.button("📷 Save Snapshot"):
-        pio.write_image(fig, "TRR_snapshot.png", width=1000, height=800)
-        st.success("Snapshot saved as TRR_snapshot.png")
-
+    
 else:
     st.warning("No visible geometry. Adjust intensity threshold or wave parameters.")
 
