@@ -189,6 +189,16 @@ st.sidebar.markdown("---")
 # Optional toggle
 view_mode = st.sidebar.radio("Visualization Mode", ["Geometry Only", "Wave Overlay"], index=1)
 
+with st.sidebar:
+    st.markdown("## Resources")
+    with open("Rendered_Reality_TimG.pdf", "rb") as f:
+        st.download_button(
+            label="Download TRR White Paper",
+            data=f,
+            file_name="Rendered_Reality_TimG.pdf",
+            mime="application/pdf"
+        )
+
 fx, fy, fz = 10**log_fx, 10**log_fy, 10**log_fz
 x = np.linspace(0, domain_scale, grid_size)
 y = np.linspace(0, domain_scale, grid_size)
