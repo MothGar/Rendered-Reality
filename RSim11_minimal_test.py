@@ -122,7 +122,7 @@ presets = {
     }
 }
 
-selected = st.sidebar.selectbox("TRR Demo Presets:", list(presets.keys()))
+selected = st.sidebar.selectbox("**TRR Demo Presets:**", list(presets.keys()))
 preset = presets[selected]
 
 st.sidebar.markdown(f"**Description:** {preset['desc']}")
