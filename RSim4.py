@@ -1,11 +1,13 @@
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
+import pyvista as pv
+from stpyvista import stpyvista
 
 st.set_page_config(layout="wide")
 
-st.title("TRR Resonance Simulation – 1D Wave Interference")
-st.markdown("This app visualizes wave interference across X, Y, Z axes in the stable matter frequency range (10^10–10^20 Hz). Use the sidebar to adjust parameters.")
+st.title("TRR Resonance Simulation: Stable Matter Range")
+st.markdown("Visualize 3D wave interference in the frequency range of stable matter (10^10–10^20 Hz).")
 
 # Sidebar Controls
 st.sidebar.title("Wave Parameters")
@@ -17,6 +19,7 @@ freq_z = st.sidebar.slider("Z Wave Frequency (log10 Hz)", 10.0, 20.0, 14.0, 0.1)
 phase_z = st.sidebar.slider("Z Wave Phase (°)", 0, 360, 180, 10)
 
 amplitude = st.sidebar.slider("Amplitude (a.u.)", 0.1, 5.0, 1.0, 0.1)
+contour_levels = st.sidebar.multiselect("Contour Levels (a.u.)", [0.0, 0.5, 1.0, 1.5, 2.0], default=[0.0])
 phase_locked = st.sidebar.checkbox("Phase-Locked Waves", value=False)
 
 # Convert log10 frequency to actual frequency in Hz
@@ -56,8 +59,48 @@ ax.legend()
 ax.grid(True)
 st.pyplot(fig)
 
-# Coherence probability
+st.markdown("Use the sidebar sliders to manipulate log-scale frequencies and phase shifts. Observe how high-frequency resonances interact over time.")
+
+# 3D Viewer with Frame Scrubbing
+st.markdown("### 3D Spatial Waveform Representation")
+st.session_state.setdefault("frame_index", 0)
+total_frames = 10
+frame_ns = np.linspace(0.0, 10.0, total_frames)
+
+col_play, col_slider = st.columns([1, 5])
+with col_play:
+    autoplay = st.checkbox("\u25b6 Auto Play")
+with col_slider:
+    frame_index = st.slider("Frame Index", 0, total_frames - 1, st.session_state.frame_index)
+
+st.session_state.frame_index = (frame_index + 1) % total_frames if autoplay else frame_index
+
+x = np.linspace(0, 1, 50)
+y = np.linspace(0, 1, 50)
+z = np.linspace(0, 1, 50)
+X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
+
+T = frame_ns[st.session_state.frame_index] * 1e-9
+EX = amplitude * np.sin(2 * np.pi * f_x * X + omega_x * T + phi_x)
+EY = amplitude * np.sin(2 * np.pi * f_y * Y + omega_y * T + phi_y)
+EZ = amplitude * np.sin(2 * np.pi * f_z * Z + omega_z * T + phi_z)
+wave_3d = EX + EY + EZ
+
+# Resonance coherence probability (simple heuristic based on similarity of frequencies and phase lock)
 freq_diff = abs(freq_x - freq_y) + abs(freq_y - freq_z) + abs(freq_x - freq_z)
 phase_match = int(phase_locked)
 coherence_score = max(0.0, 1.0 - (freq_diff / 3)) * (0.5 + 0.5 * phase_match)
 st.markdown(f"**Resonance Coherence Probability:** {coherence_score:.2%}")
+
+try:
+    grid = pv.StructuredGrid(X, Y, Z)
+    grid["WaveSum"] = wave_3d.flatten(order="F")
+    plotter = pv.Plotter(off_screen=True)
+    contour = grid.contour(contour_levels)
+    plotter.add_mesh(contour, scalars="WaveSum", cmap="coolwarm")
+    plotter.view_isometric()
+    plotter.set_background("white")
+    st.markdown(f"#### Frame at t = {frame_ns[st.session_state.frame_index]:.2f} ns")
+    stpyvista(plotter)
+except Exception as e:
+    st.warning(f"3D rendering failed at frame index {frame_index}: {e}")
