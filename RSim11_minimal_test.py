@@ -91,12 +91,11 @@ helper_ranges = {
     "Quantum Limit":                {"grid": "40",    "domain": "1–3"},
 }
 
-st.sidebar.markdown("---")
 st.sidebar.markdown("### 🔧 Recommended Settings")
 recommend = helper_ranges.get(selected, {})
 st.sidebar.markdown(f"**Domain Size:** {recommend.get('domain', '—')}")
 st.sidebar.markdown(f"**Grid Resolution:** {recommend.get('grid', '—')}")
-
+st.sidebar.markdown("---")
 
 domain_scale_default = float(preset.get("domain_scale", 10.0))
 domain_scale = st.sidebar.slider(
