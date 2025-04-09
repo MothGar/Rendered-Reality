@@ -256,6 +256,22 @@ def format_hz(value):
 
 fx, fy, fz = 10**log_fx, 10**log_fy, 10**log_fz
 
+def format_wavelength(frequency_hz):
+    c = 299_792_458  # Speed of light in m/s
+    if frequency_hz == 0:
+        return "∞"
+    wavelength_m = c / frequency_hz
+    if wavelength_m >= 1:
+        return f"{wavelength_m:.2f} m"
+    elif wavelength_m >= 1e-3:
+        return f"{wavelength_m * 1e3:.2f} mm"
+    elif wavelength_m >= 1e-6:
+        return f"{wavelength_m * 1e6:.2f} µm"
+    elif wavelength_m >= 1e-9:
+        return f"{wavelength_m * 1e9:.2f} nm"
+    else:
+        return f"{wavelength_m:.2e} m"
+        
 st.markdown(f"""
 **Render Threshold:** {threshold:.2f}  
 **Resonance Lock Range:** ±{lock_strength:.3f}  
