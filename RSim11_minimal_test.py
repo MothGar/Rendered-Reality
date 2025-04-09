@@ -79,6 +79,24 @@ preset = presets[selected]
 
 st.sidebar.markdown(f"**Description:** {preset['desc']}")
 
+# --- Recommended Settings Helper ---
+helper_ranges = {
+    "Resonant Core (Ψₐ ∩ Φₐ)":       {"grid": "30–40", "domain": "1–3"},
+    "Phase Rift":                    {"grid": "40",    "domain": "2–4"},
+    "Cymatic Shell":                 {"grid": "40–50", "domain": "20–25"},
+    "Render Fog":                    {"grid": "35–40", "domain": "5–8"},
+    "Perceptual Jam":                {"grid": "50–60", "domain": "25–30"},
+    "Biofield Bloom":                {"grid": "40–50", "domain": "15–20"},
+    "Singularity Shell":            {"grid": "60",    "domain": "18–20"},
+    "Quantum Limit":                {"grid": "40",    "domain": "1–3"},
+}
+
+st.sidebar.markdown("---")
+st.sidebar.markdown("### 🔧 Recommended Settings")
+recommend = helper_ranges.get(selected, {})
+st.sidebar.markdown(f"**Grid Resolution:** {recommend.get('grid', '—')}")
+st.sidebar.markdown(f"**Domain Size:** {recommend.get('domain', '—')}")
+
 domain_scale_default = float(preset.get("domain_scale", 10.0))
 domain_scale = st.sidebar.slider(
     "Display Domain Size",
@@ -103,24 +121,6 @@ lock_strength = st.sidebar.slider("Resonance Lock Range", 0.0, 1.0, preset["lock
 
 # Optional toggle
 view_mode = st.sidebar.radio("Visualization Mode", ["Geometry Only", "Wave Overlay"], index=1)
-
-# --- Recommended Settings Helper ---
-helper_ranges = {
-    "Resonant Core (Ψₐ ∩ Φₐ)":       {"grid": "30–40", "domain": "1–3"},
-    "Phase Rift":                    {"grid": "40",    "domain": "2–4"},
-    "Cymatic Shell":                 {"grid": "40–50", "domain": "20–25"},
-    "Render Fog":                    {"grid": "35–40", "domain": "5–8"},
-    "Perceptual Jam":                {"grid": "50–60", "domain": "25–30"},
-    "Biofield Bloom":                {"grid": "40–50", "domain": "15–20"},
-    "Singularity Shell":            {"grid": "60",    "domain": "18–20"},
-    "Quantum Limit":                {"grid": "40",    "domain": "1–3"},
-}
-
-st.sidebar.markdown("---")
-st.sidebar.markdown("### 🔧 Recommended Settings")
-recommend = helper_ranges.get(selected, {})
-st.sidebar.markdown(f"**Grid Resolution:** {recommend.get('grid', '—')}")
-st.sidebar.markdown(f"**Domain Size:** {recommend.get('domain', '—')}")
 
 fx, fy, fz = 10**log_fx, 10**log_fy, 10**log_fz
 x = np.linspace(0, domain_scale, grid_size)
