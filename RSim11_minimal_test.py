@@ -17,7 +17,7 @@ with st.expander("What Are Cymatic Patterns in TRR?"):
 
     These structures represent **rendered zones**—areas where internal and external fields overlap in a way that satisfies the rendering condition:
     
-    > `|Ψᵣ · Φ|² > Tᵣ`
+    > **|Ψᵣ · Φ|² > Tᵣ**
 
     - Nodes (no movement) = voids in perception  
     - Antinodes (intense overlap) = structured reality
