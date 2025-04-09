@@ -7,7 +7,7 @@ st.set_page_config(layout="wide")
 st.title("Theory of Rendered Reality Isoplane Geometry Simulator V10")
 
 st.markdown("""
-This simulator shows how resonance waves in **X, Y, and Z** create combined **cymatic patterns**—stable 3D geometries that emerge when resonance waves intersect.
+This simulator shows how resonance waves in **X, Y, and Z** create combined **cymatic patterns**—stable 3D geometries that emerge when the waves intersect.
 """)
 with st.expander("What Are Cymatic Patterns in TRR?"):
     st.markdown("""
