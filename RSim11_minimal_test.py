@@ -37,6 +37,7 @@ presets = {
         "fx": 6.0, "fy": 6.0, "fz": 6.0,
         "px": 0, "py": 0, "pz": 0,
         "threshold": 0.05, "lock": 0.03,
+        "grid_size": 40,
         "domain_scale": 1
     },
     "Phase Rift": {
@@ -44,6 +45,7 @@ presets = {
         "fx": 6.0, "fy": 6.0, "fz": 6.0,
         "px": 45, "py": 0, "pz": 0,
         "threshold": 0.05, "lock": 0.03,
+        "grid_size": 40,
         "domain_scale": 1
     },
     "Cymatic Shell": {
@@ -51,6 +53,7 @@ presets = {
         "fx": 3.0, "fy": 4.0, "fz": 4.0,
         "px": 0, "py": 0, "pz": 0,
         "threshold": 0.1, "lock": 0.05,
+        "grid_size": 40,
         "domain_scale": 22
     },
     "Render Fog": {
@@ -58,6 +61,7 @@ presets = {
         "fx": 5.5, "fy": 6.0, "fz": 6.5,
         "px": 90, "py": 45, "pz": 180,
         "threshold": 0.3, "lock": 0.15,
+        "grid_size": 40,
         "domain_scale": 3
     },
     "Perceptual Jam": {
@@ -65,6 +69,7 @@ presets = {
         "fx": 7.0, "fy": 7.0, "fz": 7.0,
         "px": 90, "py": 90, "pz": 90,
         "threshold": 0.05, "lock": 0.01,
+        "grid_size": 60,
         "domain_scale": 30
     },
     "Biofield Bloom": {
@@ -91,7 +96,30 @@ presets = {
         "grid_size": 40,
         "domain_scale": 1.0
     }
-
+    "Solar Lattice": {
+        "desc": "Photonic field interaction in the solar coherence band — modeling solar perception windows.",
+        "fx": 14.8, "fy": 15.0, "fz": 15.2,
+        "px": 0, "py": 45, "pz": 90,
+        "threshold": 0.05, "lock": 0.025,
+        "domain_scale": 5.0,
+        "grid_size": 40
+    },
+    "Quartz Memory Shell": {
+        "desc": "Highly stable crystalline resonance — visualizing field anchoring inside silica-based substrates.",
+        "fx": 12.1, "fy": 12.1, "fz": 12.1,
+        "px": 0, "py": 120, "pz": 240,
+        "threshold": 0.08, "lock": 0.02,
+        "domain_scale": 3.0,
+        "grid_size": 50
+    },
+    "Schumann Phase Gate": {
+        "desc": "Earth’s electromagnetic coherence frequency — rendering resonance aligned with planetary rhythms.",
+        "fx": 0.89, "fy": 0.91, "fz": 0.93,
+        "px": 0, "py": 90, "pz": 180,
+        "threshold": 0.02, "lock": 0.01,
+        "domain_scale": 10.0,
+        "grid_size": 30
+    }
 }
 
 selected = st.sidebar.selectbox("Choose TRR Demo Preset", list(presets.keys()))
@@ -109,6 +137,9 @@ helper_ranges = {
     "Biofield Bloom":                {"grid": "40–50", "domain": "15–20"},
     "Singularity Shell":            {"grid": "60",    "domain": "18–20"},
     "Quantum Limit":                {"grid": "40",    "domain": "1–3"},
+    "Solar Lattice":                {"grid": "40",    "domain": "4–6"},
+    "Quartz Memory Shell":          {"grid": "50",    "domain": "1–3"},
+    "Schumann Phase Gate":          {"grid": "30",    "domain": "9–11"},
 }
 
 st.sidebar.markdown("### 🔧 Recommended Settings")
