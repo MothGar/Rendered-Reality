@@ -259,10 +259,10 @@ fx, fy, fz = 10**log_fx, 10**log_fy, 10**log_fz
 st.markdown(f"""
 **Render Threshold:** {threshold:.2f}  
 **Resonance Lock Range:** ±{lock_strength:.3f}  
-**Wave Frequencies:**  
-- X Axis: {format_hz(fx)}  
-- Y Axis: {format_hz(fy)}  
-- Z Axis: {format_hz(fz)}
+**Wave Frequencies and Wavelengths:**  
+- X Axis: {format_hz(fx)}  (λ = {format_wavelength(fx)})  
+- Y Axis: {format_hz(fy)}  (λ = {format_wavelength(fy)})  
+- Z Axis: {format_hz(fz)}  (λ = {format_wavelength(fz)})
 """)
 
 
