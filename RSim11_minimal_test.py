@@ -169,9 +169,9 @@ st.sidebar.markdown("---")
 st.sidebar.markdown("""
 **Phase Shift Help**
 - Affects the **starting point** of the wave
-- `0°` = Perfect Alignment
-- `180°` = Destructive Interference
-- `90° / 270°` = Orthogonal Field States, often incoherent
+- 0° = Perfect Alignment
+- 180° = Destructive Interference
+- 90° / 270° = Orthogonal Field States, often incoherent
 """)
 st.sidebar.markdown("Wave Phase Settings (Degrees)")
 phase_x = np.radians(st.sidebar.slider("X-Axis Phase (°)", 0, 360, preset["px"], 10))
