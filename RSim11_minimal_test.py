@@ -168,8 +168,11 @@ log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 🔄 Wave Phase Settings (Degrees)")
 st.sidebar.markdown("""
-Adjust the phase angle for each axis.  
-This shifts the wave’s position in its cycle.
+**Phase Shift Help**
+- Affects the **starting point** of the wave
+- `0°` = aligned
+- `180°` = opposite (cancels)
+- `90° / 270°` = orthogonal, often incoherent
 """)
 
 phase_x = np.radians(st.sidebar.slider("X-Axis Phase (°)", 0, 360, preset["px"], 10))
