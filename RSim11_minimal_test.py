@@ -240,9 +240,14 @@ if len(xv) > 0:
 else:
     st.warning("No visible geometry. Adjust intensity threshold or wave parameters.")
 
-st.markdown(
-    f"**Threshold:** {threshold:.2f} (lock range ±{lock_strength:.3f}) | "
-    f"Frequencies [Hz]: X=10^{log_fx:.1f}, Y=10^{log_fy:.1f}, Z=10^{log_fz:.1f}"
+st.markdown(f"""
+**Render Threshold:** {threshold:.2f}  
+**Resonance Lock Range:** ±{lock_strength:.3f}  
+**Wave Frequencies:**  
+- X Axis: {format_hz(fx)}  
+- Y Axis: {format_hz(fy)}  
+- Z Axis: {format_hz(fz)}
+""")
 )
 st.markdown("""
 ---
