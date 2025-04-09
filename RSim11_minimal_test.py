@@ -214,7 +214,7 @@ if len(xv) > 0:
         scene=dict(xaxis_title="X", yaxis_title="Y", zaxis_title="Z"),
         margin=dict(l=0, r=0, b=0, t=0),
         paper_bgcolor='black', scene_bgcolor='black',
-        height=800
+        height=640
     )
     st.plotly_chart(fig, use_container_width=True)
 
