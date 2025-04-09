@@ -117,7 +117,7 @@ presets = {
         "fx": 0.89, "fy": 0.91, "fz": 0.93,
         "px": 0, "py": 90, "pz": 180,
         "threshold": 0.02, "lock": 0.01,
-        "domain_scale": 10.0,
+        "domain_scale": 11.0,
         "grid_size": 30
     }
 }
