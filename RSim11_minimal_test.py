@@ -166,6 +166,11 @@ log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset
 log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fz"], 0.1)
 
 st.sidebar.markdown("---")
+
+threshold = st.sidebar.slider("Render Threshold", 0.0, 1.0, preset["threshold"], 0.01)
+lock_strength = st.sidebar.slider("Resonance Lock Range", 0.0, 1.0, preset["lock"], 0.005)
+
+st.sidebar.markdown("---")
 st.sidebar.markdown("""
 **Phase Shift Help**
 - Affects the **starting point** of the wave
@@ -178,11 +183,6 @@ phase_x = np.radians(st.sidebar.slider("X-Axis Phase (°)", 0, 360, preset["px"]
 phase_y = np.radians(st.sidebar.slider("Y-Axis Phase (°)", 0, 360, preset["py"], 10))
 phase_z = np.radians(st.sidebar.slider("Z-Axis Phase (°)", 0, 360, preset["pz"], 10))
 
-
-st.sidebar.markdown("---")
-
-threshold = st.sidebar.slider("Render Threshold", 0.0, 1.0, preset["threshold"], 0.01)
-lock_strength = st.sidebar.slider("Resonance Lock Range", 0.0, 1.0, preset["lock"], 0.005)
 
 st.sidebar.markdown("---")
 
