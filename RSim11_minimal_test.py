@@ -194,6 +194,15 @@ else:
     st.warning("No visible geometry. Adjust intensity threshold or wave parameters.")
 
 st.markdown(f"**Threshold**: {threshold:.2f} ± {lock_strength:.3f} — Frequencies: X=10^{log_fx:.1f}Hz, Y=10^{log_fy:.1f}Hz, Z=10^{log_fz:.1f}Hz")
+st.markdown("""
+---
+### 📐 TRR Equation of Rendered Geometry
+
+> **Render Condition:**  
+> \\[ |⟨ \\Psi_r(x, t) | H_{res} | \\Phi(x, t) ⟩|^2 > T_r \\]
+
+This simulator visualizes the points in 3D space where this equation **crosses the render threshold**—where reality takes form.
+""")
 
 # --- Collapsible TRR Explanation ---
 with st.expander("📘 What Is TRR Isoplane Geometry?"):
