@@ -123,11 +123,11 @@ presets = {
     },
     "Biofield Bloom": {
         "desc": "A biological coherence pattern — local regions resonate while the surrounding field remains inert. Similar to consciousness arising in neurons.",
-        "fx": 2.5, "fy": 3.0, "fz": 2.8,
-        "px": 50, "py": 0, "pz": 150,
+        "fx": 13.9, "fy": 13.7, "fz": 13.5,
+        "px": 50, "py": 0, "pz": 180,
         "threshold": 0.15, "lock": 0.06,
-        "grid_size": 40,
-        "domain_scale": 17.0
+        "grid_size": 70,
+        "domain_scale": 1.0
     },
     "Singularity Shell": {
         "desc": "A black hole–inspired collapse field. All rendering is pushed to the outer fringe — the center is a void where nothing can render.",
