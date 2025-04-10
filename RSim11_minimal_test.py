@@ -211,7 +211,6 @@ if "grid_size" not in st.session_state or st.session_state.get("last_preset") !=
     st.session_state.last_preset = selected 
 
 grid_size = st.sidebar.slider("Geometry Detail (Grid Resolution)", 20, 100, value=st.session_state.grid_size, step=5, key="grid_size")
-st.session_state.grid_size = grid_size
 
 st.sidebar.markdown("---")
 
