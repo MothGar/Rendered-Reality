@@ -94,7 +94,7 @@ with st.expander("What Are Cymatic Patterns in TRR?"):
 presets = {
     "Resonant Core (Ψₐ ∩ Φₐ)": {
         "desc": "A perfect match of internal and external waveforms—reality crystallizes at the center. This is the golden zone where rendering is guaranteed.",
-        "use_chladni": False,
+        "chladni": False,
         "fx": 6.0, "fy": 6.0, "fz": 6.0,
         "px": 90, "py": 90, "pz": 90,
         "threshold": 0.05, "lock": 0.03,
@@ -282,6 +282,9 @@ presets = {
 
 selected = st.sidebar.selectbox("**TRR Demo Presets:**", list(presets.keys()))
 preset = presets[selected]
+# Automatically activate Chladni mode if the preset requires it
+if "chladni" in preset:
+    st.session_state.use_chladni = preset["chladni"]
 
 
 st.sidebar.markdown(f"**Description:** {preset['desc']}")
@@ -398,7 +401,7 @@ st.sidebar.markdown("---")
 # Optional toggle
 view_mode = st.sidebar.radio("Visualization Mode", ["Geometry Only", "Wave Overlay"], index=1)
 
-use_chladni = st.sidebar.checkbox("Enable Chladni Mode Input", value=True)
+use_chladni = st.sidebar.checkbox("Enable Chladni Mode Input", value=st.session_state.get("use_chladni", False))
 
 # Define override and sliders immediately if Chladni mode is on
 if use_chladni:
