@@ -168,13 +168,17 @@ st.sidebar.markdown(f"**Grid Resolution:** {recommend.get('grid', '—')}")
 st.sidebar.markdown("---")
 
 domain_scale_default = float(preset.get("domain_scale", 10.0))
-domain_scale = st.sidebar.slider(
-    "Display Domain Size",
-    min_value=1.0,
-    max_value=30.0,
-    value=domain_scale_default,
-    step=1.0
-)
+domain_scale = st.sidebar.slider("Display Domain Size", 1.0, 30.0, float(preset.get("domain_scale", 10.0)), step=1.0)
+
+wave_optimized_grid = st.sidebar.checkbox("Wave-Optimized Grid Resolution", value=False)
+
+if wave_optimized_grid:
+    grid_size = wave_based_grid_size([fx, fy, fz], domain_scale)
+    st.sidebar.caption(f"Grid: {grid_size} pts — auto-optimized to wavelength")
+else:
+    auto_grid_size = recommended_grid_size([fx, fy, fz], domain_scale)
+    grid_size = st.sidebar.slider("Geometry Detail (Grid Resolution)", 20, 100, auto_grid_size, 5)
+
 st.sidebar.markdown("---")
 
 if "last_preset" not in st.session_state or st.session_state.last_preset != selected:
@@ -182,7 +186,6 @@ if "last_preset" not in st.session_state or st.session_state.last_preset != sele
     st.session_state.log_fy = preset["fy"]
     st.session_state.log_fz = preset["fz"]
     st.session_state.last_preset = selected
-
 
 log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=preset["fx"], step=0.1, key="log_fx")
 log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=preset["fy"], step=0.1, key="log_fy")
@@ -228,7 +231,7 @@ with st.sidebar:
         )
 
 
-nonlinear_detail = st.sidebar.checkbox("Enhance Detail Around Node Regions", value=True)
+nonlinear_detail = st.sidebar.checkbox("Enhance Detail Around Node Regions", value=False)
 
 if nonlinear_detail:
     x = clustered_grid_points(domain_scale, grid_size, focus='mid')
@@ -238,6 +241,7 @@ else:
     x = np.linspace(0, domain_scale, grid_size)
     y = np.linspace(0, domain_scale, grid_size)
     z = np.linspace(0, domain_scale, grid_size)
+
 X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
 
 EX = np.sin(fx * np.pi * X + phase_x)
