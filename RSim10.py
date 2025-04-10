@@ -100,10 +100,10 @@ presets = {
     "Cymatic Shell": {
         "desc": "Layered wave harmonics generate cymatic-like structures. This preset mimics sound-driven geometry—where resonance creates shells of stillness.",
         "fx": 3.0, "fy": 4.0, "fz": 4.0,
-        "px": 0, "py": 0, "pz": 0,
+        "px": 90, "py": 90, "pz": 90,
         "threshold": 0.1, "lock": 0.02,
-        "grid_size": 40,
-        "domain_scale": 22
+        "grid_size": 75,
+        "domain_scale": 1
     },
     "Render Fog": {
         "desc": "Rendering is a struggle in this chaotic field. Fields are almost coherent, but never quite stabilize—like trying to see through shifting mist.",
