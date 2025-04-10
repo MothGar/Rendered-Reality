@@ -249,11 +249,11 @@ presets = {
         "chladni": True,
         "fx": 13.7, "fy": 13.7, "fz": 13.7,
         "px": 90, "py": 120, "pz": 90,
-        "threshold": 0.25, "lock": 0.02,
-        "grid_size": 55, "domain_scale": 1.5,
+        "threshold": 0.03, "lock": 0.01,
+        "grid_size": 75, "domain_scale": 2.9,
         "r_x": 1, "l_x": 1,
         "r_y": 1, "l_y": 2,
-        "r_z": 1, "l_z": 3
+        "r_z": 1, "l_z": 1
 },
     "Phase Tuned Cross Lattice": {
         "desc": "Resonant interference throughout grid, high coherence crosswave",
