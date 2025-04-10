@@ -228,7 +228,10 @@ presets = {
         "lock": 0.01,
         "grid_size": 75,
         "domain_scale": 1.0,
-        "desc": "**Activate Chladni Mode:** Axial harmonic resonance based on fundamental Chladni symmetry — mimics bio-coherent spine-wave interaction."
+        "r_x": 2, "l_x": 2,
+        "r_y": 1, "l_y": 2,
+        "r_z": 1, "l_z": 1,
+        "desc": "**Activate Chladni Mode:** Axial harmonic resonance with a lateral twist. X and Y axes spiral asymmetrically into a central spine as Z maintains a base-mode torsion — reminiscent of neurological phase entrainment."
 },
     "Toroidal Core": {
         "desc": "**Activate Chladni Mode:** Dense toroidal symmetry with full inner cohesion",
