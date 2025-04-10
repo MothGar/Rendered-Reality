@@ -256,7 +256,10 @@ if "grid_size" not in st.session_state or st.session_state.get("last_preset") !=
     st.session_state.last_preset = selected 
 
 grid_size = st.sidebar.slider("Geometry Detail (Grid Resolution)", 20, 100, value=st.session_state.grid_size, step=5, key="grid_size")
-
+# Force grid size to be odd for symmetric centering
+if grid_size % 2 == 0:
+    grid_size += 1
+    
 st.sidebar.markdown("---")
 
 threshold = st.sidebar.slider("Render Threshold", 0.0, 1.0, value=st.session_state.get("threshold", 0.05), step=0.01, key="threshold")
