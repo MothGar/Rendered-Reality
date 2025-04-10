@@ -11,12 +11,20 @@ def recommended_grid_size(frequencies_hz, domain_scale_m):
     return max(20, min(grid_points, 60))  # clamp between 20 and 60
 
 
-def wave_based_grid_size(frequencies_hz, domain_scale_m, points_per_cycle=20, min_pts=1, max_pts=100):
+def wave_based_grid_size(frequencies_hz, domain_scale_m, reference_cycles=18.0, reference_grid_size=40, min_pts=20, max_pts=100):
+    """
+    Dynamically scale grid resolution based on cycles in domain.
+    Ensures that when cycles ≈ reference_cycles, grid = reference_grid_size.
+    """
     c = 299_792_458  # speed of light in m/s
     wavelengths = [c / f for f in frequencies_hz if f > 0]
     min_lambda = min(wavelengths)
-    cycles = domain_scale_m / min_lambda
-    grid_points = int(cycles * points_per_cycle)
+    actual_cycles = domain_scale_m / min_lambda
+
+    # Scale grid relative to reference
+    scaling_factor = actual_cycles / reference_cycles
+    grid_points = int(reference_grid_size * scaling_factor)
+
     return max(min_pts, min(grid_points, max_pts))
 
 
