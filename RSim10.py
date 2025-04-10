@@ -134,7 +134,6 @@ presets = {
         "domain_scale": 11.0,
         "grid_size": 30
     },
-    chladni_presets = {
     "Toroidal Helix (r=2, l=3)": {
         "fx": fx1, "fy": fy1, "fz": fz1,
         "px": px1, "py": py1, "pz": pz1,
