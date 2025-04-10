@@ -10,19 +10,8 @@ def recommended_grid_size(frequencies_hz, domain_scale_m):
     grid_points = int(cycles_in_domain * 15)  # 15 points per cycle
     return max(20, min(grid_points, 60))  # clamp between 20 and 60
 
-def clustered_grid_points(domain_scale, grid_size, focus='mid'):
-    t = np.linspace(0, 1, grid_size)
-    if focus == 'mid':
-        # Cosine-based center clustering
-        clustered = 0.5 * (1 - np.cos(np.pi * t))
-    elif focus == 'edges':
-        # Flip the mid-focused profile
-        clustered = 1 - 0.5 * (1 - np.cos(np.pi * t))
-    else:
-        clustered = t  # fallback to uniform
-    return clustered * domain_scale
 
-def wave_based_grid_size(frequencies_hz, domain_scale_m, points_per_cycle=16, min_pts=20, max_pts=100):
+def wave_based_grid_size(frequencies_hz, domain_scale_m, points_per_cycle=20, min_pts=1, max_pts=100):
     c = 299_792_458  # speed of light in m/s
     wavelengths = [c / f for f in frequencies_hz if f > 0]
     min_lambda = min(wavelengths)
@@ -241,13 +230,6 @@ with st.sidebar:
         )
 
 
-nonlinear_detail = st.sidebar.checkbox("Enhance Detail Around Node Regions", value=False)
-
-if nonlinear_detail:
-    x = clustered_grid_points(domain_scale, grid_size, focus='mid')
-    y = clustered_grid_points(domain_scale, grid_size, focus='mid')
-    z = clustered_grid_points(domain_scale, grid_size, focus='mid')
-else:
     x = np.linspace(0, domain_scale, grid_size)
     y = np.linspace(0, domain_scale, grid_size)
     z = np.linspace(0, domain_scale, grid_size)
