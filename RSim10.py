@@ -318,10 +318,18 @@ if "last_preset" not in st.session_state or st.session_state.last_preset != sele
     st.session_state.log_fz = preset["fz"]
     st.session_state.last_preset = selected
 
-log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -3.0, 20.0, value=st.session_state.log_fx, step=0.1, key="log_fx")
-log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -3.0, 20.0, value=st.session_state.log_fy, step=0.1, key="log_fy")
-log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", -3.0, 20.0, value=st.session_state.log_fz, step=0.1, key="log_fz")
+def clamp_log(val, minval=-3.0, maxval=20.0):
+    return max(min(val, maxval), minval)
 
+# Fallback-safe log values
+log_fx_val = clamp_log(st.session_state.get("log_fx", 6.0))
+log_fy_val = clamp_log(st.session_state.get("log_fy", 6.0))
+log_fz_val = clamp_log(st.session_state.get("log_fz", 6.0))
+
+# Now create sliders safely
+log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -3.0, 20.0, value=log_fx_val, step=0.1, key="log_fx")
+log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -3.0, 20.0, value=log_fy_val, step=0.1, key="log_fy")
+log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", -3.0, 20.0, value=log_fz_val, step=0.1, key="log_fz")
 
 fx = 10**log_fx
 fy = 10**log_fy
