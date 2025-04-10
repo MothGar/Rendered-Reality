@@ -209,9 +209,9 @@ with st.sidebar:
         )
 
 
-x = np.linspace(0, domain_scale, grid_size)
-y = np.linspace(0, domain_scale, grid_size)
-z = np.linspace(0, domain_scale, grid_size)
+x = domain_scale * np.power(np.linspace(0, 1, grid_size), 1.5)
+y = domain_scale * np.power(np.linspace(0, 1, grid_size), 1.5)
+z = domain_scale * np.power(np.linspace(0, 1, grid_size), 1.5)
 X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
 
 EX = np.sin(fx * np.pi * X + phase_x)
