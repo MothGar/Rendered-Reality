@@ -86,8 +86,8 @@ presets = {
         "fx": 6.0, "fy": 6.0, "fz": 6.0,
         "px": 90, "py": 90, "pz": 90,
         "threshold": 0.05, "lock": 0.03,
-        "grid_size": 40,
-        "domain_scale": 8.0
+        "grid_size": 55,
+        "domain_scale": 1.3
     },
     "Phase Rift": {
         "desc": "One axis breaks coherence—TRR shows how a single misalignment disrupts what is rendered. Like trying to tune a radio with one knob off.",
