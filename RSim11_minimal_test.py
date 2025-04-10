@@ -173,9 +173,10 @@ if "last_preset" not in st.session_state or st.session_state.last_preset != sele
     st.session_state.log_fz = preset["fz"]
     st.session_state.last_preset = selected
 
-log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=preset["fx"], step=0.1, key="log_fx")
-log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=preset["fy"], step=0.1, key="log_fy")
-log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=preset["fz"], step=0.1, key="log_fz")
+log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=st.session_state.log_fx, step=0.1, key="log_fx")
+log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=st.session_state.log_fy, step=0.1, key="log_fy")
+log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=st.session_state.log_fz, step=0.1, key="log_fz")
+
 
 fx = 10**log_fx
 fy = 10**log_fy
