@@ -134,12 +134,16 @@ presets = {
         "r_z": 1, "l_z": 3
     },
     "Singularity Shell": {
-        "desc": "A black hole–inspired collapse field. All rendering is pushed to the outer fringe — the center is a void where nothing can render.",
-        "fx": -1.0, "fy": -1.0, "fz": 17.0,
-        "px": 90, "py": 110, "pz": 40,
-        "threshold": 0.04, "lock": 0.01,
-        "grid_size": 60,
-        "domain_scale": 18.0
+        "desc": "**Activate Chladni Mode:** A black hole–inspired collapse field. All rendering is pushed to the outer fringe — the center is a void where nothing can render.",
+        "fx": 6, "fy": 6, "fz": 9,
+        "px": 90, "py": 180, "pz": 0,
+        "threshold": 0.22,
+        "lock": 0.06,
+        "grid_size": 50,
+        "domain_scale": 9.2,
+        "r_x": 0, "l_x": 0,
+        "r_y": 0, "l_y": 0,
+        "r_z": 4, "l_z": 3
     },
     "Quantum Limit": {
         "desc": "This pattern sits just below the rendering threshold. Resonance threads emerge and vanish — a delicate dance at the edge of realization.",
