@@ -360,7 +360,9 @@ helper_ranges = {
     "Phase Collapse Gate":           {"grid": "50",    "domain": "1.0"},
     "Ring Cross":                    {"grid": "55",    "domain": "1.5"}
 }
-
+fx = 10**log_fx
+fy = 10**log_fy
+fz = 10**log_fz
 
 st.sidebar.markdown("Recommended Settings")
 recommend = helper_ranges.get(selected, {})
@@ -403,10 +405,6 @@ log_fz_val = clamp_log(st.session_state.get("log_fz", 6.0))
 log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -3.0, 20.0, value=log_fx_val, step=0.1, key="log_fx")
 log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -3.0, 20.0, value=log_fy_val, step=0.1, key="log_fy")
 log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", -3.0, 20.0, value=log_fz_val, step=0.1, key="log_fz")
-
-fx = 10**log_fx
-fy = 10**log_fy
-fz = 10**log_fz
 
 if "grid_size" not in st.session_state or st.session_state.get("last_preset") != selected:
     st.session_state.grid_size = preset.get("grid_size", 40)
