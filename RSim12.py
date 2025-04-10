@@ -373,6 +373,11 @@ log_fx_val = clamp_log(st.session_state.get("log_fx", 6.0))
 log_fy_val = clamp_log(st.session_state.get("log_fy", 6.0))
 log_fz_val = clamp_log(st.session_state.get("log_fz", 6.0))
 
+# Now create sliders safely
+log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -3.0, 20.0, value=log_fx_val, step=0.1, key="log_fx")
+log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -3.0, 20.0, value=log_fy_val, step=0.1, key="log_fy")
+log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", -3.0, 20.0, value=log_fz_val, step=0.1, key="log_fz")
+
 # Convert frequency sliders to linear Hz
 fx = 10**log_fx
 fy = 10**log_fy
@@ -410,10 +415,7 @@ if "last_preset" not in st.session_state or st.session_state.last_preset != sele
 
 
 
-# Now create sliders safely
-log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -3.0, 20.0, value=log_fx_val, step=0.1, key="log_fx")
-log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -3.0, 20.0, value=log_fy_val, step=0.1, key="log_fy")
-log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", -3.0, 20.0, value=log_fz_val, step=0.1, key="log_fz")
+
 
 if "grid_size" not in st.session_state or st.session_state.get("last_preset") != selected:
     st.session_state.grid_size = preset.get("grid_size", 40)
