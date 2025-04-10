@@ -301,11 +301,6 @@ use_chladni = st.sidebar.checkbox("Enable Chladni Mode Input")
 if use_chladni:
     use_chladni_override = st.sidebar.checkbox("Override Chladni Freq/Phase", value=False)
 
-    st.sidebar.markdown(f"**Chladni Mode Summary:**")
-    st.sidebar.markdown(f"- X: r={r_x}, l={l_x}")
-    st.sidebar.markdown(f"- Y: r={r_y}, l={l_y}")
-    st.sidebar.markdown(f"- Z: r={r_z}, l={l_z}")
-
     st.sidebar.markdown("### Chladni Mode Selection")
     r_x = st.sidebar.slider("Radial Mode rₓ", 0, 4, 2)
     l_x = st.sidebar.slider("Angular Mode lₓ", 0, 4, 1)
@@ -313,6 +308,11 @@ if use_chladni:
     l_y = st.sidebar.slider("Angular Mode lᵧ", 0, 4, 2)
     r_z = st.sidebar.slider("Radial Mode r𝓏", 0, 4, 2)
     l_z = st.sidebar.slider("Angular Mode l𝓏", 0, 4, 3)
+
+    st.sidebar.markdown(f"**Chladni Mode Summary:**")
+    st.sidebar.markdown(f"- X: r={r_x}, l={l_x}")
+    st.sidebar.markdown(f"- Y: r={r_y}, l={l_y}")
+    st.sidebar.markdown(f"- Z: r={r_z}, l={l_z}")
 if use_chladni and not use_chladni_override:
     # Use positive-only grid for traditional cymatic plate alignment
     x = np.linspace(0, domain_scale, grid_size)
