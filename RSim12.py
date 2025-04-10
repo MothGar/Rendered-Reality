@@ -360,9 +360,7 @@ helper_ranges = {
     "Phase Collapse Gate":           {"grid": "50",    "domain": "1.0"},
     "Ring Cross":                    {"grid": "55",    "domain": "1.5"}
 }
-fx = 10**log_fx
-fy = 10**log_fy
-fz = 10**log_fz
+
 
 st.sidebar.markdown("Recommended Settings")
 recommend = helper_ranges.get(selected, {})
@@ -389,6 +387,10 @@ domain_scale = st.sidebar.slider("Display Domain Size", 0.01, 30.0, float(preset
 
 
 st.sidebar.markdown("---")
+
+fx = 10**log_fx
+fy = 10**log_fy
+fz = 10**log_fz
 
 if "last_preset" not in st.session_state or st.session_state.last_preset != selected:
     st.session_state.log_fx = preset["fx"]
