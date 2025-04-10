@@ -172,8 +172,7 @@ wave_optimized_grid = st.sidebar.checkbox("Wave-Optimized Grid Resolution", valu
 
 
 auto_grid_size = ([fx, fy, fz], domain_scale)
-grid_size = st.sidebar.slider("Geometry Detail (Grid Resolution)", 20, 100, auto_grid_size, 5)
-
+grid_size = st.sidebar.slider("Geometry Detail (Grid Resolution)", 20, 100, int(auto_grid_size), 5)
 
 st.sidebar.markdown("---")
 
