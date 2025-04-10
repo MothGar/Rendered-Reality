@@ -17,14 +17,19 @@ def recommended_grid_size(frequencies_hz, domain_scale_m, target_grid=40, refere
 
 
 
-def wave_based_grid_size(frequencies_hz, domain_scale_m, base_cycles=18.0, base_grid=40, min_pts=20, max_pts=100):
-    c = 299_792_458  # m/s
+def wave_based_grid_size(frequencies_hz, domain_scale_m, reference_freq_log10=6.0, reference_domain=1.0, reference_grid=40, min_pts=20, max_pts=100):
+    c = 299_792_458  # speed of light in m/s
     min_lambda = min(c / f for f in frequencies_hz if f > 0)
     cycles = domain_scale_m / min_lambda
 
-    grid_points = int(base_grid * (cycles / base_cycles))
-    return max(min_pts, min(grid_points, max_pts))
+    # Reference based on Resonant Core
+    ref_freq = 10 ** reference_freq_log10
+    ref_lambda = c / ref_freq
+    ref_cycles = reference_domain / ref_lambda
 
+    scaling = cycles / ref_cycles
+    grid_points = int(reference_grid * scaling)
+    return max(min_pts, min(grid_points, max_pts))
 
 st.set_page_config(layout="wide")
 st.title("Theory of Rendered Reality Isoplane Geometry Simulator V10")
