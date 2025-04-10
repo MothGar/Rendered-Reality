@@ -174,8 +174,8 @@ presets = {
     "px": 270, "py": 0, "pz": 270,
     "threshold": 0.5,
     "lock": 0.01,
-    "grid_size": 55,
-    "domain_scale": 1.0,
+    "grid_size": 75,
+    "domain_scale": 6.0,
     "desc": "Clear toroidal Chladni resonance with full symmetry — ideal for visualizing harmonic confinement in TRR."
 },
 
