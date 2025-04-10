@@ -164,6 +164,13 @@ domain_scale = st.sidebar.slider(
     step=1.0
 )
 
+
+log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fx"], 0.1)
+log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fy"], 0.1)
+log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fz"], 0.1)
+
+
+fx, fy, fz = 10**log_fx, 10**log_fy, 10**log_fz
 auto_grid_size = recommended_grid_size([fx, fy, fz], domain_scale)
 grid_size = st.sidebar.slider("Geometry Detail (Grid Resolution)", 20, 60, auto_grid_size, 5)
 
@@ -207,7 +214,7 @@ with st.sidebar:
             mime="application/pdf"
         )
 
-fx, fy, fz = 10**log_fx, 10**log_fy, 10**log_fz
+
 x = np.linspace(0, domain_scale, grid_size)
 y = np.linspace(0, domain_scale, grid_size)
 z = np.linspace(0, domain_scale, grid_size)
