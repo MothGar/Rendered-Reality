@@ -157,7 +157,7 @@ domain_scale = st.sidebar.slider(
     step=1.0
 )
 
-grid_size = st.sidebar.slider("Geometry Detail (Grid Resolution)", 20, 60, 40, 5)
+grid_size = st.sidebar.slider("Geometry Detail (Grid Resolution)", 20, 60, auto_grid_size, 5)
 
 st.sidebar.markdown("---")
 
@@ -224,7 +224,7 @@ def recommended_grid_size(frequencies_hz, domain_scale_m):
     return max(20, min(grid_points, 60))  # clamp between 20 and 60
 
 auto_grid_size = recommended_grid_size([fx, fy, fz], domain_scale)
-grid_size = st.sidebar.slider("Geometry Detail (Grid Resolution)", 20, 60, auto_grid_size, 5)
+
 
 
 if len(xv) > 0:
