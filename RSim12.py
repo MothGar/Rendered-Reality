@@ -394,6 +394,8 @@ log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -3.0, 20.0, value=
 log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -3.0, 20.0, value=log_fy_val, step=0.1, key="log_fy")
 log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", -3.0, 20.0, value=log_fz_val, step=0.1, key="log_fz")
 
+st.sidebar.markdown("---")
+
 # Convert frequency sliders to linear Hz
 fx = 10**log_fx
 fy = 10**log_fy
