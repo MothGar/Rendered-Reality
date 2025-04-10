@@ -139,8 +139,32 @@ presets = {
 selected = st.sidebar.selectbox("**TRR Demo Presets:**", list(presets.keys()))
 preset = presets[selected]
 
+
 st.sidebar.markdown(f"**Description:** {preset['desc']}")
 
+if (
+    "last_preset" not in st.session_state or
+    st.session_state.last_preset != selected
+):
+    st.session_state.last_preset = selected
+
+    # Frequencies
+    st.session_state.log_fx = preset["fx"]
+    st.session_state.log_fy = preset["fy"]
+    st.session_state.log_fz = preset["fz"]
+
+    # Grid
+    st.session_state.grid_size = preset.get("grid_size", 40)
+
+    # Threshold and lock
+    st.session_state.threshold = preset.get("threshold", 0.05)
+    st.session_state.lock_strength = preset.get("lock", 0.01)
+
+    # Phase
+    st.session_state.phase_x = preset.get("px", 0)
+    st.session_state.phase_y = preset.get("py", 0)
+    st.session_state.phase_z = preset.get("pz", 0)
+    
 # --- Recommended Settings Helper ---
 helper_ranges = {
     "Resonant Core (Ψₐ ∩ Φₐ)":       {"grid": "40", "domain": "1–3"},
@@ -186,13 +210,14 @@ if "grid_size" not in st.session_state or st.session_state.get("last_preset") !=
     st.session_state.grid_size = preset.get("grid_size", 40)
     st.session_state.last_preset = selected 
 
-grid_size = st.sidebar.slider("Geometry Detail (Grid Resolution)", 20, 100, st.session_state.grid_size, 5)
+grid_size = st.sidebar.slider("Geometry Detail (Grid Resolution)", 20, 100, value=st.session_state.grid_size, step=5, key="grid_size")
 st.session_state.grid_size = grid_size
 
 st.sidebar.markdown("---")
 
-threshold = st.sidebar.slider("Render Threshold", 0.0, 1.0, preset["threshold"], 0.01)
-lock_strength = st.sidebar.slider("Resonance Lock Range", 0.0, 1.0, preset["lock"], 0.005)
+threshold = st.sidebar.slider("Render Threshold", 0.0, 1.0, value=st.session_state.threshold, step=0.01, key="threshold")
+lock_strength = st.sidebar.slider("Resonance Lock Range", 0.0, 1.0, value=st.session_state.lock_strength, step=0.005, key="lock_strength")
+
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("""
@@ -203,10 +228,9 @@ st.sidebar.markdown("""
 - 90° / 270° = Orthogonal Field States, often incoherent
 """)
 st.sidebar.markdown("Wave Phase Settings (Degrees)")
-phase_x = np.radians(st.sidebar.slider("X-Axis Phase (°)", 0, 360, preset["px"], 10))
-phase_y = np.radians(st.sidebar.slider("Y-Axis Phase (°)", 0, 360, preset["py"], 10))
-phase_z = np.radians(st.sidebar.slider("Z-Axis Phase (°)", 0, 360, preset["pz"], 10))
-
+phase_x = np.radians(st.sidebar.slider("X-Axis Phase (°)", 0, 360, value=st.session_state.phase_x, step=10, key="phase_x"))
+phase_y = np.radians(st.sidebar.slider("Y-Axis Phase (°)", 0, 360, value=st.session_state.phase_y, step=10, key="phase_y"))
+phase_z = np.radians(st.sidebar.slider("Z-Axis Phase (°)", 0, 360, value=st.session_state.phase_z, step=10, key="phase_z"))
 
 st.sidebar.markdown("---")
 
