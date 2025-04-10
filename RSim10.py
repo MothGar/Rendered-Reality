@@ -336,9 +336,9 @@ with st.sidebar:
         )
 
 
-    x = np.linspace(0, domain_scale, grid_size)
-    y = np.linspace(0, domain_scale, grid_size)
-    z = np.linspace(0, domain_scale, grid_size)
+x = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
+y = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
+z = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
 
 X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
 
