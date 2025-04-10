@@ -4,40 +4,25 @@ import plotly.graph_objects as go
 import plotly.io as pio
 
 def recommended_grid_size(frequencies_hz, domain_scale_m, target_grid=40, reference_freq_log10=6.0, reference_domain=1.0, min_pts=20, max_pts=100):
-    """
-    Scales the grid size so that a preset with log₁₀(freq)=6.0 and domain=1.0 gives exactly 40.
-    """
-    c = 299_792_458  # speed of light in m/s
-    wavelengths = [c / f for f in frequencies_hz if f > 0]
-    min_lambda = min(wavelengths)
+    c = 299_792_458  # m/s
+    min_lambda = min(c / f for f in frequencies_hz if f > 0)
     cycles = domain_scale_m / min_lambda
 
-    # Compute reference cycles based on default 6.0 log frequency and domain 1.0
     ref_freq = 10 ** reference_freq_log10
     ref_lambda = c / ref_freq
     ref_cycles = reference_domain / ref_lambda
 
-    # Scale based on relative cycle count
-    scaling_factor = cycles / ref_cycles
-    grid_points = int(target_grid * scaling_factor)
-
+    grid_points = int(target_grid * (cycles / ref_cycles))
     return max(min_pts, min(grid_points, max_pts))
 
 
-def wave_based_grid_size(frequencies_hz, domain_scale_m, reference_cycles=18.0, reference_grid_size=40, min_pts=20, max_pts=100):
-    """
-    Dynamically scale grid resolution based on cycles in domain.
-    Ensures that when cycles ≈ reference_cycles, grid = reference_grid_size.
-    """
-    c = 299_792_458  # speed of light in m/s
-    wavelengths = [c / f for f in frequencies_hz if f > 0]
-    min_lambda = min(wavelengths)
-    actual_cycles = domain_scale_m / min_lambda
 
-    # Scale grid relative to reference
-    scaling_factor = actual_cycles / reference_cycles
-    grid_points = int(reference_grid_size * scaling_factor)
+def wave_based_grid_size(frequencies_hz, domain_scale_m, base_cycles=18.0, base_grid=40, min_pts=20, max_pts=100):
+    c = 299_792_458  # m/s
+    min_lambda = min(c / f for f in frequencies_hz if f > 0)
+    cycles = domain_scale_m / min_lambda
 
+    grid_points = int(base_grid * (cycles / base_cycles))
     return max(min_pts, min(grid_points, max_pts))
 
 
