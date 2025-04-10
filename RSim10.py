@@ -313,6 +313,18 @@ if use_chladni:
     z = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
 
     X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
+    
+    EX = np.sin(fx * np.pi * X + phase_x)
+EY = np.sin(fy * np.pi * Y + phase_y)
+EZ = np.sin(fz * np.pi * Z + phase_z)
+interference = np.abs(EX * EY * EZ)
+
+field_norm = (interference - interference.min()) / (interference.max() - interference.min())
+lock_mask = ((field_norm > threshold - lock_strength) & (field_norm < threshold + lock_strength))
+
+xv, yv, zv = X[lock_mask], Y[lock_mask], Z[lock_mask]
+color_vals = field_norm[lock_mask]
+
 
     if not use_chladni_override:
         log_fx, phase_x_deg = chladni_mode_to_waveparams(r_x, l_x, 'x')
@@ -332,6 +344,18 @@ if use_chladni:
         z = np.linspace(0, domain_scale, grid_size)
 
     X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
+
+    EX = np.sin(fx * np.pi * X + phase_x)
+EY = np.sin(fy * np.pi * Y + phase_y)
+EZ = np.sin(fz * np.pi * Z + phase_z)
+interference = np.abs(EX * EY * EZ)
+
+field_norm = (interference - interference.min()) / (interference.max() - interference.min())
+lock_mask = ((field_norm > threshold - lock_strength) & (field_norm < threshold + lock_strength))
+
+xv, yv, zv = X[lock_mask], Y[lock_mask], Z[lock_mask]
+color_vals = field_norm[lock_mask]
+
 
     st.sidebar.markdown(f"**Chladni Mode Summary:**")
     st.sidebar.markdown(f"- X: r={r_x}, l={l_x}")
@@ -353,16 +377,6 @@ with st.sidebar:
 
 
 
-EX = np.sin(fx * np.pi * X + phase_x)
-EY = np.sin(fy * np.pi * Y + phase_y)
-EZ = np.sin(fz * np.pi * Z + phase_z)
-interference = np.abs(EX * EY * EZ)
-
-field_norm = (interference - interference.min()) / (interference.max() - interference.min())
-lock_mask = ((field_norm > threshold - lock_strength) & (field_norm < threshold + lock_strength))
-
-xv, yv, zv = X[lock_mask], Y[lock_mask], Z[lock_mask]
-color_vals = field_norm[lock_mask]
 
 if len(xv) > 0:
     fig = go.Figure()
