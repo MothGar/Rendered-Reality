@@ -16,22 +16,10 @@ def recommended_grid_size(frequencies_hz, domain_scale_m, target_grid=40, refere
     return max(min_pts, min(grid_points, max_pts))
 
 
-
-def get_reference_cycles(freq_log10, domain):
-    c = 299_792_458
-    f = 10 ** freq_log10
-    λ = c / f
-    return domain / λ
-
-def wave_based_grid_size(frequencies_hz, domain_scale_m, reference_cycles=None, reference_grid=40, min_pts=20, max_pts=100):
+def wave_based_grid_size(frequencies_hz, domain_scale_m, reference_cycles=81.5, reference_grid=40, min_pts=20, max_pts=100):
     c = 299_792_458
     min_lambda = min(c / f for f in frequencies_hz if f > 0)
     actual_cycles = domain_scale_m / min_lambda
-
-    if reference_cycles is None:
-        rc_cycles = get_reference_cycles(6.0, 1.0)
-        bb_cycles = get_reference_cycles(np.log10(2.8), 17.0)
-        reference_cycles = (rc_cycles + bb_cycles) / 2
 
     scaling = actual_cycles / reference_cycles
     grid_points = int(reference_grid * scaling)
