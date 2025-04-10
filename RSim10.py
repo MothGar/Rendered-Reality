@@ -308,6 +308,10 @@ if use_chladni:
     r_z = st.sidebar.slider("Radial Mode r𝓏", 0, 4, 2)
     l_z = st.sidebar.slider("Angular Mode l𝓏", 0, 4, 3)
 
+    x = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
+    y = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
+    z = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
+
     if not use_chladni_override:
         log_fx, phase_x_deg = chladni_mode_to_waveparams(r_x, l_x, 'x')
         log_fy, phase_y_deg = chladni_mode_to_waveparams(r_y, l_y, 'y')
@@ -320,6 +324,10 @@ if use_chladni:
         phase_x = np.radians(phase_x_deg)
         phase_y = np.radians(phase_y_deg)
         phase_z = np.radians(phase_z_deg)
+
+        x = np.linspace(0, domain_scale, grid_size)
+        y = np.linspace(0, domain_scale, grid_size)
+        z = np.linspace(0, domain_scale, grid_size)
 
     st.sidebar.markdown(f"**Chladni Mode Summary:**")
     st.sidebar.markdown(f"- X: r={r_x}, l={l_x}")
@@ -338,9 +346,6 @@ with st.sidebar:
         )
 
 
-x = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
-y = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
-z = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
 
 X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
 
