@@ -181,9 +181,13 @@ fx = 10**log_fx
 fy = 10**log_fy
 fz = 10**log_fz
 
-auto_grid_size = recommended_grid_size([fx, fy, fz], domain_scale)
-grid_size = st.sidebar.slider("Geometry Detail (Grid Resolution)", 20, 100, int(auto_grid_size), 5)
+# If first load or preset just changed, reset to preset-defined grid size
+if "grid_size" not in st.session_state or st.session_state.last_preset != selected:
+    st.session_state.grid_size = preset.get("grid_size", 40)
 
+# User-adjustable slider, default = preset-defined
+grid_size = st.sidebar.slider("Geometry Detail (Grid Resolution)", 20, 100, st.session_state.grid_size, 5)
+st.session_state.grid_size = grid_size
 
 st.sidebar.markdown("---")
 
