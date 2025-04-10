@@ -432,10 +432,6 @@ domain_scale = st.sidebar.slider(
     step=0.1
 )
 
-min_freq = min_renderable_frequency(domain_scale, cycles=3)
-st.sidebar.markdown("**Minimum Frequency for Full Visibility:**")
-st.sidebar.markdown(f"- {min_freq:.2f} Hz = {np.log10(min_freq):.2f} log₁₀ Hz")
-
 st.sidebar.markdown("---")
 
     
