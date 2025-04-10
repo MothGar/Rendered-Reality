@@ -163,7 +163,6 @@ domain_scale = st.sidebar.slider(
     value=domain_scale_default,
     step=1.0
 )
-
 st.sidebar.markdown("---")
 
 log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fx"], 0.1)
