@@ -2,7 +2,18 @@ import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
 import plotly.io as pio
+import math
 
+def clamp_log(value, minval=-3.0, maxval=20.0):
+    # If value is missing, non-numeric, or nan, default to 6.0
+    try:
+        val = float(value)
+        if math.isnan(val):
+            val = 6.0
+    except:
+        val = 6.0
+    return max(min(val, maxval), minval)
+    
 def recommended_grid_size(frequencies_hz, domain_scale_m, target_grid=40, reference_freq_log10=6.0, reference_domain=1.0, min_pts=10, max_pts=100):
     c = 299_792_458  # m/s
     smallest_lambda = min(c / f for f in frequencies_hz if f > 0)
@@ -317,9 +328,6 @@ if "last_preset" not in st.session_state or st.session_state.last_preset != sele
     st.session_state.log_fy = preset["fy"]
     st.session_state.log_fz = preset["fz"]
     st.session_state.last_preset = selected
-
-def clamp_log(val, minval=-3.0, maxval=20.0):
-    return max(min(val, maxval), minval)
 
 # Fallback-safe log values
 log_fx_val = clamp_log(st.session_state.get("log_fx", 6.0))
