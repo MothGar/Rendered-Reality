@@ -243,7 +243,7 @@ st.sidebar.markdown(f"**Grid Resolution:** {recommend.get('grid', '—')}")
 st.sidebar.markdown("---")
 
 domain_scale_default = float(preset.get("domain_scale", 10.0))
-domain_scale = st.sidebar.slider("Display Domain Size", 1.0, 30.0, float(preset.get("domain_scale", 10.0)), step=0.5)
+domain_scale = st.sidebar.slider("Display Domain Size", 1.0, 30.0, float(preset.get("domain_scale", 10.0)), step=0.1)
 
 st.sidebar.markdown("---")
 
