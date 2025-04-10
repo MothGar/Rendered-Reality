@@ -297,64 +297,31 @@ view_mode = st.sidebar.radio("Visualization Mode", ["Geometry Only", "Wave Overl
 
 use_chladni = st.sidebar.checkbox("Enable Chladni Mode Input")
 
-if use_chladni:
-    use_chladni_override = st.sidebar.checkbox("Override Chladni Freq/Phase", value=False)
+# --- Set domain grid shape based on mode ---
+if use_chladni and not use_chladni_override:
+    # Use positive-only grid for traditional cymatic plate alignment
+    x = np.linspace(0, domain_scale, grid_size)
+    y = np.linspace(0, domain_scale, grid_size)
+    z = np.linspace(0, domain_scale, grid_size)
 
-    st.sidebar.markdown("### Chladni Mode Selection")
-    r_x = st.sidebar.slider("Radial Mode rₓ", 0, 4, 2)
-    l_x = st.sidebar.slider("Angular Mode lₓ", 0, 4, 1)
-    r_y = st.sidebar.slider("Radial Mode rᵧ", 0, 4, 2)
-    l_y = st.sidebar.slider("Angular Mode lᵧ", 0, 4, 2)
-    r_z = st.sidebar.slider("Radial Mode r𝓏", 0, 4, 2)
-    l_z = st.sidebar.slider("Angular Mode l𝓏", 0, 4, 3)
+    # Update Chladni-derived frequency and phase
+    log_fx, phase_x_deg = chladni_mode_to_waveparams(r_x, l_x, 'x')
+    log_fy, phase_y_deg = chladni_mode_to_waveparams(r_y, l_y, 'y')
+    log_fz, phase_z_deg = chladni_mode_to_waveparams(r_z, l_z, 'z')
 
+    fx = 10 ** log_fx
+    fy = 10 ** log_fy
+    fz = 10 ** log_fz
+
+    phase_x = np.radians(phase_x_deg)
+    phase_y = np.radians(phase_y_deg)
+    phase_z = np.radians(phase_z_deg)
+
+else:
+    # Use centered grid for TRR-style full symmetry
     x = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
     y = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
     z = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
-
-    X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
-    
-    EX = np.sin(fx * np.pi * X + phase_x)
-    EY = np.sin(fy * np.pi * Y + phase_y)
-    EZ = np.sin(fz * np.pi * Z + phase_z)
-    interference = np.abs(EX * EY * EZ)
-
-    field_norm = (interference - interference.min()) / (interference.max() - interference.min())
-    lock_mask = ((field_norm > threshold - lock_strength) & (field_norm < threshold + lock_strength))
-
-    xv, yv, zv = X[lock_mask], Y[lock_mask], Z[lock_mask]
-    color_vals = field_norm[lock_mask]
-
-
-    if not use_chladni_override:
-        log_fx, phase_x_deg = chladni_mode_to_waveparams(r_x, l_x, 'x')
-        log_fy, phase_y_deg = chladni_mode_to_waveparams(r_y, l_y, 'y')
-        log_fz, phase_z_deg = chladni_mode_to_waveparams(r_z, l_z, 'z')
-
-        fx = 10 ** log_fx
-        fy = 10 ** log_fy
-        fz = 10 ** log_fz
-
-        phase_x = np.radians(phase_x_deg)
-        phase_y = np.radians(phase_y_deg)
-        phase_z = np.radians(phase_z_deg)
-
-        x = np.linspace(0, domain_scale, grid_size)
-        y = np.linspace(0, domain_scale, grid_size)
-        z = np.linspace(0, domain_scale, grid_size)
-
-    X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
-
-    EX = np.sin(fx * np.pi * X + phase_x)
-    EY = np.sin(fy * np.pi * Y + phase_y)
-    EZ = np.sin(fz * np.pi * Z + phase_z)
-    interference = np.abs(EX * EY * EZ)
-
-    field_norm = (interference - interference.min()) / (interference.max() - interference.min())
-    lock_mask = ((field_norm > threshold - lock_strength) & (field_norm < threshold + lock_strength))
-
-    xv, yv, zv = X[lock_mask], Y[lock_mask], Z[lock_mask]
-    color_vals = field_norm[lock_mask]
 
 
     st.sidebar.markdown(f"**Chladni Mode Summary:**")
@@ -373,6 +340,18 @@ with st.sidebar:
             mime="application/pdf"
         )
 
+X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
+
+EX = np.sin(fx * np.pi * X + phase_x)
+EY = np.sin(fy * np.pi * Y + phase_y)
+EZ = np.sin(fz * np.pi * Z + phase_z)
+interference = np.abs(EX * EY * EZ)
+
+field_norm = (interference - interference.min()) / (interference.max() - interference.min())
+lock_mask = ((field_norm > threshold - lock_strength) & (field_norm < threshold + lock_strength))
+
+xv, yv, zv = X[lock_mask], Y[lock_mask], Z[lock_mask]
+color_vals = field_norm[lock_mask]
 
 
 
