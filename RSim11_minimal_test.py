@@ -142,10 +142,7 @@ preset = presets[selected]
 
 st.sidebar.markdown(f"**Description:** {preset['desc']}")
 
-if (
-    "last_preset" not in st.session_state or
-    st.session_state.last_preset != selected
-):
+if "last_preset" not in st.session_state or st.session_state.last_preset != selected:
     st.session_state.last_preset = selected
 
     # Frequencies
@@ -164,6 +161,7 @@ if (
     st.session_state.phase_x = preset.get("px", 0)
     st.session_state.phase_y = preset.get("py", 0)
     st.session_state.phase_z = preset.get("pz", 0)
+
     
 # --- Recommended Settings Helper ---
 helper_ranges = {
