@@ -177,13 +177,9 @@ log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=
 log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=preset["fy"], step=0.1, key="log_fy")
 log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=preset["fz"], step=0.1, key="log_fz")
 
-# 2. Convert log values into real frequency in Hz
 fx = 10**log_fx
 fy = 10**log_fy
 fz = 10**log_fz
-
-wave_optimized_grid = st.sidebar.checkbox("Wave-Optimized Grid Resolution", value=False)
-
 
 auto_grid_size = recommended_grid_size([fx, fy, fz], domain_scale)
 grid_size = st.sidebar.slider("Geometry Detail (Grid Resolution)", 20, 100, int(auto_grid_size), 5)
