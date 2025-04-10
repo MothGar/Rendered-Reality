@@ -50,6 +50,10 @@ def chladni_mode_to_waveparams(r: int, l: int, axis: str):
 
     return freq, phase
 
+def min_renderable_frequency(domain_size_m, cycles=3):
+    c = 299_792_458  # speed of render
+    return (c * cycles) / domain_size_m
+
 def suggest_domain_scale(frequencies_hz, cycles=3):
     """
     Suggest domain size to fit ~'cycles' full wave cycles of the smallest frequency component.
@@ -422,6 +426,10 @@ domain_scale = st.sidebar.slider(
     float(preset.get("domain_scale", auto_domain)),
     step=0.1
 )
+
+min_freq = min_renderable_frequency(domain_scale, cycles=3)
+st.sidebar.markdown("**Minimum Frequency for Full Visibility:**")
+st.sidebar.markdown(f"- {min_freq:.2f} Hz = {np.log10(min_freq):.2f} log₁₀ Hz")
 
 st.sidebar.markdown("---")
 
