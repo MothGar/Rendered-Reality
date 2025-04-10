@@ -296,12 +296,10 @@ st.sidebar.markdown("---")
 view_mode = st.sidebar.radio("Visualization Mode", ["Geometry Only", "Wave Overlay"], index=1)
 
 
-# --- Chladni UI and Integration ---
-use_chladni = st.sidebar.checkbox("Enable Chladni Mode Input")
-
 if use_chladni:
-    st.sidebar.markdown("### Chladni Mode Selection")
+    use_chladni_override = st.sidebar.checkbox("Override Chladni Freq/Phase", value=False)
 
+    st.sidebar.markdown("### Chladni Mode Selection")
     r_x = st.sidebar.slider("Radial Mode rₓ", 0, 4, 2)
     l_x = st.sidebar.slider("Angular Mode lₓ", 0, 4, 1)
     r_y = st.sidebar.slider("Radial Mode rᵧ", 0, 4, 2)
@@ -309,34 +307,23 @@ if use_chladni:
     r_z = st.sidebar.slider("Radial Mode r𝓏", 0, 4, 2)
     l_z = st.sidebar.slider("Angular Mode l𝓏", 0, 4, 3)
 
-    log_fx, phase_x_deg = chladni_mode_to_waveparams(r_x, l_x, 'x')
-    log_fy, phase_y_deg = chladni_mode_to_waveparams(r_y, l_y, 'y')
-    log_fz, phase_z_deg = chladni_mode_to_waveparams(r_z, l_z, 'z')
+    if not use_chladni_override:
+        log_fx, phase_x_deg = chladni_mode_to_waveparams(r_x, l_x, 'x')
+        log_fy, phase_y_deg = chladni_mode_to_waveparams(r_y, l_y, 'y')
+        log_fz, phase_z_deg = chladni_mode_to_waveparams(r_z, l_z, 'z')
 
-    fx = 10 ** log_fx
-    fy = 10 ** log_fy
-    fz = 10 ** log_fz
+        fx = 10 ** log_fx
+        fy = 10 ** log_fy
+        fz = 10 ** log_fz
 
-    phase_x = np.radians(phase_x_deg)
-    phase_y = np.radians(phase_y_deg)
-    phase_z = np.radians(phase_z_deg)
+        phase_x = np.radians(phase_x_deg)
+        phase_y = np.radians(phase_y_deg)
+        phase_z = np.radians(phase_z_deg)
 
     st.sidebar.markdown(f"**Chladni Mode Summary:**")
-    st.sidebar.markdown(f"- X: r={r_x}, l={l_x} → f={log_fx:.2f}, ϕ={phase_x_deg}°")
-    st.sidebar.markdown(f"- Y: r={r_y}, l={l_y} → f={log_fy:.2f}, ϕ={phase_y_deg}°")
-    st.sidebar.markdown(f"- Z: r={r_z}, l={l_z} → f={log_fz:.2f}, ϕ={phase_z_deg}°")
-else:
-    log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=6.0, step=0.1)
-    log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=6.0, step=0.1)
-    log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=6.0, step=0.1)
-
-    fx = 10**log_fx
-    fy = 10**log_fy
-    fz = 10**log_fz
-
-    phase_x = np.radians(st.sidebar.slider("X-Axis Phase (°)", 0, 360, value=0, step=10))
-    phase_y = np.radians(st.sidebar.slider("Y-Axis Phase (°)", 0, 360, value=0, step=10))
-    phase_z = np.radians(st.sidebar.slider("Z-Axis Phase (°)", 0, 360, value=0, step=10))
+    st.sidebar.markdown(f"- X: r={r_x}, l={l_x}")
+    st.sidebar.markdown(f"- Y: r={r_y}, l={l_y}")
+    st.sidebar.markdown(f"- Z: r={r_z}, l={l_z}")
 
 
 with st.sidebar:
