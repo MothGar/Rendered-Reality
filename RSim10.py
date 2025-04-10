@@ -257,18 +257,24 @@ def chladni_mode_to_waveparams(r: int, l: int, axis: str):
     return freq, phase
 
 # --- Preset Extension for Chladni Modes ---
+fx1, px1 = chladni_mode_to_waveparams(2, 3, 'x')
+fy1, py1 = chladni_mode_to_waveparams(2, 3, 'y')
+fz1, pz1 = chladni_mode_to_waveparams(2, 3, 'z')
+
+fx2, px2 = chladni_mode_to_waveparams(1, 2, 'x')
+fy2, py2 = chladni_mode_to_waveparams(1, 2, 'y')
+fz2, pz2 = chladni_mode_to_waveparams(2, 3, 'z')
+
 chladni_presets = {
     "Toroidal Helix (r=2, l=3)": {
-        "fx": *chladni_mode_to_waveparams(2, 3, 'x'),
-        "fy": *chladni_mode_to_waveparams(2, 3, 'y'),
-        "fz": *chladni_mode_to_waveparams(2, 3, 'z'),
+        "fx": fx1, "fy": fy1, "fz": fz1,
+        "px": px1, "py": py1, "pz": pz1,
         "threshold": 0.5, "lock": 0.02, "grid_size": 50, "domain_scale": 12.0,
         "desc": "A twisted toroidal resonance structure — circular confinement meets spiral coherence."
     },
     "Axial Helix (r=1, l=2)": {
-        "fx": *chladni_mode_to_waveparams(1, 2, 'x'),
-        "fy": *chladni_mode_to_waveparams(1, 2, 'y'),
-        "fz": *chladni_mode_to_waveparams(2, 3, 'z'),
+        "fx": fx2, "fy": fy2, "fz": fz2,
+        "px": px2, "py": py2, "pz": pz2,
         "threshold": 0.45, "lock": 0.015, "grid_size": 48, "domain_scale": 10.0,
         "desc": "A biologically inspired axial helix — suitable for modeling wave-based structures like DNA cores."
     }
