@@ -398,7 +398,7 @@ st.sidebar.markdown("---")
 # Optional toggle
 view_mode = st.sidebar.radio("Visualization Mode", ["Geometry Only", "Wave Overlay"], index=1)
 
-use_chladni = st.sidebar.checkbox("Enable Chladni Mode Input")
+use_chladni = st.sidebar.checkbox("Enable Chladni Mode Input", value=True)
 
 # Define override and sliders immediately if Chladni mode is on
 if use_chladni:
