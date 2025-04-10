@@ -110,7 +110,7 @@ presets = {
         "fx": 5.5, "fy": 6.0, "fz": 6.5,
         "px": 90, "py": 45, "pz": 180,
         "threshold": 0.3, "lock": 0.09,
-        "grid_size": 40,
+        "grid_size": 45,
         "domain_scale": 3
     },
     "Perceptual Jam": {
