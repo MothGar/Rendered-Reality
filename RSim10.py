@@ -207,15 +207,13 @@ presets = {
         "r_y": 1, "l_y": 2,
         "r_z": 1, "l_z": 3
 },
-    "Fractal Lattice": {
-        "desc": "**Activate Chladni Mode:** Resonant interference throughout grid, high coherence crosswave",
-        "fx": 13.7, "fy": 13.7, "fz": 13.7,
-        "px": 90, "py": 120, "pz": 90,
+    "Phase Tuned Cross Lattice": {
+        "desc": "Resonant interference throughout grid, high coherence crosswave",
+        "fx": 13.5, "fy": 13.5, "fz": 13.5,
+        "px": 90, "py": 90, "pz": 90,
         "threshold": 0.05, "lock": 0.04,
-        "grid_size": 75, "domain_scale": 1.0,
-        "r_x": 3, "l_x": 1,
-        "r_y": 3, "l_y": 2,
-        "r_z": 3, "l_z": 3
+        "grid_size": 70, "domain_scale": 1.5,
+        
 },
     "Phase Collapse Gate": {
         "desc": "**Activate Chladni Mode:** Flat stacked planar emergence at destructive Z",
