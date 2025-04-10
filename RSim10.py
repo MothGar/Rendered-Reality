@@ -17,6 +17,41 @@ def recommended_grid_size(frequencies_hz, domain_scale_m, target_grid=40, refere
 
     return max(min_pts, min(grid_points, max_pts))
 
+def chladni_mode_to_waveparams(r: int, l: int, axis: str):
+    """
+    Maps Chladni plate mode numbers to frequency and phase values
+    for TRR-style 3D interference simulation.
+
+    Arguments:
+    - r: radial mode (number of circular nodes)
+    - l: angular mode (number of nodal diameters)
+    - axis: 'x', 'y', or 'z'
+
+    Returns:
+    - frequency (log10 Hz), phase (degrees)
+    """
+
+    base_log_freq = 6.0  # Typical EM vibration base (~1 MHz)
+    axis_shift = {'x': 0.0, 'y': 0.1, 'z': 0.2}[axis]  # Slight shifts to avoid perfect overlap
+
+    freq = base_log_freq + 0.3 * r + axis_shift
+    phase = (l * 90) % 360
+
+    return freq, phase
+
+# --- Preset Extension for Chladni Modes ---
+fx1, px1 = chladni_mode_to_waveparams(2, 3, 'x')
+fy1, py1 = chladni_mode_to_waveparams(2, 3, 'y')
+fz1, pz1 = chladni_mode_to_waveparams(2, 3, 'z')
+
+fx2, px2 = chladni_mode_to_waveparams(1, 2, 'x')
+fy2, py2 = chladni_mode_to_waveparams(1, 2, 'y')
+fz2, pz2 = chladni_mode_to_waveparams(2, 3, 'z')
+
+
+
+#presets.update(chladni_presets)
+
 st.set_page_config(layout="wide")
 st.title("Theory of Rendered Reality Isoplane Geometry Simulator V10")
 
@@ -246,40 +281,6 @@ st.sidebar.markdown("---")
 # Optional toggle
 view_mode = st.sidebar.radio("Visualization Mode", ["Geometry Only", "Wave Overlay"], index=1)
 
-def chladni_mode_to_waveparams(r: int, l: int, axis: str):
-    """
-    Maps Chladni plate mode numbers to frequency and phase values
-    for TRR-style 3D interference simulation.
-
-    Arguments:
-    - r: radial mode (number of circular nodes)
-    - l: angular mode (number of nodal diameters)
-    - axis: 'x', 'y', or 'z'
-
-    Returns:
-    - frequency (log10 Hz), phase (degrees)
-    """
-
-    base_log_freq = 6.0  # Typical EM vibration base (~1 MHz)
-    axis_shift = {'x': 0.0, 'y': 0.1, 'z': 0.2}[axis]  # Slight shifts to avoid perfect overlap
-
-    freq = base_log_freq + 0.3 * r + axis_shift
-    phase = (l * 90) % 360
-
-    return freq, phase
-
-# --- Preset Extension for Chladni Modes ---
-fx1, px1 = chladni_mode_to_waveparams(2, 3, 'x')
-fy1, py1 = chladni_mode_to_waveparams(2, 3, 'y')
-fz1, pz1 = chladni_mode_to_waveparams(2, 3, 'z')
-
-fx2, px2 = chladni_mode_to_waveparams(1, 2, 'x')
-fy2, py2 = chladni_mode_to_waveparams(1, 2, 'y')
-fz2, pz2 = chladni_mode_to_waveparams(2, 3, 'z')
-
-
-
-presets.update(chladni_presets)
 
 # --- Chladni UI and Integration ---
 use_chladni = st.sidebar.checkbox("Enable Chladni Mode Input")
