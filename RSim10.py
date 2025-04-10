@@ -278,7 +278,6 @@ fy2, py2 = chladni_mode_to_waveparams(1, 2, 'y')
 fz2, pz2 = chladni_mode_to_waveparams(2, 3, 'z')
 
 
-}
 
 presets.update(chladni_presets)
 
