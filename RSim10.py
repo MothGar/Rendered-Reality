@@ -170,11 +170,11 @@ presets = {
         "grid_size": 30
     },
     "Toroidal Helix (r=2, l=3)": {
-    "fx": 6.6, "fy": 6.7, "fz": 6.8,
+    "fx": 6.3, "fy": 6.4, "fz": 6.8,
     "px": 270, "py": 0, "pz": 270,
-    "threshold": 0.5,
+    "threshold": 0.95,
     "lock": 0.01,
-    "grid_size": 41,
+    "grid_size": 75,
     "domain_scale": 1.0,
     "desc": "Clear toroidal Chladni resonance with full symmetry — ideal for visualizing harmonic confinement in TRR."
 },
@@ -231,8 +231,8 @@ helper_ranges = {
     "Solar Lattice":                 {"grid": "40",    "domain": "4–6"},
     "Quartz Memory Shell":           {"grid": "50",    "domain": "1–3"},
     "Schumann Phase Gate":           {"grid": "30",    "domain": "9–11"},
-    "Toroidal Helix (r=2, l=3)":      {"grid": "41",    "domain": "1.0"},
-    "Axial Helix (r=1, l=2)":         {"grid": "41",    "domain": "1.0"},
+    "Toroidal Helix (r=2, l=3)":      {"grid": "55",    "domain": "1.0"},
+    "Axial Helix (r=1, l=2)":         {"grid": "75",    "domain": "1.0"},
 }
 
 
