@@ -59,6 +59,22 @@ def suggest_domain_scale(frequencies_hz, cycles=3):
     shortest_wavelength = min(wavelengths)
     return cycles * shortest_wavelength
 
+def format_wavelength(frequency_hz):
+    c = 299_792_458  # Speed of light in m/s
+    if frequency_hz == 0:
+        return "∞"
+    wavelength_m = c / frequency_hz
+    if wavelength_m >= 1:
+        return f"{wavelength_m:.2f} m"
+    elif wavelength_m >= 1e-3:
+        return f"{wavelength_m * 1e3:.2f} mm"
+    elif wavelength_m >= 1e-6:
+        return f"{wavelength_m * 1e6:.2f} µm"
+    elif wavelength_m >= 1e-9:
+        return f"{wavelength_m * 1e9:.2f} nm"
+    else:
+        return f"{wavelength_m:.2e} m"
+
 
 # --- Preset Extension for Chladni Modes ---
 fx1, px1 = chladni_mode_to_waveparams(2, 3, 'x')
