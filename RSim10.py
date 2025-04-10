@@ -295,6 +295,7 @@ st.sidebar.markdown("---")
 # Optional toggle
 view_mode = st.sidebar.radio("Visualization Mode", ["Geometry Only", "Wave Overlay"], index=1)
 
+use_chladni = st.sidebar.checkbox("Enable Chladni Mode Input")
 
 if use_chladni:
     use_chladni_override = st.sidebar.checkbox("Override Chladni Freq/Phase", value=False)
