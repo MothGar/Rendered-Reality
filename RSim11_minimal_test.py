@@ -216,6 +216,17 @@ lock_mask = ((field_norm > threshold - lock_strength) & (field_norm < threshold 
 xv, yv, zv = X[lock_mask], Y[lock_mask], Z[lock_mask]
 color_vals = field_norm[lock_mask]
 
+def recommended_grid_size(frequencies_hz, domain_scale_m):
+    c = 299_792_458  # m/s
+    smallest_lambda = min(c / f for f in frequencies_hz if f > 0)
+    cycles_in_domain = domain_scale_m / smallest_lambda
+    grid_points = int(cycles_in_domain * 15)  # 15 points per cycle
+    return max(20, min(grid_points, 60))  # clamp between 20 and 60
+
+auto_grid_size = recommended_grid_size([fx, fy, fz], domain_scale)
+grid_size = st.sidebar.slider("Geometry Detail (Grid Resolution)", 20, 60, auto_grid_size, 5)
+
+
 if len(xv) > 0:
     fig = go.Figure()
     fig.add_trace(go.Scatter3d(
