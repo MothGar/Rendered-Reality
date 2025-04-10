@@ -192,7 +192,7 @@ presets = {
         "fx": 13.5, "fy": 13.5, "fz": 13.5,
         "px": 0, "py": 120, "pz": 240,
         "threshold": 0.05, "lock": 0.04,
-        "grid_size": 55, "domain_scale": 2.0,
+        "grid_size": 75, "domain_scale": 2.0,
         "r_x": 2, "l_x": 1,
         "r_y": 2, "l_y": 2,
         "r_z": 2, "l_z": 3
