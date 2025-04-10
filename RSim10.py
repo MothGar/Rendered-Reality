@@ -94,7 +94,7 @@ with st.expander("What Are Cymatic Patterns in TRR?"):
 presets = {
     "Resonant Core (Ψₐ ∩ Φₐ)": {
         "desc": "A perfect match of internal and external waveforms—reality crystallizes at the center. This is the golden zone where rendering is guaranteed.",
-        "chladni": False,
+        "use_chladni": False,
         "fx": 6.0, "fy": 6.0, "fz": 6.0,
         "px": 90, "py": 90, "pz": 90,
         "threshold": 0.05, "lock": 0.03,
