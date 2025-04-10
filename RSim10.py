@@ -312,9 +312,9 @@ if use_chladni:
     st.sidebar.markdown(f"- Y: r={r_y}, l={l_y} → f={log_fy:.2f}, ϕ={phase_y_deg}°")
     st.sidebar.markdown(f"- Z: r={r_z}, l={l_z} → f={log_fz:.2f}, ϕ={phase_z_deg}°")
 else:
-    log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=st.session_state.get("log_fx", 6.0), step=0.1, key="log_fx")
-    log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=st.session_state.get("log_fy", 6.0), step=0.1, key="log_fy")
-    log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=st.session_state.get("log_fz", 6.0), step=0.1, key="log_fz")
+    log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=6.0, step=0.1)
+    log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=6.0, step=0.1)
+    log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=6.0, step=0.1)
 
     fx = 10**log_fx
     fy = 10**log_fy
