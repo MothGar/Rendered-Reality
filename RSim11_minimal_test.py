@@ -136,7 +136,7 @@ st.sidebar.markdown(f"**Description:** {preset['desc']}")
 
 # --- Recommended Settings Helper ---
 helper_ranges = {
-    "Resonant Core (Ψₐ ∩ Φₐ)":       {"grid": "30–40", "domain": "1–3"},
+    "Resonant Core (Ψₐ ∩ Φₐ)":       {"grid": "40", "domain": "1–3"},
     "Phase Rift":                    {"grid": "40",    "domain": "2–4"},
     "Cymatic Shell":                 {"grid": "40–50", "domain": "20–25"},
     "Render Fog":                    {"grid": "35–40", "domain": "5–8"},
