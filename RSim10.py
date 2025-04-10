@@ -157,7 +157,7 @@ presets = {
         "r_z": 4, "l_z": 3
     },
     "Quantum Limit": {
-        "desc": "This pattern sits just below the rendering threshold. Resonance threads emerge and vanish — a delicate dance at the edge of realization.",
+        "desc": "**Activate Chladni Mode:** This pattern sits just below the rendering threshold. Resonance threads emerge and vanish — a delicate dance at the edge of realization.",
         "fx": 5.1, "fy": 4.9, "fz": 5.0,
         "px": 0, "py": 0, "pz": 0,
         "threshold": 0.01, "lock": 0.002,
@@ -165,7 +165,7 @@ presets = {
         "domain_scale": 1.0
     },
     "Solar Lattice": {
-        "desc": "Photonic field interaction in the solar coherence band — modeling solar perception windows.",
+        "desc": "**Activate Chladni Mode:** Photonic field interaction in the solar coherence band — modeling solar perception windows.",
         "fx": 14.8, "fy": 15.0, "fz": 15.2,
         "px": 0, "py": 45, "pz": 90,
         "threshold": 0.05, "lock": 0.01,
@@ -173,12 +173,16 @@ presets = {
         "grid_size": 40
     },
     "Quartz Memory Shell": {
-        "desc": "Highly stable crystalline resonance — visualizing field anchoring inside silica-based substrates.",
-        "fx": 12.1, "fy": 12.1, "fz": 12.1,
-        "px": 0, "py": 120, "pz": 240,
-        "threshold": 0.08, "lock": 0.02,
-        "domain_scale": 3.0,
-        "grid_size": 50
+        "desc": "**Activate Chladni Mode:** Encoded memory band with coherence column and null-protected axis. Preserves state integrity with phase stratification.",
+        "fx": 4.8, "fy": 4.2, "fz": 5.4,
+        "px": 90, "py": 90, "pz": 90,
+        "threshold": 0.11,
+        "lock": 0.014,
+        "grid_size": 65,
+        "domain_scale": 2.4,
+        "r_x": 1, "l_x": 1,
+        "r_y": 0, "l_y": 1,
+        "r_z": 2, "l_z": 3
     },
     "Schumann Phase Gate": {
         "desc": "Earth’s electromagnetic coherence frequency — rendering resonance aligned with planetary rhythms.",
