@@ -91,9 +91,13 @@ else:
     fy = 10**log_fy
     fz = 10**log_fz
 
-    phase_x = np.radians(st.sidebar.slider("X Phase (°)", 0, 360, value=p["px"], step=10))
-    phase_y = np.radians(st.sidebar.slider("Y Phase (°)", 0, 360, value=p["py"], step=10))
-    phase_z = np.radians(st.sidebar.slider("Z Phase (°)", 0, 360, value=p["pz"], step=10))
+if not use_chladni:
+    phase_x = np.radians(st.sidebar.slider("X-Axis Phase (°)", 0, 360, value=p["px"], step=10))
+    phase_y = np.radians(st.sidebar.slider("Y-Axis Phase (°)", 0, 360, value=p["py"], step=10))
+    phase_z = np.radians(st.sidebar.slider("Z-Axis Phase (°)", 0, 360, value=p["pz"], step=10))
+else:
+    st.sidebar.markdown("*Phase sliders are disabled — phase set from Chladni mode: l × 90°*")
+
 
     grid_size = st.sidebar.slider("Grid Resolution", 20, 100, value=p["grid_size"], step=5)
     threshold = st.sidebar.slider("Render Threshold", 0.0, 1.0, value=p["threshold"], step=0.01)
