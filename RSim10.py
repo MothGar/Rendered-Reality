@@ -209,7 +209,7 @@ presets = {
     },
     "Toroidal Helix (r=2, l=3)": {
         "desc": "**Activate Chladni Mode:** Generates a toroidal standing-wave field with axial bypass symmetry. Triple angular nodes wrap in X and Z, while Y maintains radial structure with no angular twist. Useful for modeling vertical energy channels through toroidal confinement zones—such as magnetic bottle cores or hypothetical consciousness conduits.",
-        "chladni": true,
+        "chladni": True,
         "fx": 6.6, "fy": 6.7, "fz": 6.8,
         "px": 270, "py": 0, "pz": 270,
         "threshold": 0.5,
