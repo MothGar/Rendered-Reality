@@ -170,17 +170,25 @@ presets = {
         "grid_size": 30
     },
     "Toroidal Helix (r=2, l=3)": {
-        "fx": fx1, "fy": fy1, "fz": fz1,
-        "px": px1, "py": py1, "pz": pz1,
-        "threshold": 0.5, "lock": 0.02, "grid_size": 50, "domain_scale": 12.0,
-        "desc": "A twisted toroidal resonance structure — circular confinement meets spiral coherence."
-    },
-    "Axial Helix (r=1, l=2)": {
-        "fx": fx2, "fy": fy2, "fz": fz2,
-        "px": px2, "py": py2, "pz": pz2,
-        "threshold": 0.45, "lock": 0.015, "grid_size": 48, "domain_scale": 10.0,
-        "desc": "A biologically inspired axial helix — suitable for modeling wave-based structures like DNA cores."
-    }
+    "fx": 6.6, "fy": 6.7, "fz": 6.8,
+    "px": 270, "py": 0, "pz": 270,
+    "threshold": 0.5,
+    "lock": 0.01,
+    "grid_size": 41,
+    "domain_scale": 1.0,
+    "desc": "Clear toroidal Chladni resonance with full symmetry — ideal for visualizing harmonic confinement in TRR."
+},
+
+"Axial Helix (r=1, l=2)": {
+    "fx": 6.3, "fy": 6.4, "fz": 6.6,
+    "px": 180, "py": 0, "pz": 180,
+    "threshold": 0.5,
+    "lock": 0.01,
+    "grid_size": 41,
+    "domain_scale": 1.0,
+    "desc": "Axial harmonic resonance based on fundamental Chladni symmetry — mimics bio-coherent spine-wave interaction."
+}
+
 }
 
 selected = st.sidebar.selectbox("**TRR Demo Presets:**", list(presets.keys()))
@@ -212,18 +220,21 @@ if "last_preset" not in st.session_state or st.session_state.last_preset != sele
     
 # --- Recommended Settings Helper ---
 helper_ranges = {
-    "Resonant Core (Ψₐ ∩ Φₐ)":       {"grid": "40", "domain": "1–3"},
+    "Resonant Core (Ψₐ ∩ Φₐ)":       {"grid": "40",    "domain": "1–3"},
     "Phase Rift":                    {"grid": "40",    "domain": "2–4"},
     "Cymatic Shell":                 {"grid": "40–50", "domain": "20–25"},
     "Render Fog":                    {"grid": "35–40", "domain": "5–8"},
     "Perceptual Jam":                {"grid": "50–60", "domain": "25–30"},
     "Biofield Bloom":                {"grid": "40–50", "domain": "15–20"},
-    "Singularity Shell":            {"grid": "60",    "domain": "18–20"},
-    "Quantum Limit":                {"grid": "40",    "domain": "1–3"},
-    "Solar Lattice":                {"grid": "40",    "domain": "4–6"},
-    "Quartz Memory Shell":          {"grid": "50",    "domain": "1–3"},
-    "Schumann Phase Gate":          {"grid": "30",    "domain": "9–11"},
+    "Singularity Shell":             {"grid": "60",    "domain": "18–20"},
+    "Quantum Limit":                 {"grid": "40",    "domain": "1–3"},
+    "Solar Lattice":                 {"grid": "40",    "domain": "4–6"},
+    "Quartz Memory Shell":           {"grid": "50",    "domain": "1–3"},
+    "Schumann Phase Gate":           {"grid": "30",    "domain": "9–11"},
+    "Toroidal Helix (r=2, l=3)":      {"grid": "41",    "domain": "1.0"},
+    "Axial Helix (r=1, l=2)":         {"grid": "41",    "domain": "1.0"},
 }
+
 
 st.sidebar.markdown("Recommended Settings")
 recommend = helper_ranges.get(selected, {})
