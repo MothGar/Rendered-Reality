@@ -267,6 +267,15 @@ if "last_preset" not in st.session_state or st.session_state.last_preset != sele
     st.session_state.phase_y = preset.get("py", 0)
     st.session_state.phase_z = preset.get("pz", 0)
 
+    # Chladni Modes — if available
+    st.session_state.r_x = preset.get("r_x", 2)
+    st.session_state.l_x = preset.get("l_x", 2)
+    st.session_state.r_y = preset.get("r_y", 2)
+    st.session_state.l_y = preset.get("l_y", 2)
+    st.session_state.r_z = preset.get("r_z", 2)
+    st.session_state.l_z = preset.get("l_z", 2)
+
+
     
 # --- Recommended Settings Helper ---
 helper_ranges = {
@@ -352,12 +361,13 @@ if use_chladni:
     use_chladni_override = st.sidebar.checkbox("Override Chladni Freq/Phase", value=False)
 
     st.sidebar.markdown("### Chladni Mode Selection")
-    r_x = st.sidebar.slider("Radial Mode rₓ", 0, 4, 2)
-    l_x = st.sidebar.slider("Angular Mode lₓ", 0, 4, 1)
-    r_y = st.sidebar.slider("Radial Mode rᵧ", 0, 4, 2)
-    l_y = st.sidebar.slider("Angular Mode lᵧ", 0, 4, 2)
-    r_z = st.sidebar.slider("Radial Mode r𝓏", 0, 4, 2)
-    l_z = st.sidebar.slider("Angular Mode l𝓏", 0, 4, 3)
+    r_x = st.sidebar.slider("Radial Mode rₓ", 0, 4, st.session_state.get("r_x", 2))
+    l_x = st.sidebar.slider("Angular Mode lₓ", 0, 4, st.session_state.get("l_x", 2))
+    r_y = st.sidebar.slider("Radial Mode rᵧ", 0, 4, st.session_state.get("r_y", 2))
+    l_y = st.sidebar.slider("Angular Mode lᵧ", 0, 4, st.session_state.get("l_y", 2))
+    r_z = st.sidebar.slider("Radial Mode r𝓏", 0, 4, st.session_state.get("r_z", 2))
+    l_z = st.sidebar.slider("Angular Mode l𝓏", 0, 4, st.session_state.get("l_z", 2))
+
 
     st.sidebar.markdown(f"**Chladni Mode Summary:**")
     st.sidebar.markdown(f"- X: r={r_x}, l={l_x}")
