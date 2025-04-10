@@ -170,15 +170,6 @@ st.sidebar.markdown("---")
 domain_scale_default = float(preset.get("domain_scale", 10.0))
 domain_scale = st.sidebar.slider("Display Domain Size", 1.0, 30.0, float(preset.get("domain_scale", 10.0)), step=1.0)
 
-wave_optimized_grid = st.sidebar.checkbox("Wave-Optimized Grid Resolution", value=False)
-
-if wave_optimized_grid:
-    grid_size = wave_based_grid_size([fx, fy, fz], domain_scale)
-    st.sidebar.caption(f"Grid: {grid_size} pts — auto-optimized to wavelength")
-else:
-    auto_grid_size = recommended_grid_size([fx, fy, fz], domain_scale)
-    grid_size = st.sidebar.slider("Geometry Detail (Grid Resolution)", 20, 100, auto_grid_size, 5)
-
 st.sidebar.markdown("---")
 
 if "last_preset" not in st.session_state or st.session_state.last_preset != selected:
@@ -195,6 +186,15 @@ log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=
 fx = 10**log_fx
 fy = 10**log_fy
 fz = 10**log_fz
+
+wave_optimized_grid = st.sidebar.checkbox("Wave-Optimized Grid Resolution", value=False)
+
+if wave_optimized_grid:
+    grid_size = wave_based_grid_size([fx, fy, fz], domain_scale)
+    st.sidebar.caption(f"Grid: {grid_size} pts — auto-optimized to wavelength")
+else:
+    auto_grid_size = recommended_grid_size([fx, fy, fz], domain_scale)
+    grid_size = st.sidebar.slider("Geometry Detail (Grid Resolution)", 20, 100, auto_grid_size, 5)
 
 # 3. Now it's safe to calculate grid size
 auto_grid_size = recommended_grid_size([fx, fy, fz], domain_scale)
