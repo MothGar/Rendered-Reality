@@ -367,6 +367,21 @@ recommend = helper_ranges.get(selected, {})
 st.sidebar.markdown(f"**Domain Size:** {recommend.get('domain', '—')}")
 st.sidebar.markdown(f"**Grid Resolution:** {recommend.get('grid', '—')}")
 st.sidebar.markdown("---")
+
+fx = 10**log_fx
+fy = 10**log_fy
+fz = 10**log_fz
+
+
+# Suggest domain scale dynamically based on current wave frequencies
+default_domain_scale = suggest_domain_scale([fx, fy, fz], cycles=3)
+domain_scale = st.sidebar.slider("Display Domain Size", 0.01, 30.0, float(preset.get("domain_scale", default_domain_scale)), step=0.1)
+
+
+st.sidebar.markdown("---")
+
+
+
 # Compute shortest wavelength and suggest domain
 try:
     shortest_lambda = min([fx, fy, fz])
@@ -378,20 +393,7 @@ except Exception as e:
     st.sidebar.markdown("**Wave Cycle-Based Domain Suggestion:**")
     st.sidebar.markdown("- Error calculating wavelength.")
     st.sidebar.caption(str(e))
-
-
-
-# Suggest domain scale dynamically based on current wave frequencies
-default_domain_scale = suggest_domain_scale([fx, fy, fz], cycles=3)
-domain_scale = st.sidebar.slider("Display Domain Size", 0.01, 30.0, float(preset.get("domain_scale", default_domain_scale)), step=0.1)
-
-
-st.sidebar.markdown("---")
-
-fx = 10**log_fx
-fy = 10**log_fy
-fz = 10**log_fz
-
+    
 if "last_preset" not in st.session_state or st.session_state.last_preset != selected:
     st.session_state.log_fx = preset["fx"]
     st.session_state.log_fy = preset["fy"]
