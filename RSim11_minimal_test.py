@@ -331,19 +331,24 @@ if "last_preset" not in st.session_state or st.session_state.last_preset != sele
     
 # --- Recommended Settings Helper ---
 helper_ranges = {
-    "Resonant Core (Ψₐ ∩ Φₐ)":       {"grid": "40",    "domain": "1–3"},
-    "Phase Rift":                    {"grid": "40",    "domain": "2–4"},
-    "Cymatic Shell":                 {"grid": "40–50", "domain": "20–25"},
-    "Render Fog":                    {"grid": "35–40", "domain": "5–8"},
-    "Perceptual Jam":                {"grid": "50–60", "domain": "25–30"},
-    "Biofield Bloom":                {"grid": "40–50", "domain": "15–20"},
-    "Singularity Shell":             {"grid": "60",    "domain": "18–20"},
-    "Quantum Limit":                 {"grid": "40",    "domain": "1–3"},
-    "Solar Lattice":                 {"grid": "40",    "domain": "4–6"},
-    "Quartz Memory Shell":           {"grid": "50",    "domain": "1–3"},
-    "Schumann Phase Gate":           {"grid": "30",    "domain": "9–11"},
-    "Toroidal Helix (r=2, l=3)":      {"grid": "55",    "domain": "1.0"},
+    "Resonant Core (Ψₐ ∩ Φₐ)":       {"grid": "55",    "domain": "1.3"},
+    "Phase Rift":                    {"grid": "75",    "domain": "5.4"},
+    "Cymatic Shell":                 {"grid": "75",    "domain": "1"},
+    "Render Fog":                    {"grid": "45",    "domain": "3"},
+    "Perceptual Jam":                {"grid": "85",    "domain": "30"},
+    "Biofield Bloom":                {"grid": "75",    "domain": "2.0"},
+    "Singularity Shell":             {"grid": "50",    "domain": "9.2"},
+    "Quantum Limit":                 {"grid": "40",    "domain": "1.0"},
+    "Solar Lattice":                 {"grid": "65",    "domain": "6.0"},
+    "Quartz Memory Shell":           {"grid": "65",    "domain": "2.4"},
+    "Schumann Phase Gate":           {"grid": "30",    "domain": "11.0"},
+    "Toroidal Helix (r=2, l=3)":      {"grid": "75",    "domain": "2.0"},
     "Axial Helix (r=1, l=2)":         {"grid": "75",    "domain": "1.0"},
+    "Toroidal Core":                 {"grid": "75",    "domain": "2.0"},
+    "Cellular Cubes":                {"grid": "75",    "domain": "2.9"},
+    "Phase Tuned Cross Lattice":     {"grid": "70",    "domain": "1.5"},
+    "Phase Collapse Gate":           {"grid": "50",    "domain": "1.0"},
+    "Ring Cross":                    {"grid": "55",    "domain": "1.5"}
 }
 
 
