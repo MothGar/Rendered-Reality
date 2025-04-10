@@ -17,17 +17,23 @@ def recommended_grid_size(frequencies_hz, domain_scale_m, target_grid=40, refere
 
 
 
-def wave_based_grid_size(frequencies_hz, domain_scale_m, reference_freq_log10=6.0, reference_domain=1.0, reference_grid=40, min_pts=20, max_pts=100):
-    c = 299_792_458  # speed of light in m/s
+def get_reference_cycles(freq_log10, domain):
+    c = 299_792_458
+    f = 10 ** freq_log10
+    λ = c / f
+    return domain / λ
+
+def wave_based_grid_size(frequencies_hz, domain_scale_m, reference_cycles=None, reference_grid=40, min_pts=20, max_pts=100):
+    c = 299_792_458
     min_lambda = min(c / f for f in frequencies_hz if f > 0)
-    cycles = domain_scale_m / min_lambda
+    actual_cycles = domain_scale_m / min_lambda
 
-    # Reference based on Resonant Core
-    ref_freq = 10 ** reference_freq_log10
-    ref_lambda = c / ref_freq
-    ref_cycles = reference_domain / ref_lambda
+    if reference_cycles is None:
+        rc_cycles = get_reference_cycles(6.0, 1.0)
+        bb_cycles = get_reference_cycles(np.log10(2.8), 17.0)
+        reference_cycles = (rc_cycles + bb_cycles) / 2
 
-    scaling = cycles / ref_cycles
+    scaling = actual_cycles / reference_cycles
     grid_points = int(reference_grid * scaling)
     return max(min_pts, min(grid_points, max_pts))
 
