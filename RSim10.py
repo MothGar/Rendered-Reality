@@ -301,6 +301,11 @@ use_chladni = st.sidebar.checkbox("Enable Chladni Mode Input")
 if use_chladni:
     use_chladni_override = st.sidebar.checkbox("Override Chladni Freq/Phase", value=False)
 
+    st.sidebar.markdown(f"**Chladni Mode Summary:**")
+    st.sidebar.markdown(f"- X: r={r_x}, l={l_x}")
+    st.sidebar.markdown(f"- Y: r={r_y}, l={l_y}")
+    st.sidebar.markdown(f"- Z: r={r_z}, l={l_z}")
+
     st.sidebar.markdown("### Chladni Mode Selection")
     r_x = st.sidebar.slider("Radial Mode rₓ", 0, 4, 2)
     l_x = st.sidebar.slider("Angular Mode lₓ", 0, 4, 1)
@@ -334,11 +339,7 @@ else:
     z = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
 
 
-    st.sidebar.markdown(f"**Chladni Mode Summary:**")
-    st.sidebar.markdown(f"- X: r={r_x}, l={l_x}")
-    st.sidebar.markdown(f"- Y: r={r_y}, l={l_y}")
-    st.sidebar.markdown(f"- Z: r={r_z}, l={l_z}")
-
+   
 
 with st.sidebar:
     st.markdown("## Resources")
