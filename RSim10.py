@@ -104,13 +104,18 @@ else:
     lock_strength = st.sidebar.slider("Resonance Lock Range", 0.0, 1.0, value=p["lock"], step=0.005)
     domain_scale = st.sidebar.slider("Domain Size", 1.0, 30.0, value=p["domain_scale"], step=1.0)
 
-# Safety fallback in case domain_scale was never initialized
 # --- Safety fallback if values are not set above ---
 if 'domain_scale' not in locals():
     domain_scale = 1.0
 
 if 'grid_size' not in locals():
-    grid_size = 40  # Default resolution
+    grid_size = 40
+
+if 'threshold' not in locals():
+    threshold = 0.05
+
+if 'lock_strength' not in locals():
+    lock_strength = 0.01
 x = np.linspace(-domain_scale/2, domain_scale/2, grid_size)
 y = np.linspace(-domain_scale/2, domain_scale/2, grid_size)
 z = np.linspace(-domain_scale/2, domain_scale/2, grid_size)
