@@ -322,12 +322,6 @@ presets = {
 
 selected = st.sidebar.selectbox("**TRR Demo Presets:**", list(presets.keys()))
 preset = presets[selected]
-# Automatically activate Chladni mode if the preset requires it
-if "chladni" in preset:
-    st.session_state.use_chladni = preset["chladni"]
-
-
-st.sidebar.markdown(f"**Description:** {preset['desc']}")
 
 if "last_preset" not in st.session_state or st.session_state.last_preset != selected:
     st.session_state.last_preset = selected
@@ -356,6 +350,13 @@ if "last_preset" not in st.session_state or st.session_state.last_preset != sele
     st.session_state.l_y = preset.get("l_y", 2)
     st.session_state.r_z = preset.get("r_z", 2)
     st.session_state.l_z = preset.get("l_z", 2)
+    
+# Automatically activate Chladni mode if the preset requires it
+if "chladni" in preset:
+    st.session_state.use_chladni = preset["chladni"]
+
+
+st.sidebar.markdown(f"**Description:** {preset['desc']}")
 
 
     
@@ -433,17 +434,6 @@ domain_scale = st.sidebar.slider(
 )
 
 st.sidebar.markdown("---")
-
-    
-if "last_preset" not in st.session_state or st.session_state.last_preset != selected:
-    st.session_state.log_fx = preset["fx"]
-    st.session_state.log_fy = preset["fy"]
-    st.session_state.log_fz = preset["fz"]
-    st.session_state.last_preset = selected
-
-
-
-
 
 if "grid_size" not in st.session_state or st.session_state.get("last_preset") != selected:
     st.session_state.grid_size = preset.get("grid_size", 40)
