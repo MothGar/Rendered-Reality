@@ -205,12 +205,6 @@ else:
     auto_grid_size = recommended_grid_size([fx, fy, fz], domain_scale)
     grid_size = st.sidebar.slider("Geometry Detail (Grid Resolution)", 20, 100, auto_grid_size, 5)
 
-# 3. Now it's safe to calculate grid size
-auto_grid_size = recommended_grid_size([fx, fy, fz], domain_scale)
-
-# --- Grid resolution slider ---
-grid_size = st.sidebar.slider("Geometry Detail (Grid Resolution)", 20, 60, auto_grid_size, step=5)
-
 
 st.sidebar.markdown("---")
 
