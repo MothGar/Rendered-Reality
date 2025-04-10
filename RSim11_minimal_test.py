@@ -36,7 +36,7 @@ presets = {
         "desc": "A perfect match of internal and external waveforms—reality crystallizes at the center. This is the golden zone where rendering is guaranteed.",
         "fx": 6.0, "fy": 6.0, "fz": 6.0,
         "px": 0, "py": 0, "pz": 0,
-        "threshold": 0.05, "lock": 0.01,
+        "threshold": 0.05, "lock": 0.03,
         "grid_size": 40,
         "domain_scale": 1
     },
@@ -76,7 +76,7 @@ presets = {
         "desc": "A biological coherence pattern — local regions resonate while the surrounding field remains inert. Similar to consciousness arising in neurons.",
         "fx": 2.5, "fy": 3.0, "fz": 2.8,
         "px": 50, "py": 0, "pz": 150,
-        "threshold": 0.15, "lock": 0.04,
+        "threshold": 0.15, "lock": 0.06,
         "grid_size": 40,
         "domain_scale": 17.0
     },
