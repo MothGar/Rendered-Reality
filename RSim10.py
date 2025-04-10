@@ -313,6 +313,11 @@ if use_chladni:
     st.sidebar.markdown(f"- X: r={r_x}, l={l_x}")
     st.sidebar.markdown(f"- Y: r={r_y}, l={l_y}")
     st.sidebar.markdown(f"- Z: r={r_z}, l={l_z}")
+
+    # Use centered grid for TRR-style full symmetry
+    x = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
+    y = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
+    z = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
 if use_chladni and not use_chladni_override:
     # Use positive-only grid for traditional cymatic plate alignment
     x = np.linspace(0, domain_scale, grid_size)
