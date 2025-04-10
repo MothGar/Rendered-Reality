@@ -173,13 +173,17 @@ presets = {
         "domain_scale": 1.0
     },
     "Solar Lattice": {
-        "desc": "**Activate Chladni Mode:** Photonic field interaction in the solar coherence band — modeling solar perception windows.",
+        "desc": "**Activate Chladni Mode:** High-energy photonic resonance net — simulates structured coherence zones in solar EM emission windows (UV-visible band). Useful for visualizing spectral emission coherence during photosphere-level observation.",
         "chladni": True,
-        "fx": 14.8, "fy": 15.0, "fz": 15.2,
-        "px": 0, "py": 45, "pz": 90,
-        "threshold": 0.05, "lock": 0.01,
-        "domain_scale": 5.0,
-        "grid_size": 40
+        "fx": 14.7, "fy": 14.9, "fz": 15.1,
+        "px": 45, "py": 90, "pz": 135,
+        "threshold": 0.06,
+        "lock": 0.015,
+        "domain_scale": 6.0,
+        "grid_size": 65,
+        "r_x": 1, "l_x": 2,
+        "r_y": 2, "l_y": 1,
+        "r_z": 3, "l_z": 2
     },
     "Quartz Memory Shell": {
         "desc": "**Activate Chladni Mode:** Encoded memory band with coherence column and null-protected axis. Preserves state integrity with phase stratification.",
