@@ -50,6 +50,16 @@ def chladni_mode_to_waveparams(r: int, l: int, axis: str):
 
     return freq, phase
 
+def suggest_domain_scale(frequencies_hz, cycles=3):
+    """
+    Suggest domain size to fit ~'cycles' full wave cycles of the smallest frequency component.
+    """
+    c = 299_792_458  # Speed of light in m/s
+    wavelengths = [c / f if f > 0 else 1.0 for f in frequencies_hz]
+    shortest_wavelength = min(wavelengths)
+    return cycles * shortest_wavelength
+
+
 # --- Preset Extension for Chladni Modes ---
 fx1, px1 = chladni_mode_to_waveparams(2, 3, 'x')
 fy1, py1 = chladni_mode_to_waveparams(2, 3, 'y')
@@ -357,9 +367,16 @@ recommend = helper_ranges.get(selected, {})
 st.sidebar.markdown(f"**Domain Size:** {recommend.get('domain', '—')}")
 st.sidebar.markdown(f"**Grid Resolution:** {recommend.get('grid', '—')}")
 st.sidebar.markdown("---")
+st.sidebar.markdown(f"""
+**Wave Cycle-Based Domain Suggestion:**  
+Shortest λ = {format_wavelength(min([fx, fy, fz]))}  
+Recommended Domain ≈ {default_domain_scale:.3f} m (for ~3 cycles)
+""")
 
-domain_scale_default = float(preset.get("domain_scale", 10.0))
-domain_scale = st.sidebar.slider("Display Domain Size", 1.0, 30.0, float(preset.get("domain_scale", 10.0)), step=0.1)
+# Suggest domain scale dynamically based on current wave frequencies
+default_domain_scale = suggest_domain_scale([fx, fy, fz], cycles=3)
+domain_scale = st.sidebar.slider("Display Domain Size", 0.01, 30.0, float(preset.get("domain_scale", default_domain_scale)), step=0.1)
+
 
 st.sidebar.markdown("---")
 
