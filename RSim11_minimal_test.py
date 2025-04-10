@@ -10,6 +10,18 @@ def recommended_grid_size(frequencies_hz, domain_scale_m):
     grid_points = int(cycles_in_domain * 15)  # 15 points per cycle
     return max(20, min(grid_points, 60))  # clamp between 20 and 60
 
+def clustered_grid_points(domain_scale, grid_size, focus='mid'):
+    t = np.linspace(0, 1, grid_size)
+    if focus == 'mid':
+        # Cosine-based center clustering
+        clustered = 0.5 * (1 - np.cos(np.pi * t))
+    elif focus == 'edges':
+        # Flip the mid-focused profile
+        clustered = 1 - 0.5 * (1 - np.cos(np.pi * t))
+    else:
+        clustered = t  # fallback to uniform
+    return clustered * domain_scale
+
 st.set_page_config(layout="wide")
 st.title("Theory of Rendered Reality Isoplane Geometry Simulator V10")
 
@@ -216,12 +228,12 @@ with st.sidebar:
         )
 
 
-nonlinear_detail = st.sidebar.checkbox("Enhance Detail Near Origin", value=False)
+nonlinear_detail = st.sidebar.checkbox("Enhance Detail Around Node Regions", value=True)
 
 if nonlinear_detail:
-    x = domain_scale * np.power(np.linspace(0, 1, grid_size), 1.5)
-    y = domain_scale * np.power(np.linspace(0, 1, grid_size), 1.5)
-    z = domain_scale * np.power(np.linspace(0, 1, grid_size), 1.5)
+    x = clustered_grid_points(domain_scale, grid_size, focus='mid')
+    y = clustered_grid_points(domain_scale, grid_size, focus='mid')
+    z = clustered_grid_points(domain_scale, grid_size, focus='mid')
 else:
     x = np.linspace(0, domain_scale, grid_size)
     y = np.linspace(0, domain_scale, grid_size)
