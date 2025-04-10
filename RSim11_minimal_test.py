@@ -3,28 +3,6 @@ import numpy as np
 import plotly.graph_objects as go
 import plotly.io as pio
 
-def recommended_grid_size(frequencies_hz, domain_scale_m, target_grid=40, reference_freq_log10=6.0, reference_domain=1.0, min_pts=20, max_pts=100):
-    c = 299_792_458  # m/s
-    min_lambda = min(c / f for f in frequencies_hz if f > 0)
-    cycles = domain_scale_m / min_lambda
-
-    ref_freq = 10 ** reference_freq_log10
-    ref_lambda = c / ref_freq
-    ref_cycles = reference_domain / ref_lambda
-
-    grid_points = int(target_grid * (cycles / ref_cycles))
-    return max(min_pts, min(grid_points, max_pts))
-
-
-def wave_based_grid_size(frequencies_hz, domain_scale_m, reference_cycles=81.5, reference_grid=40, min_pts=20, max_pts=100):
-    c = 299_792_458
-    min_lambda = min(c / f for f in frequencies_hz if f > 0)
-    actual_cycles = domain_scale_m / min_lambda
-
-    scaling = actual_cycles / reference_cycles
-    grid_points = int(reference_grid * scaling)
-    return max(min_pts, min(grid_points, max_pts))
-
 st.set_page_config(layout="wide")
 st.title("Theory of Rendered Reality Isoplane Geometry Simulator V10")
 
@@ -192,11 +170,8 @@ fz = 10**log_fz
 
 wave_optimized_grid = st.sidebar.checkbox("Wave-Optimized Grid Resolution", value=False)
 
-if wave_optimized_grid:
-    grid_size = wave_based_grid_size([fx, fy, fz], domain_scale)
-    st.sidebar.caption(f"Grid: {grid_size} pts — auto-optimized to wavelength")
-else:
-    auto_grid_size = recommended_grid_size([fx, fy, fz], domain_scale)
+
+    auto_grid_size = ([fx, fy, fz], domain_scale)
     grid_size = st.sidebar.slider("Geometry Detail (Grid Resolution)", 20, 100, auto_grid_size, 5)
 
 
