@@ -36,7 +36,7 @@ presets = {
         "desc": "A perfect match of internal and external waveforms—reality crystallizes at the center. This is the golden zone where rendering is guaranteed.",
         "fx": 6.0, "fy": 6.0, "fz": 6.0,
         "px": 0, "py": 0, "pz": 0,
-        "threshold": 0.05, "lock": 0.03,
+        "threshold": 0.05, "lock": 0.01,
         "grid_size": 40,
         "domain_scale": 1
     },
@@ -44,7 +44,7 @@ presets = {
         "desc": "One axis breaks coherence—TRR shows how a single misalignment disrupts what is rendered. Like trying to tune a radio with one knob off.",
         "fx": 6.0, "fy": 6.0, "fz": 6.0,
         "px": 45, "py": 0, "pz": 0,
-        "threshold": 0.05, "lock": 0.03,
+        "threshold": 0.05, "lock": 0.01,
         "grid_size": 40,
         "domain_scale": 1
     },
@@ -52,7 +52,7 @@ presets = {
         "desc": "Layered wave harmonics generate cymatic-like structures. This preset mimics sound-driven geometry—where resonance creates shells of stillness.",
         "fx": 3.0, "fy": 4.0, "fz": 4.0,
         "px": 0, "py": 0, "pz": 0,
-        "threshold": 0.1, "lock": 0.05,
+        "threshold": 0.1, "lock": 0.02,
         "grid_size": 40,
         "domain_scale": 22
     },
@@ -60,7 +60,7 @@ presets = {
         "desc": "Rendering is a struggle in this chaotic field. Fields are almost coherent, but never quite stabilize—like trying to see through shifting mist.",
         "fx": 5.5, "fy": 6.0, "fz": 6.5,
         "px": 90, "py": 45, "pz": 180,
-        "threshold": 0.3, "lock": 0.15,
+        "threshold": 0.3, "lock": 0.09,
         "grid_size": 40,
         "domain_scale": 3
     },
@@ -76,7 +76,7 @@ presets = {
         "desc": "A biological coherence pattern — local regions resonate while the surrounding field remains inert. Similar to consciousness arising in neurons.",
         "fx": 2.5, "fy": 3.0, "fz": 2.8,
         "px": 50, "py": 0, "pz": 150,
-        "threshold": 0.15, "lock": 0.10,
+        "threshold": 0.15, "lock": 0.04,
         "grid_size": 40,
         "domain_scale": 17.0
     },
@@ -84,7 +84,7 @@ presets = {
         "desc": "A black hole–inspired collapse field. All rendering is pushed to the outer fringe — the center is a void where nothing can render.",
         "fx": -1.0, "fy": -1.0, "fz": 17.0,
         "px": 90, "py": 110, "pz": 40,
-        "threshold": 0.04, "lock": 0.02,
+        "threshold": 0.04, "lock": 0.01,
         "grid_size": 60,
         "domain_scale": 18.0
     },
@@ -92,7 +92,7 @@ presets = {
         "desc": "This pattern sits just below the rendering threshold. Resonance threads emerge and vanish — a delicate dance at the edge of realization.",
         "fx": 5.1, "fy": 4.9, "fz": 5.0,
         "px": 0, "py": 0, "pz": 0,
-        "threshold": 0.01, "lock": 0.01,
+        "threshold": 0.01, "lock": 0.002,
         "grid_size": 40,
         "domain_scale": 1.0
     },
@@ -100,7 +100,7 @@ presets = {
         "desc": "Photonic field interaction in the solar coherence band — modeling solar perception windows.",
         "fx": 14.8, "fy": 15.0, "fz": 15.2,
         "px": 0, "py": 45, "pz": 90,
-        "threshold": 0.05, "lock": 0.025,
+        "threshold": 0.05, "lock": 0.01,
         "domain_scale": 5.0,
         "grid_size": 40
     },
@@ -116,7 +116,7 @@ presets = {
         "desc": "Earth’s electromagnetic coherence frequency — rendering resonance aligned with planetary rhythms.",
         "fx": 0.89, "fy": 0.91, "fz": 0.93,
         "px": 0, "py": 90, "pz": 180,
-        "threshold": 0.02, "lock": 0.01,
+        "threshold": 0.02, "lock": 0.004,
         "domain_scale": 11.0,
         "grid_size": 30
     }
