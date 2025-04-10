@@ -118,7 +118,7 @@ presets = {
         "fx": 7.0, "fy": 7.0, "fz": 7.0,
         "px": 90, "py": 90, "pz": 90,
         "threshold": 0.05, "lock": 0.01,
-        "grid_size": 60,
+        "grid_size": 85,
         "domain_scale": 30
     },
     "Biofield Bloom": {
