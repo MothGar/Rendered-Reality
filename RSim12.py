@@ -367,11 +367,11 @@ recommend = helper_ranges.get(selected, {})
 st.sidebar.markdown(f"**Domain Size:** {recommend.get('domain', '—')}")
 st.sidebar.markdown(f"**Grid Resolution:** {recommend.get('grid', '—')}")
 st.sidebar.markdown("---")
-st.sidebar.markdown(f"""
-**Wave Cycle-Based Domain Suggestion:**  
-Shortest λ = {format_wavelength(min([fx, fy, fz]))}  
-Recommended Domain ≈ {default_domain_scale:.3f} m (for ~3 cycles)
-""")
+shortest_lambda = min([fx, fy, fz])
+st.sidebar.markdown("**Wave Cycle-Based Domain Suggestion:**")
+st.sidebar.markdown(f"- Shortest λ = {format_wavelength(shortest_lambda)}")
+st.sidebar.markdown(f"- Suggested Domain ≈ {default_domain_scale:.3f} m  (for ~3 cycles)")
+
 
 # Suggest domain scale dynamically based on current wave frequencies
 default_domain_scale = suggest_domain_scale([fx, fy, fz], cycles=3)
