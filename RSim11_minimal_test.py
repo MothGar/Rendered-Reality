@@ -165,9 +165,16 @@ domain_scale = st.sidebar.slider(
 )
 st.sidebar.markdown("---")
 
-log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fx"], 0.1)
-log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fy"], 0.1)
-log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fz"], 0.1)
+if "last_preset" not in st.session_state or st.session_state.last_preset != selected:
+    st.session_state.log_fx = preset["fx"]
+    st.session_state.log_fy = preset["fy"]
+    st.session_state.log_fz = preset["fz"]
+    st.session_state.last_preset = selected
+
+
+log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=preset["fx"], step=0.1, key="log_fx")
+log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=preset["fy"], step=0.1, key="log_fy")
+log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=preset["fz"], step=0.1, key="log_fz")
 
 fx, fy, fz = 10**log_fx, 10**log_fy, 10**log_fz
 
