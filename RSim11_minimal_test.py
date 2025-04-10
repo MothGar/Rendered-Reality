@@ -22,6 +22,15 @@ def clustered_grid_points(domain_scale, grid_size, focus='mid'):
         clustered = t  # fallback to uniform
     return clustered * domain_scale
 
+def wave_based_grid_size(frequencies_hz, domain_scale_m, points_per_cycle=16, min_pts=20, max_pts=100):
+    c = 299_792_458  # speed of light in m/s
+    wavelengths = [c / f for f in frequencies_hz if f > 0]
+    min_lambda = min(wavelengths)
+    cycles = domain_scale_m / min_lambda
+    grid_points = int(cycles * points_per_cycle)
+    return max(min_pts, min(grid_points, max_pts))
+
+
 st.set_page_config(layout="wide")
 st.title("Theory of Rendered Reality Isoplane Geometry Simulator V10")
 
