@@ -3,22 +3,50 @@ import numpy as np
 import plotly.graph_objects as go
 import plotly.io as pio
 
+# --- TRR White Paper Download ---
+with st.sidebar:
+    st.markdown("## Resources")
+    try:
+        with open("Rendered_Reality_TimG.pdf", "rb") as f:
+            st.download_button(
+                label="Download TRR White Paper",
+                data=f,
+                file_name="Rendered_Reality_TimG.pdf",
+                mime="application/pdf"
+            )
+    except:
+        st.warning("TRR white paper not found.")
 
-def recommended_grid_size(frequencies_hz, domain_scale_m, target_grid=40, reference_freq_log10=6.0, reference_domain=1.0, min_pts=10, max_pts=100):
-    c = 299_792_458  # m/s
-    smallest_lambda = min(c / f for f in frequencies_hz if f > 0)
-    cycles = domain_scale_m / smallest_lambda
+# --- Equation Explanation ---
+st.markdown("""
+---
+**TRR Equation of Rendered Geometry**
 
-    ref_freq = 10 ** reference_freq_log10
-    ref_lambda = c / ref_freq
-    ref_cycles = reference_domain / ref_lambda
+> **Render Condition:**  
+> \[ |⟨ \Psi_r(x, t) | H_{res} | \Phi(x, t) ⟩|^2 > T_r \]
 
-    scaling_factor = cycles / ref_cycles
-    grid_points = int(target_grid * scaling_factor)
+This simulator visualizes the points in 3D space where this equation **crosses the render threshold**—where reality takes form.
+""")
 
-    return max(min_pts, min(grid_points, max_pts))
+# --- TRR Conceptual Explanation ---
+with st.expander("📘 What Is TRR Isoplane Geometry?"):
+    st.markdown("""
+    **TRR (Theory of Rendered Reality)** models how reality appears when wave-based resonance fields align into coherent patterns.
 
+    **Isoplane Geometry** happens when X, Y, and Z waves intersect *just right*—forming stable structures.
 
+    **Simplified Equation:**  
+    `resonance_energy > threshold`  
+    _When internal and external fields overlap enough, reality 'renders'._
+
+    This viewer shows you **where** that happens in space.
+
+    - High alignment = more structure  
+    - Phase mismatch = less pattern  
+    - Thresholds let you filter only the coherent zones
+    """)
+
+# --- Chladni Mode Functions ---
 def chladni_mode_to_waveparams(r: int, l: int, axis: str):
     base_log_freq = 6.0
     axis_shift = {'x': 0.0, 'y': 0.1, 'z': 0.2}[axis]
@@ -26,43 +54,16 @@ def chladni_mode_to_waveparams(r: int, l: int, axis: str):
     phase = (l * 90) % 360
     return freq, phase
 
-
-# Chladni presets
-fx1, px1 = chladni_mode_to_waveparams(2, 3, 'x')
-fy1, py1 = chladni_mode_to_waveparams(2, 3, 'y')
-fz1, pz1 = chladni_mode_to_waveparams(2, 3, 'z')
-
-fx2, px2 = chladni_mode_to_waveparams(1, 2, 'x')
-fy2, py2 = chladni_mode_to_waveparams(1, 2, 'y')
-fz2, pz2 = chladni_mode_to_waveparams(2, 3, 'z')
-
-presets = {
-    "Toroidal Helix (r=2, l=3)": {
-        "fx": fx1, "fy": fy1, "fz": fz1,
-        "px": px1, "py": py1, "pz": pz1,
-        "threshold": 0.5, "lock": 0.02,
-        "grid_size": 50, "domain_scale": 12.0,
-        "desc": "A twisted toroidal resonance structure — circular confinement meets spiral coherence."
-    },
-    "Axial Helix (r=1, l=2)": {
-        "fx": fx2, "fy": fy2, "fz": fz2,
-        "px": px2, "py": py2, "pz": pz2,
-        "threshold": 0.45, "lock": 0.015,
-        "grid_size": 48, "domain_scale": 10.0,
-        "desc": "A biologically inspired axial helix — suitable for modeling wave-based structures like DNA cores."
-    }
-}
-
-selected = st.sidebar.selectbox("Chladni Preset", list(presets.keys()))
-p = presets[selected]
-
+# --- Chladni Mode Input Section ---
 use_chladni = st.sidebar.checkbox("Enable Chladni Mode Input")
 
 if use_chladni:
+    st.sidebar.markdown("### Chladni Mode Selection")
+
     r_x = st.sidebar.slider("Radial Mode rₓ", 0, 4, 2)
-    l_x = st.sidebar.slider("Angular Mode lₓ", 0, 4, 3)
+    l_x = st.sidebar.slider("Angular Mode lₓ", 0, 4, 1)
     r_y = st.sidebar.slider("Radial Mode rᵧ", 0, 4, 2)
-    l_y = st.sidebar.slider("Angular Mode lᵧ", 0, 4, 3)
+    l_y = st.sidebar.slider("Angular Mode lᵧ", 0, 4, 2)
     r_z = st.sidebar.slider("Radial Mode r𝓏", 0, 4, 2)
     l_z = st.sidebar.slider("Angular Mode l𝓏", 0, 4, 3)
 
@@ -78,69 +79,46 @@ if use_chladni:
     phase_y = np.radians(phase_y_deg)
     phase_z = np.radians(phase_z_deg)
 
-    grid_size = recommended_grid_size([fx, fy, fz], p["domain_scale"])
-    threshold = p["threshold"]
-    lock_strength = p["lock"]
-    domain_scale = p["domain_scale"]
-else:
-    log_fx = st.sidebar.slider("X Frequency (log₁₀ Hz)", -1.0, 17.0, value=p["fx"], step=0.1)
-    log_fy = st.sidebar.slider("Y Frequency (log₁₀ Hz)", -1.0, 17.0, value=p["fy"], step=0.1)
-    log_fz = st.sidebar.slider("Z Frequency (log₁₀ Hz)", -1.0, 17.0, value=p["fz"], step=0.1)
+    st.sidebar.markdown(f"**Chladni Mode Summary:**")
+    st.sidebar.markdown(f"- X: r={r_x}, l={l_x} → f={log_fx:.2f}, ϕ={phase_x_deg}°")
+    st.sidebar.markdown(f"- Y: r={r_y}, l={l_y} → f={log_fy:.2f}, ϕ={phase_y_deg}°")
+    st.sidebar.markdown(f"- Z: r={r_z}, l={l_z} → f={log_fz:.2f}, ϕ={phase_z_deg}°")
 
-    fx = 10**log_fx
-    fy = 10**log_fy
-    fz = 10**log_fz
-
-if not use_chladni:
-    phase_x = np.radians(st.sidebar.slider("X-Axis Phase (°)", 0, 360, value=p["px"], step=10))
-    phase_y = np.radians(st.sidebar.slider("Y-Axis Phase (°)", 0, 360, value=p["py"], step=10))
-    phase_z = np.radians(st.sidebar.slider("Z-Axis Phase (°)", 0, 360, value=p["pz"], step=10))
-else:
-    st.sidebar.markdown("*Phase sliders are disabled — phase set from Chladni mode: l × 90°*")
-
-
-    grid_size = st.sidebar.slider("Grid Resolution", 20, 100, value=p["grid_size"], step=5)
-    threshold = st.sidebar.slider("Render Threshold", 0.0, 1.0, value=p["threshold"], step=0.01)
-    lock_strength = st.sidebar.slider("Resonance Lock Range", 0.0, 1.0, value=p["lock"], step=0.005)
-    domain_scale = st.sidebar.slider("Domain Size", 1.0, 30.0, value=p["domain_scale"], step=1.0)
-
-# --- Safety fallback if values are not set above ---
-if 'domain_scale' not in locals():
-    domain_scale = 1.0
-
-if 'grid_size' not in locals():
+    domain_scale = 10.0
     grid_size = 40
-
-if 'threshold' not in locals():
     threshold = 0.05
-
-if 'lock_strength' not in locals():
     lock_strength = 0.01
-x = np.linspace(-domain_scale/2, domain_scale/2, grid_size)
-y = np.linspace(-domain_scale/2, domain_scale/2, grid_size)
-z = np.linspace(-domain_scale/2, domain_scale/2, grid_size)
-X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
 
-EX = np.sin(fx * np.pi * X + phase_x)
-EY = np.sin(fy * np.pi * Y + phase_y)
-EZ = np.sin(fz * np.pi * Z + phase_z)
-interference = np.abs(EX * EY * EZ)
+    x = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
+    y = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
+    z = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
 
-field_norm = (interference - interference.min()) / (interference.max() - interference.min())
-lock_mask = ((field_norm > threshold - lock_strength) & (field_norm < threshold + lock_strength))
+    X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
 
-xv, yv, zv = X[lock_mask], Y[lock_mask], Z[lock_mask]
-color_vals = field_norm[lock_mask]
+    EX = np.sin(fx * np.pi * X + phase_x)
+    EY = np.sin(fy * np.pi * Y + phase_y)
+    EZ = np.sin(fz * np.pi * Z + phase_z)
+    interference = np.abs(EX * EY * EZ)
 
-fig = go.Figure()
-fig.add_trace(go.Scatter3d(
-    x=xv.flatten(), y=yv.flatten(), z=zv.flatten(),
-    mode='markers',
-    marker=dict(size=2, color=color_vals, colorscale='Viridis', opacity=0.6)
-))
-fig.update_layout(
-    scene=dict(xaxis_title='X', yaxis_title='Y', zaxis_title='Z', aspectmode='cube'),
-    margin=dict(l=0, r=0, b=0, t=0),
-    paper_bgcolor='black', scene_bgcolor='black', height=700
-)
-st.plotly_chart(fig, use_container_width=True)
+    field_norm = (interference - interference.min()) / (interference.max() - interference.min())
+    lock_mask = ((field_norm > threshold - lock_strength) & (field_norm < threshold + lock_strength))
+
+    xv, yv, zv = X[lock_mask], Y[lock_mask], Z[lock_mask]
+    color_vals = field_norm[lock_mask]
+
+    if len(xv) > 0:
+        fig = go.Figure()
+        fig.add_trace(go.Scatter3d(
+            x=xv.flatten(), y=yv.flatten(), z=zv.flatten(),
+            mode='markers',
+            marker=dict(size=2, color=color_vals, colorscale='Viridis', opacity=0.6)
+        ))
+        fig.update_layout(
+            scene=dict(xaxis_title="X", yaxis_title="Y", zaxis_title="Z"),
+            margin=dict(l=0, r=0, b=0, t=0),
+            paper_bgcolor='black', scene_bgcolor='black',
+            height=640
+        )
+        st.plotly_chart(fig, use_container_width=True)
+    else:
+        st.warning("No visible geometry. Adjust intensity threshold or wave parameters.")
