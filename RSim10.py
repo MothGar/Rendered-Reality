@@ -320,9 +320,9 @@ else:
     fy = 10**log_fy
     fz = 10**log_fz
 
-    phase_x = np.radians(st.sidebar.slider("X-Axis Phase (°)", 0, 360, value=st.session_state.phase_x, step=10, key="phase_x"))
-    phase_y = np.radians(st.sidebar.slider("Y-Axis Phase (°)", 0, 360, value=st.session_state.phase_y, step=10, key="phase_y"))
-    phase_z = np.radians(st.sidebar.slider("Z-Axis Phase (°)", 0, 360, value=st.session_state.phase_z, step=10, key="phase_z"))
+    phase_x = np.radians(st.sidebar.slider("X-Axis Phase (°)", 0, 360, value=0, step=10))
+    phase_y = np.radians(st.sidebar.slider("Y-Axis Phase (°)", 0, 360, value=0, step=10))
+    phase_z = np.radians(st.sidebar.slider("Z-Axis Phase (°)", 0, 360, value=0, step=10))
 
 
 with st.sidebar:
