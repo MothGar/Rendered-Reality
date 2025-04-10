@@ -595,8 +595,6 @@ def format_hz(value):
     else:
         return f"{value/1e15:.2f} PHz"
 
-fx, fy, fz = 10**log_fx, 10**log_fy, 10**log_fz
-
 def format_wavelength(frequency_hz):
     c = 299_792_458  # Speed of light in m/s
     if frequency_hz == 0:
