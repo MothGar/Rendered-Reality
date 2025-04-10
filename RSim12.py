@@ -407,13 +407,14 @@ try:
     auto_domain = suggest_domain_scale([fx, fy, fz], cycles=3)
 
     st.sidebar.markdown("**Wave Cycle-Based Domain Suggestion:**")
-    st.sidebar.markdown(f"- Shortest λ = {format_wavelength(shortest_lambda)}")
-    st.sidebar.markdown(f"- Suggested Domain ≈ {auto_domain:.3f} m  (for ~3 cycles)")
+    st.sidebar.markdown(f"- Shortest λ: `{format_wavelength(shortest_lambda)}`")
+    st.sidebar.markdown(f"- Suggested Domain: `{auto_domain:.3f} m`  (for ~three cycles)")
 except Exception as e:
     auto_domain = 1.0
     st.sidebar.markdown("**Wave Cycle-Based Domain Suggestion:**")
     st.sidebar.markdown("- Error calculating wavelength.")
     st.sidebar.caption(str(e))
+
 
 # Use either preset domain or auto-suggested one
 domain_scale = st.sidebar.slider(
