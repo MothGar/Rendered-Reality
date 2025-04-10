@@ -199,7 +199,7 @@ fx, fy, fz = 10**log_fx, 10**log_fy, 10**log_fz
 auto_grid_size = recommended_grid_size([fx, fy, fz], domain_scale)
 
 # --- Grid resolution slider ---
-grid_size = st.sidebar.slider("Geometry Detail (Grid Resolution)", 20, 60, value=auto_grid_size, step=5)
+grid_size = st.sidebar.slider("Geometry Detail (Grid Resolution)", 20, 60, auto_grid_size, step=5)
 
 
 st.sidebar.markdown("---")
