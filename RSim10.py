@@ -245,12 +245,12 @@ presets = {
         "r_z": 2, "l_z": 3
 },
     "Cellular Cubes": {
-        "desc": "**Activate Chladni Mode:** Box-in-box pattern where internal render fails",
+        "desc": "**Activate Chladni Mode:** Nested cubic interference pattern — external symmetry encloses null interiors. Mimics quantum-tessellation failure zones.",
         "chladni": True,
         "fx": 13.7, "fy": 13.7, "fz": 13.7,
         "px": 90, "py": 120, "pz": 90,
-        "threshold": 0.05, "lock": 0.04,
-        "grid_size": 50, "domain_scale": 1.0,
+        "threshold": 0.25, "lock": 0.02,
+        "grid_size": 55, "domain_scale": 1.5,
         "r_x": 1, "l_x": 1,
         "r_y": 1, "l_y": 2,
         "r_z": 1, "l_z": 3
