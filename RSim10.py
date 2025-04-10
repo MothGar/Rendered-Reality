@@ -234,6 +234,90 @@ st.sidebar.markdown("---")
 # Optional toggle
 view_mode = st.sidebar.radio("Visualization Mode", ["Geometry Only", "Wave Overlay"], index=1)
 
+def chladni_mode_to_waveparams(r: int, l: int, axis: str):
+    """
+    Maps Chladni plate mode numbers to frequency and phase values
+    for TRR-style 3D interference simulation.
+
+    Arguments:
+    - r: radial mode (number of circular nodes)
+    - l: angular mode (number of nodal diameters)
+    - axis: 'x', 'y', or 'z'
+
+    Returns:
+    - frequency (log10 Hz), phase (degrees)
+    """
+
+    base_log_freq = 6.0  # Typical EM vibration base (~1 MHz)
+    axis_shift = {'x': 0.0, 'y': 0.1, 'z': 0.2}[axis]  # Slight shifts to avoid perfect overlap
+
+    freq = base_log_freq + 0.3 * r + axis_shift
+    phase = (l * 90) % 360
+
+    return freq, phase
+
+# --- Preset Extension for Chladni Modes ---
+chladni_presets = {
+    "Toroidal Helix (r=2, l=3)": {
+        "fx": *chladni_mode_to_waveparams(2, 3, 'x'),
+        "fy": *chladni_mode_to_waveparams(2, 3, 'y'),
+        "fz": *chladni_mode_to_waveparams(2, 3, 'z'),
+        "threshold": 0.5, "lock": 0.02, "grid_size": 50, "domain_scale": 12.0,
+        "desc": "A twisted toroidal resonance structure — circular confinement meets spiral coherence."
+    },
+    "Axial Helix (r=1, l=2)": {
+        "fx": *chladni_mode_to_waveparams(1, 2, 'x'),
+        "fy": *chladni_mode_to_waveparams(1, 2, 'y'),
+        "fz": *chladni_mode_to_waveparams(2, 3, 'z'),
+        "threshold": 0.45, "lock": 0.015, "grid_size": 48, "domain_scale": 10.0,
+        "desc": "A biologically inspired axial helix — suitable for modeling wave-based structures like DNA cores."
+    }
+}
+
+presets.update(chladni_presets)
+
+# --- Chladni UI and Integration ---
+use_chladni = st.sidebar.checkbox("Enable Chladni Mode Input")
+
+if use_chladni:
+    st.sidebar.markdown("### Chladni Mode Selection")
+
+    r_x = st.sidebar.slider("Radial Mode rₓ", 0, 4, 2)
+    l_x = st.sidebar.slider("Angular Mode lₓ", 0, 4, 1)
+    r_y = st.sidebar.slider("Radial Mode rᵧ", 0, 4, 2)
+    l_y = st.sidebar.slider("Angular Mode lᵧ", 0, 4, 2)
+    r_z = st.sidebar.slider("Radial Mode r𝓏", 0, 4, 2)
+    l_z = st.sidebar.slider("Angular Mode l𝓏", 0, 4, 3)
+
+    log_fx, phase_x_deg = chladni_mode_to_waveparams(r_x, l_x, 'x')
+    log_fy, phase_y_deg = chladni_mode_to_waveparams(r_y, l_y, 'y')
+    log_fz, phase_z_deg = chladni_mode_to_waveparams(r_z, l_z, 'z')
+
+    fx = 10 ** log_fx
+    fy = 10 ** log_fy
+    fz = 10 ** log_fz
+
+    phase_x = np.radians(phase_x_deg)
+    phase_y = np.radians(phase_y_deg)
+    phase_z = np.radians(phase_z_deg)
+
+    st.sidebar.markdown(f"**Chladni Mode Summary:**")
+    st.sidebar.markdown(f"- X: r={r_x}, l={l_x} → f={log_fx:.2f}, ϕ={phase_x_deg}°")
+    st.sidebar.markdown(f"- Y: r={r_y}, l={l_y} → f={log_fy:.2f}, ϕ={phase_y_deg}°")
+    st.sidebar.markdown(f"- Z: r={r_z}, l={l_z} → f={log_fz:.2f}, ϕ={phase_z_deg}°")
+else:
+    log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=st.session_state.log_fx, step=0.1, key="log_fx")
+    log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=st.session_state.log_fy, step=0.1, key="log_fy")
+    log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=st.session_state.log_fz, step=0.1, key="log_fz")
+
+    fx = 10**log_fx
+    fy = 10**log_fy
+    fz = 10**log_fz
+
+    phase_x = np.radians(st.sidebar.slider("X-Axis Phase (°)", 0, 360, value=st.session_state.phase_x, step=10, key="phase_x"))
+    phase_y = np.radians(st.sidebar.slider("Y-Axis Phase (°)", 0, 360, value=st.session_state.phase_y, step=10, key="phase_y"))
+    phase_z = np.radians(st.sidebar.slider("Z-Axis Phase (°)", 0, 360, value=st.session_state.phase_z, step=10, key="phase_z"))
+
 with st.sidebar:
     st.markdown("## Resources")
     with open("Rendered_Reality_TimG.pdf", "rb") as f:
