@@ -94,6 +94,7 @@ with st.expander("What Are Cymatic Patterns in TRR?"):
 presets = {
     "Resonant Core (Ψₐ ∩ Φₐ)": {
         "desc": "A perfect match of internal and external waveforms—reality crystallizes at the center. This is the golden zone where rendering is guaranteed.",
+        "chladni": False,
         "fx": 6.0, "fy": 6.0, "fz": 6.0,
         "px": 90, "py": 90, "pz": 90,
         "threshold": 0.05, "lock": 0.03,
@@ -102,6 +103,7 @@ presets = {
     },
     "Phase Rift": {
         "desc": "One axis breaks coherence—TRR shows how a single misalignment disrupts what is rendered. Like trying to tune a radio with one knob off.",
+        "chladni": False,
         "fx": 6.0, "fy": 6.0, "fz": 6.0,
         "px": 45, "py": 90, "pz": 90,
         "threshold": 0.05, "lock": 0.01,
@@ -110,6 +112,7 @@ presets = {
     },
     "Cymatic Shell": {
         "desc": "Layered wave harmonics generate cymatic-like structures. This preset mimics sound-driven geometry—where resonance creates shells of stillness.",
+        "chladni": False,
         "fx": 3.0, "fy": 4.0, "fz": 4.0,
         "px": 90, "py": 90, "pz": 90,
         "threshold": 0.1, "lock": 0.02,
@@ -118,6 +121,7 @@ presets = {
     },
     "Render Fog": {
         "desc": "Rendering is a struggle in this chaotic field. Fields are almost coherent, but never quite stabilize—like trying to see through shifting mist.",
+        "chladni": False,
         "fx": 5.5, "fy": 6.0, "fz": 6.5,
         "px": 90, "py": 45, "pz": 180,
         "threshold": 0.3, "lock": 0.09,
@@ -126,6 +130,7 @@ presets = {
     },
     "Perceptual Jam": {
         "desc": "When your perception filter is 90° out of sync, nothing gets through. The system denies rendering—reality blinks out.",
+        "chladni": False,
         "fx": 7.0, "fy": 7.0, "fz": 7.0,
         "px": 90, "py": 90, "pz": 90,
         "threshold": 0.05, "lock": 0.01,
@@ -134,6 +139,7 @@ presets = {
     },
     "Biofield Bloom": {
         "desc": "**Activate Chladni Mode:** Discrete coherence zones emerge in layers — like neural activation patterns surrounded by inert space. Represents localized awareness within a passive field.",
+        "chladni": True,
         "fx": 13.9, "fy": 13.7, "fz": 13.5,
         "px": 50, "py": 0, "pz": 180,
         "threshold": 0.15,
@@ -146,6 +152,7 @@ presets = {
     },
     "Singularity Shell": {
         "desc": "**Activate Chladni Mode:** A black hole–inspired collapse field. All rendering is pushed to the outer fringe — the center is a void where nothing can render.",
+        "chladni": True,
         "fx": 6, "fy": 6, "fz": 9,
         "px": 90, "py": 180, "pz": 0,
         "threshold": 0.22,
@@ -158,6 +165,7 @@ presets = {
     },
     "Quantum Limit": {
         "desc": "**Activate Chladni Mode:** This pattern sits just below the rendering threshold. Resonance threads emerge and vanish — a delicate dance at the edge of realization.",
+        "chladni": True,
         "fx": 5.1, "fy": 4.9, "fz": 5.0,
         "px": 0, "py": 0, "pz": 0,
         "threshold": 0.01, "lock": 0.002,
@@ -166,6 +174,7 @@ presets = {
     },
     "Solar Lattice": {
         "desc": "**Activate Chladni Mode:** Photonic field interaction in the solar coherence band — modeling solar perception windows.",
+        "chladni": True,
         "fx": 14.8, "fy": 15.0, "fz": 15.2,
         "px": 0, "py": 45, "pz": 90,
         "threshold": 0.05, "lock": 0.01,
@@ -174,6 +183,7 @@ presets = {
     },
     "Quartz Memory Shell": {
         "desc": "**Activate Chladni Mode:** Encoded memory band with coherence column and null-protected axis. Preserves state integrity with phase stratification.",
+        "chladni": True,
         "fx": 4.8, "fy": 4.2, "fz": 5.4,
         "px": 90, "py": 90, "pz": 90,
         "threshold": 0.11,
@@ -186,6 +196,7 @@ presets = {
     },
     "Schumann Phase Gate": {
         "desc": "Earth’s electromagnetic coherence frequency — rendering resonance aligned with planetary rhythms.",
+        "chladni": False,
         "fx": 0.89, "fy": 0.91, "fz": 0.93,
         "px": 0, "py": 90, "pz": 180,
         "threshold": 0.02, "lock": 0.004,
@@ -193,6 +204,7 @@ presets = {
         "grid_size": 30
     },
     "Toroidal Helix (r=2, l=3)": {
+        "chladni": True,
         "fx": 6.6, "fy": 6.7, "fz": 6.8,
         "px": 270, "py": 0, "pz": 270,
         "threshold": 0.5,
@@ -202,6 +214,7 @@ presets = {
         "desc": "**Activate Chladni Mode:** Clear toroidal Chladni resonance with full symmetry — ideal for visualizing harmonic confinement in TRR."
 },
     "Axial Helix (r=1, l=2)": {
+        "chladni": True,
         "fx": 6.3, "fy": 6.4, "fz": 6.6,
         "px": 180, "py": 0, "pz": 180,
         "threshold": 0.95,
@@ -212,6 +225,7 @@ presets = {
 },
     "Toroidal Core": {
         "desc": "**Activate Chladni Mode:** Dense toroidal symmetry with full inner cohesion",
+        "chladni": True,
         "fx": 13.5, "fy": 13.5, "fz": 13.5,
         "px": 0, "py": 120, "pz": 240,
         "threshold": 0.05, "lock": 0.04,
@@ -222,6 +236,7 @@ presets = {
 },
     "Cellular Cubes": {
         "desc": "**Activate Chladni Mode:** Box-in-box pattern where internal render fails",
+        "chladni": True,
         "fx": 13.7, "fy": 13.7, "fz": 13.7,
         "px": 90, "py": 120, "pz": 90,
         "threshold": 0.05, "lock": 0.04,
@@ -232,6 +247,7 @@ presets = {
 },
     "Phase Tuned Cross Lattice": {
         "desc": "Resonant interference throughout grid, high coherence crosswave",
+        "chladni": False,
         "fx": 13.5, "fy": 13.5, "fz": 13.5,
         "px": 90, "py": 90, "pz": 90,
         "threshold": 0.05, "lock": 0.04,
@@ -240,6 +256,7 @@ presets = {
 },
     "Phase Collapse Gate": {
         "desc": "**Activate Chladni Mode:** Flat stacked planar emergence at destructive Z",
+        "chladni": True,
         "fx": 13.7, "fy": 13.7, "fz": 13.7,
         "px": 90, "py": 120, "pz": 180,
         "threshold": 0.05, "lock": 0.04,
@@ -250,6 +267,7 @@ presets = {
 },
     "Ring Cross": {
         "desc": "**Activate Chladni Mode:** Circular ring with orthogonal cut planes",
+        "chladni": True,
         "fx": 13.7, "fy": 13.7, "fz": 13.7,
         "px": 90, "py": 120, "pz": 90,
         "threshold": 0.05, "lock": 0.04,
