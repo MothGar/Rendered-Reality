@@ -170,24 +170,89 @@ presets = {
         "grid_size": 30
     },
     "Toroidal Helix (r=2, l=3)": {
-    "fx": 6.6, "fy": 6.7, "fz": 6.8,
-    "px": 270, "py": 0, "pz": 270,
-    "threshold": 0.5,
-    "lock": 0.01,
-    "grid_size": 75,
-    "domain_scale": 6.0,
-    "desc": "Clear toroidal Chladni resonance with full symmetry — ideal for visualizing harmonic confinement in TRR."
+        "fx": 6.6, "fy": 6.7, "fz": 6.8,
+        "px": 270, "py": 0, "pz": 270,
+        "threshold": 0.5,
+        "lock": 0.01,
+        "grid_size": 75,
+        "domain_scale": 6.0,
+        "desc": "Clear toroidal Chladni resonance with full symmetry — ideal for visualizing harmonic confinement in TRR."
 },
-
-"Axial Helix (r=1, l=2)": {
-    "fx": 6.3, "fy": 6.4, "fz": 6.6,
-    "px": 180, "py": 0, "pz": 180,
-    "threshold": 0.95,
-    "lock": 0.01,
-    "grid_size": 75,
-    "domain_scale": 1.0,
-    "desc": "Axial harmonic resonance based on fundamental Chladni symmetry — mimics bio-coherent spine-wave interaction."
-}
+    "Axial Helix (r=1, l=2)": {
+        "fx": 6.3, "fy": 6.4, "fz": 6.6,
+        "px": 180, "py": 0, "pz": 180,
+        "threshold": 0.95,
+        "lock": 0.01,
+        "grid_size": 75,
+        "domain_scale": 1.0,
+        "desc": "Axial harmonic resonance based on fundamental Chladni symmetry — mimics bio-coherent spine-wave interaction."
+},
+    "Toroidal Core": {
+        "desc": "Dense toroidal symmetry with full inner cohesion",
+        "fx": 13.5,
+        "fy": 13.5,
+        "fz": 13.5,
+        "px": 0,
+        "py": 120,
+        "pz": 240,
+        "threshold": 0.05,
+        "lock": 0.04,
+        "grid_size": 55,
+        "domain_scale": 2.0,
+    },
+    "Cellular Cubes": {
+        "desc": "Box-in-box pattern where internal render fails",
+        "fx": 13.7,
+        "fy": 13.7,
+        "fz": 13.7,
+        "px": 90,
+        "py": 120,
+        "pz": 90,
+        "threshold": 0.05,
+        "lock": 0.04,
+        "grid_size": 50,
+        "domain_scale": 1.0,
+    },
+    "Fractal Lattice": {
+        "desc": "Resonant interference throughout grid, high coherence crosswave",
+        "fx": 13.7,
+        "fy": 13.7,
+        "fz": 13.7,
+        "px": 90,
+        "py": 120,
+        "pz": 90,
+        "threshold": 0.05,
+        "lock": 0.04,
+        "grid_size": 75,
+        "domain_scale": 1.0,
+    },
+    "Phase Collapse Gate": {
+        "desc": "Flat stacked planar emergence at destructive Z",
+        "fx": 13.7,
+        "fy": 13.7,
+        "fz": 13.7,
+        "px": 90,
+        "py": 120,
+        "pz": 180,
+        "threshold": 0.05,
+        "lock": 0.04,
+        "grid_size": 50,
+        "domain_scale": 1.0,
+    },
+    "Ring Cross": {
+        "desc": "Circular ring with orthogonal cut planes",
+        "fx": 13.7,
+        "fy": 13.7,
+        "fz": 13.7,
+        "px": 90,
+        "py": 120,
+        "pz": 90,
+        "threshold": 0.05,
+        "lock": 0.04,
+        "grid_size": 50,
+        "domain_scale": 1.0,
+    }
+    
 
 }
 
