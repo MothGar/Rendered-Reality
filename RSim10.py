@@ -353,9 +353,9 @@ with st.sidebar:
 
 X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
 
-EX = np.sin(fx * np.pi * X + phase_x)
-EY = np.sin(fy * np.pi * Y + phase_y)
-EZ = np.sin(fz * np.pi * Z + phase_z)
+EX = np.sin(fx * X + phase_x)
+EY = np.sin(fy * Y + phase_y)
+EZ = np.sin(fz * Z + phase_z)
 interference = np.abs(EX * EY * EZ)
 
 field_norm = (interference - interference.min()) / (interference.max() - interference.min())
