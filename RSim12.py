@@ -408,16 +408,21 @@ fz = 10**log_fz
 # Compute shortest wavelength and suggest domain
 try:
     shortest_lambda = min([fx, fy, fz])
-    auto_domain = suggest_domain_scale([fx, fy, fz], cycles=3)
+    true_auto_domain = suggest_domain_scale([fx, fy, fz], cycles=3)
+
+    # Scale it down so it fits inside the slider range (0.01–30.0)
+    auto_domain = min(30.0, max(0.01, true_auto_domain / 100.0))
 
     st.sidebar.markdown("**Wave Cycle-Based Domain Suggestion:**")
     st.sidebar.markdown(f"- Shortest λ: `{format_wavelength(shortest_lambda)}`")
-    st.sidebar.markdown(f"- Suggested Domain: `{auto_domain:.3f} m`  (for ~three cycles)")
+    st.sidebar.markdown(f"- Full 3-cycle domain: `{true_auto_domain:.2f} m`")
+    st.sidebar.markdown(f"- Scaled for slider: `{auto_domain:.2f}` (UI units)")
 except Exception as e:
     auto_domain = 1.0
     st.sidebar.markdown("**Wave Cycle-Based Domain Suggestion:**")
     st.sidebar.markdown("- Error calculating wavelength.")
     st.sidebar.caption(str(e))
+
 
 
 # Use either preset domain or auto-suggested one
