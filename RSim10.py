@@ -127,10 +127,10 @@ presets = {
         "px": 50, "py": 0, "pz": 180,
         "threshold": 0.15,
         "lock": 0.06,
-        "grid_size": 70,
-        "domain_scale": 1.0,
+        "grid_size": 75,
+        "domain_scale": 2.0,
         "r_x": 2, "l_x": 2,
-        "r_y": 2, "l_y": 1,
+        "r_y": 2, "l_y": 0,
         "r_z": 1, "l_z": 3
     },
     "Singularity Shell": {
