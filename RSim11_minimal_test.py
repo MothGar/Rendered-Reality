@@ -187,14 +187,20 @@ if "last_preset" not in st.session_state or st.session_state.last_preset != sele
     st.session_state.log_fz = preset["fz"]
     st.session_state.last_preset = selected
 
+# --- Frequency sliders ---
 log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=preset["fx"], step=0.1, key="log_fx")
 log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=preset["fy"], step=0.1, key="log_fy")
 log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", -1.0, 17.0, value=preset["fz"], step=0.1, key="log_fz")
 
+# --- Convert log sliders to actual frequencies ---
 fx, fy, fz = 10**log_fx, 10**log_fy, 10**log_fz
 
+# --- Calculate recommended grid size based on frequencies ---
 auto_grid_size = recommended_grid_size([fx, fy, fz], domain_scale)
-grid_size = st.sidebar.slider("Geometry Detail (Grid Resolution)", 20, 60, auto_grid_size, 5)
+
+# --- Grid resolution slider ---
+grid_size = st.sidebar.slider("Geometry Detail (Grid Resolution)", 20, 60, value=auto_grid_size, step=5)
+
 
 st.sidebar.markdown("---")
 
