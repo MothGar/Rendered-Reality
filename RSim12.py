@@ -368,31 +368,34 @@ st.sidebar.markdown(f"**Domain Size:** {recommend.get('domain', '—')}")
 st.sidebar.markdown(f"**Grid Resolution:** {recommend.get('grid', '—')}")
 st.sidebar.markdown("---")
 
+# Convert frequency sliders to linear Hz
 fx = 10**log_fx
 fy = 10**log_fy
 fz = 10**log_fz
 
-
-# Suggest domain scale dynamically based on current wave frequencies
-default_domain_scale = suggest_domain_scale([fx, fy, fz], cycles=3)
-domain_scale = st.sidebar.slider("Display Domain Size", 0.01, 30.0, float(preset.get("domain_scale", default_domain_scale)), step=0.1)
-
-
-st.sidebar.markdown("---")
-
-
-
 # Compute shortest wavelength and suggest domain
 try:
     shortest_lambda = min([fx, fy, fz])
-    default_domain_scale = suggest_domain_scale([fx, fy, fz], cycles=3)
+    auto_domain = suggest_domain_scale([fx, fy, fz], cycles=3)
+
     st.sidebar.markdown("**Wave Cycle-Based Domain Suggestion:**")
     st.sidebar.markdown(f"- Shortest λ = {format_wavelength(shortest_lambda)}")
-    st.sidebar.markdown(f"- Suggested Domain ≈ {default_domain_scale:.3f} m  (for ~3 cycles)")
+    st.sidebar.markdown(f"- Suggested Domain ≈ {auto_domain:.3f} m  (for ~3 cycles)")
 except Exception as e:
+    auto_domain = 1.0
     st.sidebar.markdown("**Wave Cycle-Based Domain Suggestion:**")
     st.sidebar.markdown("- Error calculating wavelength.")
     st.sidebar.caption(str(e))
+
+# Use either preset domain or auto-suggested one
+domain_scale = st.sidebar.slider(
+    "Display Domain Size", 0.01, 30.0,
+    float(preset.get("domain_scale", auto_domain)),
+    step=0.1
+)
+
+st.sidebar.markdown("---")
+
     
 if "last_preset" not in st.session_state or st.session_state.last_preset != selected:
     st.session_state.log_fx = preset["fx"]
