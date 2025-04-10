@@ -346,15 +346,15 @@ color_vals = field_norm[lock_mask]
     X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
 
     EX = np.sin(fx * np.pi * X + phase_x)
-EY = np.sin(fy * np.pi * Y + phase_y)
-EZ = np.sin(fz * np.pi * Z + phase_z)
-interference = np.abs(EX * EY * EZ)
+    EY = np.sin(fy * np.pi * Y + phase_y)
+    EZ = np.sin(fz * np.pi * Z + phase_z)
+    interference = np.abs(EX * EY * EZ)
 
-field_norm = (interference - interference.min()) / (interference.max() - interference.min())
-lock_mask = ((field_norm > threshold - lock_strength) & (field_norm < threshold + lock_strength))
+    field_norm = (interference - interference.min()) / (interference.max() - interference.min())
+    lock_mask = ((field_norm > threshold - lock_strength) & (field_norm < threshold + lock_strength))
 
-xv, yv, zv = X[lock_mask], Y[lock_mask], Z[lock_mask]
-color_vals = field_norm[lock_mask]
+    xv, yv, zv = X[lock_mask], Y[lock_mask], Z[lock_mask]
+    color_vals = field_norm[lock_mask]
 
 
     st.sidebar.markdown(f"**Chladni Mode Summary:**")
