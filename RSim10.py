@@ -122,12 +122,16 @@ presets = {
         "domain_scale": 30
     },
     "Biofield Bloom": {
-        "desc": "A biological coherence pattern — local regions resonate while the surrounding field remains inert. Similar to consciousness arising in neurons.",
+        "desc": "**Activate Chladni Mode:** Discrete coherence zones emerge in layers — like neural activation patterns surrounded by inert space. Represents localized awareness within a passive field.",
         "fx": 13.9, "fy": 13.7, "fz": 13.5,
         "px": 50, "py": 0, "pz": 180,
-        "threshold": 0.15, "lock": 0.06,
+        "threshold": 0.15,
+        "lock": 0.06,
         "grid_size": 70,
-        "domain_scale": 1.0
+        "domain_scale": 1.0,
+        "r_x": 2, "l_x": 2,
+        "r_y": 2, "l_y": 1,
+        "r_z": 1, "l_z": 3
     },
     "Singularity Shell": {
         "desc": "A black hole–inspired collapse field. All rendering is pushed to the outer fringe — the center is a void where nothing can render.",
