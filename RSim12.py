@@ -367,10 +367,18 @@ recommend = helper_ranges.get(selected, {})
 st.sidebar.markdown(f"**Domain Size:** {recommend.get('domain', '—')}")
 st.sidebar.markdown(f"**Grid Resolution:** {recommend.get('grid', '—')}")
 st.sidebar.markdown("---")
-shortest_lambda = min([fx, fy, fz])
-st.sidebar.markdown("**Wave Cycle-Based Domain Suggestion:**")
-st.sidebar.markdown(f"- Shortest λ = {format_wavelength(shortest_lambda)}")
-st.sidebar.markdown(f"- Suggested Domain ≈ {default_domain_scale:.3f} m  (for ~3 cycles)")
+# Compute shortest wavelength and suggest domain
+try:
+    shortest_lambda = min([fx, fy, fz])
+    default_domain_scale = suggest_domain_scale([fx, fy, fz], cycles=3)
+    st.sidebar.markdown("**Wave Cycle-Based Domain Suggestion:**")
+    st.sidebar.markdown(f"- Shortest λ = {format_wavelength(shortest_lambda)}")
+    st.sidebar.markdown(f"- Suggested Domain ≈ {default_domain_scale:.3f} m  (for ~3 cycles)")
+except Exception as e:
+    st.sidebar.markdown("**Wave Cycle-Based Domain Suggestion:**")
+    st.sidebar.markdown("- Error calculating wavelength.")
+    st.sidebar.caption(str(e))
+
 
 
 # Suggest domain scale dynamically based on current wave frequencies
