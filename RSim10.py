@@ -170,11 +170,11 @@ presets = {
         "grid_size": 30
     },
     "Toroidal Helix (r=2, l=3)": {
-    "fx": 6.3, "fy": 6.4, "fz": 6.8,
+    "fx": 6.6, "fy": 6.7, "fz": 6.8,
     "px": 270, "py": 0, "pz": 270,
-    "threshold": 0.95,
+    "threshold": 0.5,
     "lock": 0.01,
-    "grid_size": 75,
+    "grid_size": 55,
     "domain_scale": 1.0,
     "desc": "Clear toroidal Chladni resonance with full symmetry — ideal for visualizing harmonic confinement in TRR."
 },
@@ -182,9 +182,9 @@ presets = {
 "Axial Helix (r=1, l=2)": {
     "fx": 6.3, "fy": 6.4, "fz": 6.6,
     "px": 180, "py": 0, "pz": 180,
-    "threshold": 0.5,
+    "threshold": 0.95,
     "lock": 0.01,
-    "grid_size": 41,
+    "grid_size": 75,
     "domain_scale": 1.0,
     "desc": "Axial harmonic resonance based on fundamental Chladni symmetry — mimics bio-coherent spine-wave interaction."
 }
