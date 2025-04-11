@@ -552,7 +552,6 @@ else:
     y = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
     z = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
 
-    spiral_twist_rad = np.radians(spiral_twist_rate * Z)
     EX = np.sin(fx * X + phase_x + spiral_twist_rad)
     EY = np.sin(fy * Y + phase_y + spiral_twist_rad)
     EZ = np.sin(fz * Z + phase_z + spiral_twist_rad)
