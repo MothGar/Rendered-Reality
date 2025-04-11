@@ -124,6 +124,9 @@ elif view_mode == "Iso-Surface View":
     min_f, max_f = np.min(field), np.max(field)
     threshold = np.clip(iso_threshold, min_f + 1e-6, max_f - 1e-6)
     verts, faces, _, _ = measure.marching_cubes(field, level=threshold, spacing=(x[1]-x[0], y[1]-y[0], z[1]-z[0]))
+    verts[:, 0] -= np.mean(verts[:, 0])
+    verts[:, 1] -= np.mean(verts[:, 1])
+    verts[:, 2] -= np.mean(verts[:, 2])
     mesh = go.Mesh3d(
         x=verts[:, 0], y=verts[:, 1], z=verts[:, 2],
         i=faces[:, 0], j=faces[:, 1], k=faces[:, 2],
@@ -131,17 +134,15 @@ elif view_mode == "Iso-Surface View":
     )
     fig = go.Figure(data=[mesh])
     fig.update_layout(
-        width=700, height=700,
         scene_camera=dict(eye=dict(x=1.2, y=1.2, z=1.2)),
+        width=700, height=700,
         scene=dict(
             xaxis=dict(range=[-domain_size, domain_size]),
             yaxis=dict(range=[-domain_size, domain_size]),
             zaxis=dict(range=[-domain_size, domain_size]),
             aspectmode='manual',
             aspectratio=dict(x=1, y=1, z=1),
-            xaxis_title='X',
-            yaxis_title='Y',
-            zaxis_title='Z'
+            xaxis_title='X', yaxis_title='Y', zaxis_title='Z'
         ),
         title=f"Iso-Surface at Frame {selected_frame + 1} | Coherence: {coherence_scores[selected_frame]:.4f}"
     )
@@ -154,12 +155,17 @@ elif view_mode == "Export GIF":
     os.makedirs(image_folder, exist_ok=True)
     image_paths = []
 
-    step = max(1, frames // 60)  # Match animation logic
+    step = max(1, frames // 60)
     for i in range(0, frames, step):
         field = fields[i]
         min_f, max_f = np.min(field), np.max(field)
+        if iso_threshold <= min_f or iso_threshold >= max_f:
+            continue
         threshold = np.clip(iso_threshold, min_f + 1e-6, max_f - 1e-6)
         verts, faces, _, _ = measure.marching_cubes(field, level=threshold, spacing=(x[1]-x[0], y[1]-y[0], z[1]-z[0]))
+        verts[:, 0] -= np.mean(verts[:, 0])
+        verts[:, 1] -= np.mean(verts[:, 1])
+        verts[:, 2] -= np.mean(verts[:, 2])
         mesh = go.Mesh3d(
             x=verts[:, 0], y=verts[:, 1], z=verts[:, 2],
             i=faces[:, 0], j=faces[:, 1], k=faces[:, 2],
@@ -169,12 +175,26 @@ elif view_mode == "Export GIF":
         fig.update_layout(
             scene_camera=dict(eye=dict(x=1.2, y=1.2, z=1.2)),
             width=700, height=700,
-            scene=dict(xaxis_title='X', yaxis_title='Y', zaxis_title='Z', aspectmode='data'),
+            scene=dict(
+                xaxis=dict(range=[-domain_size, domain_size]),
+                yaxis=dict(range=[-domain_size, domain_size]),
+                zaxis=dict(range=[-domain_size, domain_size]),
+                aspectmode='manual',
+                aspectratio=dict(x=1, y=1, z=1),
+                xaxis_title='X', yaxis_title='Y', zaxis_title='Z'
+            ),
             title=f"Frame {i + 1}/{frames} | Coherence: {coherence_scores[i]:.4f}"
         )
         filepath = os.path.join(image_folder, f"frame_{i:03d}.png")
         fig.write_image(filepath)
         image_paths.append(filepath)
+
+    if image_paths:
+        images = [Image.open(p).convert("RGB") for p in image_paths]
+        gif_path = "resonance_simulation.gif"
+        images[0].save(gif_path, save_all=True, append_images=images[1:], duration=150, loop=0)
+        with open(gif_path, "rb") as f:
+            st.download_button("Download 3D Iso-Surface Animation GIF", f, file_name="resonance_simulation.gif")
 
     images = [Image.open(p).convert("RGB") for p in image_paths]
     gif_path = "resonance_simulation.gif"
@@ -189,4 +209,3 @@ Coherence score is calculated from normalized phase consistency.
 RAO frequency range is tuned to the audible resonance region of aluminum.
 """)
 # [Leave remaining content unchanged after this validation logic]
-
