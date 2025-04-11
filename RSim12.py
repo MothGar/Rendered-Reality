@@ -540,14 +540,31 @@ if use_chladni and not use_chladni_override:
     phase_y = np.radians(phase_y_deg)
     phase_z = np.radians(phase_z_deg)
 
+    spiral_twist_rad = np.radians(spiral_twist_rate * z[np.newaxis, np.newaxis, :])
+    EX = np.sin(fx * x[:, np.newaxis, np.newaxis] + phase_x + spiral_twist_rad)
+    EY = np.sin(fy * y[np.newaxis, :, np.newaxis] + phase_y + spiral_twist_rad)
+    EZ = np.sin(fz * z[np.newaxis, np.newaxis, :] + phase_z + spiral_twist_rad)
+
+
 else:
     # Use centered grid for TRR-style full symmetry
     x = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
     y = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
     z = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
 
+    spiral_twist_rad = np.radians(spiral_twist_rate * Z)
+    EX = np.sin(fx * X + phase_x + spiral_twist_rad)
+    EY = np.sin(fy * Y + phase_y + spiral_twist_rad)
+    EZ = np.sin(fz * Z + phase_z + spiral_twist_rad)
 
-   
+
+
+st.sidebar.markdown("---")
+
+# --- Spiral Twist Modulation ---
+spiral_twist_rate = st.sidebar.slider("Spiral Twist Rate (per unit Z)", 0.0, 40.0, 0.0, step=0.5)
+
+st.sidebar.markdown("---")   
 
 with st.sidebar:
     st.markdown("## Resources")
@@ -582,9 +599,11 @@ Chladni Mode: {"ON" if use_chladni else "OFF"}
 
 X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
 
-EX = np.sin(fx * X + phase_x)
-EY = np.sin(fy * Y + phase_y)
-EZ = np.sin(fz * Z + phase_z)
+spiral_twist_rad = np.radians(spiral_twist_rate * Z)
+
+EX = np.sin(fx * X + phase_x + spiral_twist_rad)
+EY = np.sin(fy * Y + phase_y + spiral_twist_rad)
+EZ = np.sin(fz * Z + phase_z + spiral_twist_rad)
 interference = np.abs(EX * EY * EZ)
 
 field_norm = (interference - interference.min()) / (interference.max() - interference.min())
