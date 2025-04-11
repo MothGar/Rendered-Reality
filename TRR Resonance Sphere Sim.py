@@ -130,7 +130,7 @@ elif view_mode == "Iso-Surface View":
     mesh = go.Mesh3d(
         x=verts[:, 0], y=verts[:, 1], z=verts[:, 2],
         i=faces[:, 0], j=faces[:, 1], k=faces[:, 2],
-        opacity=0.5, colorscale='Viridis', intensity=verts[:, 2], showscale=True
+        opacity=0.5, colorscale='Viridis', intensity=field[tuple(verts.T.astype(int).clip(0, grid_res - 1))], showscale=True
     )
     fig = go.Figure(data=[mesh])
     fig.update_layout(
