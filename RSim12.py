@@ -279,9 +279,9 @@ presets = {
         "chladni": True,
         "fx": 13.5, "fy": 13.5, "fz": 13.5,
         "px": 90, "py": 140, "pz": 90,
-        "threshold": 0.16, "lock": 0.2,
+        "threshold": 0.16, "lock": 0.115,
         "grid_size": 50, "domain_scale": .01,
-        "r_x": 1, "l_x": 1,
+        "r_x": 1, "l_x": 4,
         "r_y": 1, "l_y": 2,
         "r_z": 1, "l_z": 1
 },
