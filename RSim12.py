@@ -535,20 +535,21 @@ st.sidebar.markdown("### 🛠 Current Settings (Copyable)")
 
 st.sidebar.code(f"""
 Preset: {selected}
-Grid Size: {grid_size}
+Grid Size: {st.session_state.grid_size}
 Domain Scale: {domain_scale:.3f}
-Threshold: {threshold:.3f}
-Lock Range: {lock_strength:.3f}
+Threshold: {st.session_state.threshold:.3f}
+Lock Range: {st.session_state.lock_strength:.3f}
 
-X: freq = {log_fx:.2f} log₁₀ Hz | phase = {np.degrees(phase_x):.1f}°
-Y: freq = {log_fy:.2f} log₁₀ Hz | phase = {np.degrees(phase_y):.1f}°
-Z: freq = {log_fz:.2f} log₁₀ Hz | phase = {np.degrees(phase_z):.1f}°
+X: freq = {st.session_state.log_fx:.2f} log₁₀ Hz | phase = {st.session_state.phase_x}°
+Y: freq = {st.session_state.log_fy:.2f} log₁₀ Hz | phase = {st.session_state.phase_y}°
+Z: freq = {st.session_state.log_fz:.2f} log₁₀ Hz | phase = {st.session_state.phase_z}°
 
 Chladni Mode: {"ON" if use_chladni else "OFF"}
 - X: r={st.session_state.r_x}, l={st.session_state.l_x}
 - Y: r={st.session_state.r_y}, l={st.session_state.l_y}
 - Z: r={st.session_state.r_z}, l={st.session_state.l_z}
 """)
+
 
 X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
 
