@@ -439,11 +439,27 @@ except Exception as e:
 
 
 # Use either preset domain or auto-suggested one
+default_domain = float(preset.get("domain_scale", auto_domain))
+
+# Text input first
+typed_domain = st.sidebar.number_input(
+    "Type Domain Size", 
+    min_value=0.01, 
+    max_value=30.0, 
+    value=default_domain,
+    step=0.01, 
+    format="%.3f", 
+    key="typed_domain"
+)
+
+# Slider reflects the typed input (this updates dynamically)
 domain_scale = st.sidebar.slider(
-    "Display Domain Size", 0.01, 30.0,
-    float(preset.get("domain_scale", auto_domain)),
-    step=0.1,
-    format="%.3f"
+    "Adjust Domain Size", 
+    0.01, 30.0, 
+    value=typed_domain, 
+    step=0.01, 
+    format="%.3f", 
+    key="domain_slider"
 )
 
 st.sidebar.markdown("---")
