@@ -15,7 +15,7 @@ st.sidebar.header("Simulation Controls")
 c = 1.0  # Wave speed (normalized units)
 R = st.sidebar.slider("Aluminum Sphere Radius (R)", 1.0, 10.0, 5.0)
 frequency = st.sidebar.slider("RAO Frequency (Hz)", 10.0, 25000.0, 15000.0, step=100.0)
-duration = st.sidebar.slider("Simulation Duration (s)", 0.1, 10.0, 5.0)
+duration = st.sidebar.slider("Simulation Duration (s)", 1.0, 10.0, 5.0)
 frames = st.sidebar.slider("Frames (Time Steps)", 10, 200, 50)
 
 # Placeholder: compute a valid iso threshold based on field stats
@@ -23,7 +23,7 @@ iso_threshold_default = 0.5
 iso_threshold = st.sidebar.slider("Iso-Surface Threshold", 0.0, 2.0, iso_threshold_default, 0.01)
 
 # --- Grid Setup ---
-grid_res = 42
+grid_res = 50
 domain_size = R * 1.2
 x = np.linspace(-domain_size, domain_size, grid_res)
 y = np.linspace(-domain_size, domain_size, grid_res)
@@ -59,7 +59,7 @@ if not (min_val <= iso_threshold <= max_val):
 # --- Visualization Controls ---
 st.sidebar.markdown("---")
 selected_frame = st.sidebar.slider("View Frame", 0, frames - 1, 0)
-view_mode = st.sidebar.radio("View Mode", ["Amplitude Slice", "Phase Map Slice", "Iso-Surface View", "Export GIF"])
+view_mode = st.sidebar.radio("View Mode", ["Amplitude Slice", "Phase Map Slice", "Iso-Surface View", "Animate Iso-Surface", "Export GIF"])
 
 field = fields[selected_frame]
 phase = phases[selected_frame]
@@ -76,6 +76,8 @@ if view_mode == "Amplitude Slice":
         colorbar=dict(title='Field Amplitude')
     ))
     fig.update_layout(
+            width=700,
+            height=700,
             scene_camera=dict(eye=dict(x=1.2, y=1.2, z=1.2)),
             scene=dict(
                 xaxis=dict(range=[-domain_size, domain_size]),
@@ -87,50 +89,43 @@ if view_mode == "Amplitude Slice":
                 yaxis_title='Y',
                 zaxis_title='Z'
             ),
-        width=1024,
-        height=1024,
-        title=f"Central XY Slice (Amplitude) | Coherence: {coherence_scores[selected_frame]:.4f}",
-        xaxis_title="X",
-        yaxis_title="Y"
-    )
+            title=f"Frame {selected_frame + 1}/{frames} | Coherence: {coherence_scores[selected_frame]:.4f}"
+        )
     st.plotly_chart(fig)
 
-elif view_mode == "Phase Map Slice":
-    fig = go.Figure(data=go.Heatmap(
-        z=slice_phase,
-        x=x,
-        y=y,
-        colorscale='twilight',
-        colorbar=dict(title='Phase (rad)')
-    ))
-    fig.update_layout(
-            scene_camera=dict(eye=dict(x=1.2, y=1.2, z=1.2)),
-        width=1024,
-        height=1024,
-        title=f"Central XY Slice (Phase) | Coherence: {coherence_scores[selected_frame]:.4f}",
-        xaxis_title="X",
-        yaxis_title="Y"
-    )
-    st.plotly_chart(fig)
-
-elif view_mode == "Iso-Surface View":
+elif view_mode == "Animate Iso-Surface":
     from skimage import measure
-    min_f, max_f = np.min(field), np.max(field)
-    threshold = np.clip(iso_threshold, min_f + 1e-6, max_f - 1e-6)
-    verts, faces, _, _ = measure.marching_cubes(field, level=threshold, spacing=(x[1]-x[0], y[1]-y[0], z[1]-z[0]))
-    mesh = go.Mesh3d(
-        x=verts[:, 0], y=verts[:, 1], z=verts[:, 2],
-        i=faces[:, 0], j=faces[:, 1], k=faces[:, 2],
-        opacity=0.5, colorscale='Viridis', intensity=verts[:, 2], showscale=True
-    )
-    fig = go.Figure(data=[mesh])
-    fig.update_layout(
+    stframe = st.empty()
+    step = max(1, frames // 60)  # Ensure a maximum of ~60 frames for the animation
+    for i in range(0, frames, step):
+        field = fields[i]
+        min_f, max_f = np.min(field), np.max(field)
+        threshold = np.clip(iso_threshold, min_f + 1e-6, max_f - 1e-6)
+        verts, faces, _, _ = measure.marching_cubes(field, level=threshold, spacing=(x[1]-x[0], y[1]-y[0], z[1]-z[0]))
+        mesh = go.Mesh3d(
+            x=verts[:, 0], y=verts[:, 1], z=verts[:, 2],
+            i=faces[:, 0], j=faces[:, 1], k=faces[:, 2],
+            opacity=0.5, colorscale='Viridis', intensity=verts[:, 2], showscale=False
+        )
+        fig = go.Figure(data=[mesh])
+        fig.update_layout(
+            width=700,
+            height=700,
             scene_camera=dict(eye=dict(x=1.2, y=1.2, z=1.2)),
-        width=700, height=700,
-        scene=dict(xaxis_title='X', yaxis_title='Y', zaxis_title='Z', aspectmode='data'),
-        title=f"Iso-Surface at Frame {selected_frame + 1} | Coherence: {coherence_scores[selected_frame]:.4f}"
-    )
-    st.plotly_chart(fig)
+            scene=dict(
+                xaxis=dict(range=[-domain_size, domain_size]),
+                yaxis=dict(range=[-domain_size, domain_size]),
+                zaxis=dict(range=[-domain_size, domain_size]),
+                aspectmode='manual',
+                aspectratio=dict(x=1, y=1, z=1),
+                xaxis_title='X',
+                yaxis_title='Y',
+                zaxis_title='Z'
+            ),
+            title=f"Frame {i + 1}/{frames} | Coherence: {coherence_scores[i]:.4f}"
+        )
+        stframe.plotly_chart(fig)
+        time.sleep(0.1)
 
 elif view_mode == "Export GIF":
     from skimage import measure
