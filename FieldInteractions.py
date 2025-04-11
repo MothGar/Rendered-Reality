@@ -68,20 +68,22 @@ st.markdown(f"""
 - **Rendering Occurs?** `{'✅ YES' if is_rendered else '❌ NO'}`
 """)
 
-# Normalize and threshold mask
-field_norm = (interaction - np.min(interaction)) / (np.max(interaction) - np.min(interaction))
-mask = field_norm > 0.7
+# Normalize the overlap field
+field_norm = (interaction - np.min(interaction)) / (np.max(interaction) - np.min(interaction) + 1e-9)
+main_mask = field_norm > 0.7  # Standard visible geometry
 
-xv, yv, zv = X[mask], Y[mask], Z[mask]
-cv = field_norm[mask]
+# Compute all points for the main cloud
+xv, yv, zv = X[main_mask], Y[main_mask], Z[main_mask]
+cv = field_norm[main_mask]
 
-# Size scaling for visual resonance
-max_size = 50
+# Size scaling
+max_size = 8
 min_size = 2
 sizes = min_size + (cv - cv.min()) / (cv.max() - cv.min() + 1e-9) * (max_size - min_size)
 
-# Main point cloud
 fig = go.Figure()
+
+# Plot main field
 fig.add_trace(go.Scatter3d(
     x=xv.flatten(), y=yv.flatten(), z=zv.flatten(),
     mode='markers',
@@ -90,36 +92,36 @@ fig.add_trace(go.Scatter3d(
         color=cv,
         colorscale="Viridis",
         opacity=0.65,
-    )
+    ),
+    name="Resonance Field"
 ))
 
-# Add large render dot only if rendering occurs
+# Show strong rendering zone if render condition is met
 if is_rendered:
-    max_idx = np.argmax(field_norm)
-    x_core = X.flatten()[max_idx]
-    y_core = Y.flatten()[max_idx]
-    z_core = Z.flatten()[max_idx]
+    # Define highlight: top ~5% of values
+    highlight_cutoff = 0.95 * np.max(field_norm)
+    high_mask = field_norm >= highlight_cutoff
+
+    xh, yh, zh = X[high_mask], Y[high_mask], Z[high_mask]
 
     fig.add_trace(go.Scatter3d(
-        x=[x_core], y=[y_core], z=[z_core],
+        x=xh.flatten(), y=yh.flatten(), z=zh.flatten(),
         mode='markers',
         marker=dict(
-            size=20,
+            size=10,
             color='red',
-            symbol='circle',
-            opacity=0.9
+            opacity=0.9,
+            symbol='circle'
         ),
-        name='Render Core'
+        name="Render Zones"
     ))
 
-# Final plot layout
+# Layout
 fig.update_layout(
     scene=dict(xaxis_title="X", yaxis_title="Y", zaxis_title="Z"),
-    title="Overlap Zone Visualization (Ψᵣ · Φ) — Size = Intensity",
+    title="Overlap Zone Visualization — Resonant Realization Zones in Red",
     margin=dict(l=0, r=0, t=40, b=0),
     height=700
 )
 
 st.plotly_chart(fig, use_container_width=True)
-
-
