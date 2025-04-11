@@ -77,7 +77,7 @@ xv, yv, zv = X[main_mask], Y[main_mask], Z[main_mask]
 cv = field_norm[main_mask]
 
 # Size scaling
-max_size = 8
+max_size = 18
 min_size = 2
 sizes = min_size + (cv - cv.min()) / (cv.max() - cv.min() + 1e-9) * (max_size - min_size)
 
