@@ -194,13 +194,25 @@ elif view_mode == "Export GIF":
         gif_path = "resonance_simulation.gif"
         images[0].save(gif_path, save_all=True, append_images=images[1:], duration=150, loop=0)
         with open(gif_path, "rb") as f:
-            st.download_button("Download 3D Iso-Surface Animation GIF", f, file_name="resonance_simulation.gif")
+            st.download_button(
+    "Download 3D Iso-Surface Animation GIF",
+    f,
+    file_name="resonance_simulation.gif",
+    key="gif_export_button"
+)
+
 
     images = [Image.open(p).convert("RGB") for p in image_paths]
     gif_path = "resonance_simulation.gif"
     images[0].save(gif_path, save_all=True, append_images=images[1:], duration=150, loop=0)
     with open(gif_path, "rb") as f:
-        st.download_button("Download 3D Iso-Surface Animation GIF", f, file_name="resonance_simulation.gif")
+        st.download_button(
+    "Download 3D Iso-Surface Animation GIF",
+    f,
+    file_name="resonance_simulation.gif",
+    key="gif_export_button"
+)
+
 
 st.markdown("""
 This dynamic simulation shows RAO-triggered spherical wavefronts with reflection modeled inside a reflective aluminum shell. 
