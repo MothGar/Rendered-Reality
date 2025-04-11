@@ -29,6 +29,7 @@ k = 2 * np.pi * frequency
 
 # --- Field Simulation with Reflection ---
 fields = []
+phases = []
 for t in t_vals:
     # Outgoing wave
     outgoing = np.sin(k * (r - c * t)) / (r + 1e-6)
@@ -38,33 +39,57 @@ for t in t_vals:
     total_wave = outgoing + reflected
     total_wave[r >= R] = 0  # Enforce reflective boundary
     fields.append(total_wave)
+    phases.append(np.angle(np.exp(1j * k * (r - c * t))))
 
-# --- Visualization: Show One Frame ---
+# --- Visualization Controls ---
 st.sidebar.markdown("---")
 selected_frame = st.sidebar.slider("View Frame", 0, frames - 1, 0)
-st.write(f"Frame: {selected_frame + 1} / {frames}")
+view_mode = st.sidebar.radio("View Mode", ["Amplitude Slice", "Phase Map Slice", "Iso-Surface Placeholder"])
 
 field = fields[selected_frame]
+phase = phases[selected_frame]
 slice_z = field[:, :, grid_res // 2]
+slice_phase = phase[:, :, grid_res // 2]
 
-fig = go.Figure(data=go.Heatmap(
-    z=slice_z,
-    x=x,
-    y=y,
-    colorscale='RdBu',
-    zmid=0,
-    colorbar=dict(title='Field Amplitude')
-))
-fig.update_layout(
-    width=700,
-    height=700,
-    title="Central XY Slice of Resonant Field (with Reflection)",
-    xaxis_title="X",
-    yaxis_title="Y"
-)
-st.plotly_chart(fig)
+if view_mode == "Amplitude Slice":
+    fig = go.Figure(data=go.Heatmap(
+        z=slice_z,
+        x=x,
+        y=y,
+        colorscale='RdBu',
+        zmid=0,
+        colorbar=dict(title='Field Amplitude')
+    ))
+    fig.update_layout(
+        width=700,
+        height=700,
+        title="Central XY Slice of Resonant Field (Amplitude)",
+        xaxis_title="X",
+        yaxis_title="Y"
+    )
+    st.plotly_chart(fig)
+
+elif view_mode == "Phase Map Slice":
+    fig = go.Figure(data=go.Heatmap(
+        z=slice_phase,
+        x=x,
+        y=y,
+        colorscale='twilight',
+        colorbar=dict(title='Phase (rad)')
+    ))
+    fig.update_layout(
+        width=700,
+        height=700,
+        title="Central XY Slice of Field Phase",
+        xaxis_title="X",
+        yaxis_title="Y"
+    )
+    st.plotly_chart(fig)
+
+elif view_mode == "Iso-Surface Placeholder":
+    st.info("Iso-surface rendering will be implemented in the next version using voxel grid or 3D surface extraction techniques.")
 
 st.markdown("""
 This dynamic simulation shows RAO-triggered spherical wavefronts with first-order reflection modeled inside a reflective aluminum shell. 
-Wavefronts are phase-coherent, with clear node/antinode zones evolving over time.
+Use the sidebar to switch between amplitude, phase, and iso-surface planning view modes.
 """)
