@@ -76,7 +76,7 @@ xv, yv, zv = X[mask], Y[mask], Z[mask]
 cv = field_norm[mask]
 
 # Size scaling for visual resonance
-max_size = 8
+max_size = 50
 min_size = 2
 sizes = min_size + (cv - cv.min()) / (cv.max() - cv.min() + 1e-9) * (max_size - min_size)
 
