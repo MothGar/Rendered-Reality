@@ -3,6 +3,8 @@ import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
 import time
+import imageio
+import os
 
 # --- Page Config ---
 st.set_page_config(layout="wide")
@@ -42,13 +44,13 @@ for t in t_vals:
     fields.append(total_wave)
     phase = np.angle(np.exp(1j * k * (r - c * t)))
     phases.append(phase)
-    coherence = np.mean(np.cos(phase)**2 + np.sin(phase)**2)  # Normed coherence
+    coherence = np.mean(np.cos(phase)**2 + np.sin(phase)**2)
     coherence_scores.append(coherence)
 
 # --- Visualization Controls ---
 st.sidebar.markdown("---")
 selected_frame = st.sidebar.slider("View Frame", 0, frames - 1, 0)
-view_mode = st.sidebar.radio("View Mode", ["Amplitude Slice", "Phase Map Slice", "Iso-Surface View", "Animate Iso-Surface"])
+view_mode = st.sidebar.radio("View Mode", ["Amplitude Slice", "Phase Map Slice", "Iso-Surface View", "Animate Iso-Surface", "Export GIF"])
 
 field = fields[selected_frame]
 phase = phases[selected_frame]
@@ -92,7 +94,6 @@ elif view_mode == "Phase Map Slice":
 
 elif view_mode == "Iso-Surface View":
     from skimage import measure
-
     verts, faces, _, _ = measure.marching_cubes(field, level=iso_threshold, spacing=(x[1]-x[0], y[1]-y[0], z[1]-z[0]))
     mesh = go.Mesh3d(
         x=verts[:, 0],
@@ -110,12 +111,7 @@ elif view_mode == "Iso-Surface View":
     fig.update_layout(
         width=700,
         height=700,
-        scene=dict(
-            xaxis_title='X',
-            yaxis_title='Y',
-            zaxis_title='Z',
-            aspectmode='data'
-        ),
+        scene=dict(xaxis_title='X', yaxis_title='Y', zaxis_title='Z', aspectmode='data'),
         title=f"Iso-Surface at Frame {selected_frame + 1} | Coherence: {coherence_scores[selected_frame]:.4f}"
     )
     st.plotly_chart(fig)
@@ -141,20 +137,45 @@ elif view_mode == "Animate Iso-Surface":
         fig.update_layout(
             width=700,
             height=700,
-            scene=dict(
-                xaxis_title='X',
-                yaxis_title='Y',
-                zaxis_title='Z',
-                aspectmode='data'
-            ),
+            scene=dict(xaxis_title='X', yaxis_title='Y', zaxis_title='Z', aspectmode='data'),
             title=f"Frame {i + 1}/{frames} | Coherence: {coherence_scores[i]:.4f}"
         )
         stframe.plotly_chart(fig)
         time.sleep(0.15)
 
+elif view_mode == "Export GIF":
+    from skimage import measure
+    from PIL import Image
+    image_folder = "gif_frames"
+    os.makedirs(image_folder, exist_ok=True)
+    image_paths = []
+
+    for i, field in enumerate(fields):
+        verts, faces, _, _ = measure.marching_cubes(field, level=iso_threshold, spacing=(x[1]-x[0], y[1]-y[0], z[1]-z[0]))
+        mesh = go.Mesh3d(
+            x=verts[:, 0], y=verts[:, 1], z=verts[:, 2],
+            i=faces[:, 0], j=faces[:, 1], k=faces[:, 2],
+            opacity=0.5, colorscale='Viridis', intensity=verts[:, 2], showscale=False
+        )
+        fig = go.Figure(data=[mesh])
+        fig.update_layout(
+            width=700, height=700,
+            scene=dict(xaxis_title='X', yaxis_title='Y', zaxis_title='Z', aspectmode='data'),
+            title=f"Frame {i + 1}/{frames} | Coherence: {coherence_scores[i]:.4f}"
+        )
+        filepath = os.path.join(image_folder, f"frame_{i:03d}.png")
+        fig.write_image(filepath)
+        image_paths.append(filepath)
+
+    images = [Image.open(p).convert("RGB") for p in image_paths]
+    gif_path = "resonance_simulation.gif"
+    images[0].save(gif_path, save_all=True, append_images=images[1:], duration=150, loop=0)
+    with open(gif_path, "rb") as f:
+        st.download_button("Download 3D Iso-Surface Animation GIF", f, file_name="resonance_simulation.gif")
+
 st.markdown("""
 This dynamic simulation shows RAO-triggered spherical wavefronts with reflection modeled inside a reflective aluminum shell. 
-Use the sidebar to switch between amplitude slices, phase maps, 3D iso-surfaces, or run an animated time sequence.
+Use the sidebar to switch between amplitude slices, phase maps, 3D iso-surfaces, animations, or export a 3D GIF.
 Coherence score is calculated from normalized phase consistency.
 RAO frequency range is tuned to the audible resonance region of aluminum.
 """)
