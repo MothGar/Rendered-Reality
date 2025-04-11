@@ -87,8 +87,8 @@ if view_mode == "Amplitude Slice":
                 yaxis_title='Y',
                 zaxis_title='Z'
             ),
-        width=700,
-        height=700,
+        width=1024,
+        height=1024,
         title=f"Central XY Slice (Amplitude) | Coherence: {coherence_scores[selected_frame]:.4f}",
         xaxis_title="X",
         yaxis_title="Y"
@@ -105,8 +105,8 @@ elif view_mode == "Phase Map Slice":
     ))
     fig.update_layout(
             scene_camera=dict(eye=dict(x=1.2, y=1.2, z=1.2)),
-        width=700,
-        height=700,
+        width=1024,
+        height=1024,
         title=f"Central XY Slice (Phase) | Coherence: {coherence_scores[selected_frame]:.4f}",
         xaxis_title="X",
         yaxis_title="Y"
