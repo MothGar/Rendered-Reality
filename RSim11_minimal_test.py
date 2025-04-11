@@ -287,14 +287,14 @@ presets = {
         "r_z": 1, "l_z": 0
 },
     "Hex Crystal Matrix": {
-    "desc": "**Chladni OFF** – Resonance crystal field with symmetrical hex-like nodes. Mimics early snowflake geometry in 3D TRR space.",
-    "chladni": False,
-    "fx": 13.7, "fy": 13.7, "fz": 13.7,
-    "px": 90, "py": 90, "pz": 90,
-    "threshold": 0.18,
-    "lock": 0.15,
-    "grid_size": 65,
-    "domain_scale": 2.7
+        "desc": "**Chladni OFF** – Resonance crystal field with symmetrical hex-like nodes. Mimics early snowflake geometry in 3D TRR space.",
+        "chladni": False,
+        "fx": 13.7, "fy": 13.7, "fz": 13.7,
+        "px": 90, "py": 90, "pz": 90,
+        "threshold": 0.18,
+        "lock": 0.15,
+        "grid_size": 65,
+        "domain_scale": 2.7
 }
     
 
@@ -359,7 +359,7 @@ helper_ranges = {
     "Phase Tuned Cross Lattice":     {"grid": "70",    "domain": "1.5"},
     "Phase Collapse Gate":           {"grid": "50",    "domain": "1.0"},
     "Ring Cross":                    {"grid": "55",    "domain": "1.5"},
-    "Hex Crystal Matrix":            {"grid": "65", "domain": "2.7"},
+    "Hex Crystal Matrix":            {"grid": "65", "domain": "2.7"}
 
 }
 
