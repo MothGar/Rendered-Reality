@@ -23,7 +23,7 @@ iso_threshold_default = 0.5
 iso_threshold = st.sidebar.slider("Iso-Surface Threshold", 0.0, 2.0, iso_threshold_default, 0.01)
 
 # --- Grid Setup ---
-grid_res = 50
+grid_res = 100
 domain_size = R * 1.2
 x = np.linspace(-domain_size, domain_size, grid_res)
 y = np.linspace(-domain_size, domain_size, grid_res)
