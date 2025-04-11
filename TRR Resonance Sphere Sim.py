@@ -93,6 +93,60 @@ if view_mode == "Amplitude Slice":
         )
     st.plotly_chart(fig)
 
+elif view_mode == "Phase Map Slice":
+    fig = go.Figure(data=go.Heatmap(
+        z=slice_phase,
+        x=x,
+        y=y,
+        colorscale='twilight',
+        colorbar=dict(title='Phase (rad)')
+    ))
+    fig.update_layout(
+        width=700,
+        height=700,
+        scene_camera=dict(eye=dict(x=1.2, y=1.2, z=1.2)),
+        scene=dict(
+            xaxis=dict(range=[-domain_size, domain_size]),
+            yaxis=dict(range=[-domain_size, domain_size]),
+            zaxis=dict(range=[-domain_size, domain_size]),
+            aspectmode='manual',
+            aspectratio=dict(x=1, y=1, z=1),
+            xaxis_title='X',
+            yaxis_title='Y',
+            zaxis_title='Z'
+        ),
+        title=f"Frame {selected_frame + 1}/{frames} | Phase Map"
+    )
+    st.plotly_chart(fig)
+
+elif view_mode == "Iso-Surface View":
+    from skimage import measure
+    min_f, max_f = np.min(field), np.max(field)
+    threshold = np.clip(iso_threshold, min_f + 1e-6, max_f - 1e-6)
+    verts, faces, _, _ = measure.marching_cubes(field, level=threshold, spacing=(x[1]-x[0], y[1]-y[0], z[1]-z[0]))
+    mesh = go.Mesh3d(
+        x=verts[:, 0], y=verts[:, 1], z=verts[:, 2],
+        i=faces[:, 0], j=faces[:, 1], k=faces[:, 2],
+        opacity=0.5, colorscale='Viridis', intensity=verts[:, 2], showscale=True
+    )
+    fig = go.Figure(data=[mesh])
+    fig.update_layout(
+        width=700, height=700,
+        scene_camera=dict(eye=dict(x=1.2, y=1.2, z=1.2)),
+        scene=dict(
+            xaxis=dict(range=[-domain_size, domain_size]),
+            yaxis=dict(range=[-domain_size, domain_size]),
+            zaxis=dict(range=[-domain_size, domain_size]),
+            aspectmode='manual',
+            aspectratio=dict(x=1, y=1, z=1),
+            xaxis_title='X',
+            yaxis_title='Y',
+            zaxis_title='Z'
+        ),
+        title=f"Iso-Surface at Frame {selected_frame + 1} | Coherence: {coherence_scores[selected_frame]:.4f}"
+    )
+    st.plotly_chart(fig)
+
 elif view_mode == "Export GIF":
     from skimage import measure
     from PIL import Image
@@ -135,3 +189,4 @@ Coherence score is calculated from normalized phase consistency.
 RAO frequency range is tuned to the audible resonance region of aluminum.
 """)
 # [Leave remaining content unchanged after this validation logic]
+
