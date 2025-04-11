@@ -76,6 +76,7 @@ if view_mode == "Amplitude Slice":
         colorbar=dict(title='Field Amplitude')
     ))
     fig.update_layout(
+            scene_camera=dict(eye=dict(x=1.2, y=1.2, z=1.2)),
         width=700,
         height=700,
         title=f"Central XY Slice (Amplitude) | Coherence: {coherence_scores[selected_frame]:.4f}",
@@ -93,6 +94,7 @@ elif view_mode == "Phase Map Slice":
         colorbar=dict(title='Phase (rad)')
     ))
     fig.update_layout(
+            scene_camera=dict(eye=dict(x=1.2, y=1.2, z=1.2)),
         width=700,
         height=700,
         title=f"Central XY Slice (Phase) | Coherence: {coherence_scores[selected_frame]:.4f}",
@@ -113,6 +115,7 @@ elif view_mode == "Iso-Surface View":
     )
     fig = go.Figure(data=[mesh])
     fig.update_layout(
+            scene_camera=dict(eye=dict(x=1.2, y=1.2, z=1.2)),
         width=700, height=700,
         scene=dict(xaxis_title='X', yaxis_title='Y', zaxis_title='Z', aspectmode='data'),
         title=f"Iso-Surface at Frame {selected_frame + 1} | Coherence: {coherence_scores[selected_frame]:.4f}"
@@ -135,6 +138,7 @@ elif view_mode == "Animate Iso-Surface":
         )
         fig = go.Figure(data=[mesh])
         fig.update_layout(
+            scene_camera=dict(eye=dict(x=1.2, y=1.2, z=1.2)),
             width=700, height=700,
             scene=dict(xaxis_title='X', yaxis_title='Y', zaxis_title='Z', aspectmode='data'),
             title=f"Frame {i + 1}/{frames} | Coherence: {coherence_scores[i]:.4f}"
@@ -162,6 +166,7 @@ elif view_mode == "Export GIF":
         )
         fig = go.Figure(data=[mesh])
         fig.update_layout(
+            scene_camera=dict(eye=dict(x=1.2, y=1.2, z=1.2)),
             width=700, height=700,
             scene=dict(xaxis_title='X', yaxis_title='Y', zaxis_title='Z', aspectmode='data'),
             title=f"Frame {i + 1}/{frames} | Coherence: {coherence_scores[i]:.4f}"
