@@ -68,18 +68,19 @@ st.markdown(f"""
 - **Rendering Occurs?** `{'✅ YES' if is_rendered else '❌ NO'}`
 """)
 
-# Normalize for visualization
+# Normalize and threshold mask
 field_norm = (interaction - np.min(interaction)) / (np.max(interaction) - np.min(interaction))
 mask = field_norm > 0.7
 
 xv, yv, zv = X[mask], Y[mask], Z[mask]
 cv = field_norm[mask]
 
-# Scale point size by intensity (resonance sharpness)
-max_size = 51
+# Size scaling for visual resonance
+max_size = 8
 min_size = 2
 sizes = min_size + (cv - cv.min()) / (cv.max() - cv.min() + 1e-9) * (max_size - min_size)
 
+# Main point cloud
 fig = go.Figure()
 fig.add_trace(go.Scatter3d(
     x=xv.flatten(), y=yv.flatten(), z=zv.flatten(),
@@ -91,6 +92,27 @@ fig.add_trace(go.Scatter3d(
         opacity=0.65,
     )
 ))
+
+# Add large render dot only if rendering occurs
+if is_rendered:
+    max_idx = np.argmax(field_norm)
+    x_core = X.flatten()[max_idx]
+    y_core = Y.flatten()[max_idx]
+    z_core = Z.flatten()[max_idx]
+
+    fig.add_trace(go.Scatter3d(
+        x=[x_core], y=[y_core], z=[z_core],
+        mode='markers',
+        marker=dict(
+            size=20,
+            color='red',
+            symbol='circle',
+            opacity=0.9
+        ),
+        name='Render Core'
+    ))
+
+# Final plot layout
 fig.update_layout(
     scene=dict(xaxis_title="X", yaxis_title="Y", zaxis_title="Z"),
     title="Overlap Zone Visualization (Ψᵣ · Φ) — Size = Intensity",
@@ -101,4 +123,3 @@ fig.update_layout(
 st.plotly_chart(fig, use_container_width=True)
 
 
-st.plotly_chart(fig, use_container_width=True)
