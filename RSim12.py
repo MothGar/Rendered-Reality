@@ -521,6 +521,7 @@ if use_chladni:
     x = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
     y = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
     z = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
+
 if use_chladni and not use_chladni_override:
     # Use positive-only grid for traditional cymatic plate alignment
     x = np.linspace(0, domain_scale, grid_size)
@@ -540,17 +541,29 @@ if use_chladni and not use_chladni_override:
     phase_y = np.radians(phase_y_deg)
     phase_z = np.radians(phase_z_deg)
 
+    # Apply spiral twist in Z axis
     spiral_twist_rad = np.radians(spiral_twist_rate * z[np.newaxis, np.newaxis, :])
+
+    # Broadcasted wave fields (no meshgrid needed)
     EX = np.sin(fx * x[:, np.newaxis, np.newaxis] + phase_x + spiral_twist_rad)
     EY = np.sin(fy * y[np.newaxis, :, np.newaxis] + phase_y + spiral_twist_rad)
     EZ = np.sin(fz * z[np.newaxis, np.newaxis, :] + phase_z + spiral_twist_rad)
 
+    # Still generate meshgrid for plotting
+    X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
 
 else:
     # Use centered grid for TRR-style full symmetry
     x = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
     y = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
     z = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
+
+    X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
+    spiral_twist_rad = np.radians(spiral_twist_rate * Z)
+
+    EX = np.sin(fx * X + phase_x + spiral_twist_rad)
+    EY = np.sin(fy * Y + phase_y + spiral_twist_rad)
+    EZ = np.sin(fz * Z + phase_z + spiral_twist_rad)
 
     
 
