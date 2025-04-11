@@ -13,13 +13,13 @@ st.title("TRR 3D Resonant Field: Spherical Wavefronts with Reflection")
 # --- Parameters ---
 st.sidebar.header("Simulation Controls")
 c = 1.0  # Wave speed (normalized units)
-R = st.sidebar.slider("Aluminum Sphere Radius (R)", 1.0, 10.0, 5.0)
-frequency = st.sidebar.slider("RAO Frequency (Hz)", 10.0, 25000.0, 15000.0, step=100.0)
-duration = st.sidebar.slider("Simulation Duration (s)", 0.1, 10.0, 5.0)
-frames = st.sidebar.slider("Frames (Time Steps)", 10, 200, 50)
+R = st.sidebar.slider("Aluminum Sphere Radius (R)", 1.0, 10.0, 2.5)
+frequency = st.sidebar.slider("RAO Frequency (Hz)", 10.0, 25000.0, 13500.0, step=100.0)
+duration = st.sidebar.slider("Simulation Duration (s)", 0.1, 10.0, .1)
+frames = st.sidebar.slider("Frames (Time Steps)", 10, 200, 60)
 
 # Placeholder: compute a valid iso threshold based on field stats
-iso_threshold_default = 0.5
+iso_threshold_default = 0.2
 iso_threshold = st.sidebar.slider("Iso-Surface Threshold", 0.0, 2.0, iso_threshold_default, 0.01)
 
 # --- Grid Setup ---
