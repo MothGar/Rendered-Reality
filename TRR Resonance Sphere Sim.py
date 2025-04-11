@@ -15,7 +15,7 @@ st.sidebar.header("Simulation Controls")
 c = 1.0  # Wave speed (normalized units)
 R = st.sidebar.slider("Aluminum Sphere Radius (R)", 1.0, 10.0, 5.0)
 frequency = st.sidebar.slider("RAO Frequency (Hz)", 10.0, 25000.0, 15000.0, step=100.0)
-duration = st.sidebar.slider("Simulation Duration (s)", 1.0, 10.0, 5.0)
+duration = st.sidebar.slider("Simulation Duration (s)", 0.1, 10.0, 5.0)
 frames = st.sidebar.slider("Frames (Time Steps)", 10, 200, 50)
 
 # Placeholder: compute a valid iso threshold based on field stats
