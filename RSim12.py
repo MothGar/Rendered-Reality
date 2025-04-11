@@ -498,6 +498,24 @@ st.sidebar.markdown("---")
 view_mode = st.sidebar.radio("Visualization Mode", ["Geometry Only", "Wave Overlay"], index=1)
 
 use_chladni = st.sidebar.checkbox("Enable Chladni Mode Input", value=st.session_state.get("use_chladni", False))
+st.sidebar.markdown("---")
+
+# --- Spiral Twist Modulation ---
+spiral_twist_rate = st.sidebar.slider("Spiral Twist Rate (per unit Z)", 0.0, 40.0, 0.0, step=0.5)
+
+st.sidebar.markdown("---")   
+
+with st.sidebar:
+    st.markdown("## Resources")
+    with open("Rendered_Reality_TimG.pdf", "rb") as f:
+        st.download_button(
+            label="Download TRR White Paper",
+            data=f,
+            file_name="Rendered_Reality_TimG.pdf",
+            mime="application/pdf"
+        )
+
+st.sidebar.markdown("---")
 
 # Define override and sliders immediately if Chladni mode is on
 if use_chladni:
@@ -559,31 +577,14 @@ else:
     z = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
 
     X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
-    
+    spiral_twist_rad = np.radians(spiral_twist_rate * Z)
     EX = np.sin(fx * X + phase_x + spiral_twist_rad)
     EY = np.sin(fy * Y + phase_y + spiral_twist_rad)
     EZ = np.sin(fz * Z + phase_z + spiral_twist_rad)
 
     
 
-st.sidebar.markdown("---")
 
-# --- Spiral Twist Modulation ---
-spiral_twist_rate = st.sidebar.slider("Spiral Twist Rate (per unit Z)", 0.0, 40.0, 0.0, step=0.5)
-
-st.sidebar.markdown("---")   
-
-with st.sidebar:
-    st.markdown("## Resources")
-    with open("Rendered_Reality_TimG.pdf", "rb") as f:
-        st.download_button(
-            label="Download TRR White Paper",
-            data=f,
-            file_name="Rendered_Reality_TimG.pdf",
-            mime="application/pdf"
-        )
-
-st.sidebar.markdown("---")
 st.sidebar.markdown("### 🛠 Current Settings (Copyable)")
 
 st.sidebar.code(f"""
