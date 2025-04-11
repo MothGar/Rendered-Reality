@@ -443,6 +443,7 @@ domain_scale = st.sidebar.slider(
     "Display Domain Size", 0.01, 30.0,
     float(preset.get("domain_scale", auto_domain)),
     step=0.1
+    format="%.3f"
 )
 
 st.sidebar.markdown("---")
