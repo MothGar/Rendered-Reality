@@ -104,8 +104,8 @@ elif view_mode == "Phase Map Slice":
 elif view_mode == "Iso-Surface View":
     from skimage import measure
     min_f, max_f = np.min(field), np.max(field)
-    threshold = np.clip(iso_threshold, min_f + 1e-6, max_f - 1e-6)
-    verts, faces, _, _ = measure.marching_cubes(field, level=threshold, spacing=(x[1]-x[0], y[1]-y[0], z[1]-z[0])))
+        threshold = np.clip(iso_threshold, min_f + 1e-6, max_f - 1e-6)
+        verts, faces, _, _ = measure.marching_cubes(field, level=threshold, spacing=(x[1]-x[0], y[1]-y[0], z[1]-z[0])))
     mesh = go.Mesh3d(
         x=verts[:, 0], y=verts[:, 1], z=verts[:, 2],
         i=faces[:, 0], j=faces[:, 1], k=faces[:, 2],
@@ -113,9 +113,9 @@ elif view_mode == "Iso-Surface View":
     )
     fig = go.Figure(data=[mesh])
     fig.update_layout(
-    width=700, height=700,
-    scene=dict(xaxis_title='X', yaxis_title='Y', zaxis_title='Z', aspectmode='data'),
-    title=f"Iso-Surface at Frame {selected_frame + 1} | Coherence: {coherence_scores[selected_frame]:.4f}"
+        width=700, height=700,
+        scene=dict(xaxis_title='X', yaxis_title='Y', zaxis_title='Z', aspectmode='data'),
+        title=f"Iso-Surface at Frame {selected_frame + 1} | Coherence: {coherence_scores[selected_frame]:.4f}"
     )
     st.plotly_chart(fig)
 
