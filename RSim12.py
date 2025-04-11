@@ -595,7 +595,9 @@ Chladni Mode: {"ON" if use_chladni else "OFF"}
 - Y: r={st.session_state.r_y}, l={st.session_state.l_y}
 - Z: r={st.session_state.r_z}, l={st.session_state.l_z}
 """)
-
+x = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
+y = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
+z = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
 
 X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
 
