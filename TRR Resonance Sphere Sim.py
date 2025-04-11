@@ -138,9 +138,17 @@ elif view_mode == "Animate Iso-Surface":
         )
         fig = go.Figure(data=[mesh])
         fig.update_layout(
-            scene_camera=dict(eye=dict(x=1.2, y=1.2, z=1.2)),
-            width=700, height=700,
-            scene=dict(xaxis_title='X', yaxis_title='Y', zaxis_title='Z', aspectmode='data'),
+        width=700,
+        height=700,
+        scene_camera=dict(eye=dict(x=1.2, y=1.2, z=1.2)),
+        scene=dict(
+            xaxis=dict(range=[-domain_size, domain_size]),
+            yaxis=dict(range=[-domain_size, domain_size]),
+            zaxis=dict(range=[-domain_size, domain_size]),
+            aspectmode='manual',
+            aspectratio=dict(x=1, y=1, z=1),
+            xaxis_title='X', yaxis_title='Y', zaxis_title='Z'
+            ),
             title=f"Frame {i + 1}/{frames} | Coherence: {coherence_scores[i]:.4f}"
         )
         stframe.plotly_chart(fig)
