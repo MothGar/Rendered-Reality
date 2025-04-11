@@ -75,23 +75,30 @@ mask = field_norm > 0.7
 xv, yv, zv = X[mask], Y[mask], Z[mask]
 cv = field_norm[mask]
 
-# Plot
+# Scale point size by intensity (resonance sharpness)
+max_size = 8
+min_size = 2
+sizes = min_size + (cv - cv.min()) / (cv.max() - cv.min() + 1e-9) * (max_size - min_size)
+
 fig = go.Figure()
 fig.add_trace(go.Scatter3d(
     x=xv.flatten(), y=yv.flatten(), z=zv.flatten(),
     mode='markers',
     marker=dict(
-        size=2,
+        size=sizes.flatten(),
         color=cv,
         colorscale="Viridis",
-        opacity=0.6
+        opacity=0.65,
     )
 ))
 fig.update_layout(
     scene=dict(xaxis_title="X", yaxis_title="Y", zaxis_title="Z"),
-    title="Overlap Zone Visualization (Ψᵣ · Φ)",
+    title="Overlap Zone Visualization (Ψᵣ · Φ) — Size = Intensity",
     margin=dict(l=0, r=0, t=40, b=0),
     height=700
 )
+
+st.plotly_chart(fig, use_container_width=True)
+
 
 st.plotly_chart(fig, use_container_width=True)
