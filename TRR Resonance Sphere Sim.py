@@ -59,7 +59,7 @@ if not (min_val <= iso_threshold <= max_val):
 # --- Visualization Controls ---
 st.sidebar.markdown("---")
 selected_frame = st.sidebar.slider("View Frame", 0, frames - 1, 0)
-view_mode = st.sidebar.radio("View Mode", ["Amplitude Slice", "Phase Map Slice", "Iso-Surface View", "Animate Iso-Surface", "Export GIF"])
+view_mode = st.sidebar.radio("View Mode", ["Amplitude Slice", "Phase Map Slice", "Iso-Surface View", "Export GIF"])
 
 field = fields[selected_frame]
 phase = phases[selected_frame]
