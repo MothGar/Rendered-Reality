@@ -120,7 +120,9 @@ elif view_mode == "Iso-Surface View":
 elif view_mode == "Animate Iso-Surface":
     from skimage import measure
     stframe = st.empty()
-    for i, field in enumerate(fields):
+    step = max(1, frames // 60)  # Ensure a maximum of ~60 frames for the animation
+    for i in range(0, frames, step):
+        field = fields[i]
         verts, faces, _, _ = measure.marching_cubes(field, level=iso_threshold, spacing=(x[1]-x[0], y[1]-y[0], z[1]-z[0]))
         mesh = go.Mesh3d(
             x=verts[:, 0], y=verts[:, 1], z=verts[:, 2],
@@ -134,7 +136,7 @@ elif view_mode == "Animate Iso-Surface":
             title=f"Frame {i + 1}/{frames} | Coherence: {coherence_scores[i]:.4f}"
         )
         stframe.plotly_chart(fig)
-        time.sleep(0.15)
+        time.sleep(0.1)
 
 elif view_mode == "Export GIF":
     from skimage import measure
@@ -143,7 +145,9 @@ elif view_mode == "Export GIF":
     os.makedirs(image_folder, exist_ok=True)
     image_paths = []
 
-    for i, field in enumerate(fields):
+    step = max(1, frames // 60)  # Match animation logic
+    for i in range(0, frames, step):
+        field = fields[i]
         verts, faces, _, _ = measure.marching_cubes(field, level=iso_threshold, spacing=(x[1]-x[0], y[1]-y[0], z[1]-z[0]))
         mesh = go.Mesh3d(
             x=verts[:, 0], y=verts[:, 1], z=verts[:, 2],
