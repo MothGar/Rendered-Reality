@@ -132,42 +132,6 @@ elif view_mode == "Iso-Surface View":
     )
     st.plotly_chart(fig)
 
-elif view_mode == "Animate Iso-Surface":
-    from skimage import measure
-    stframe = st.empty()
-    step = max(1, frames // 60)  # Ensure a maximum of ~60 frames for the animation
-    for i in range(0, frames, step):
-        field = fields[i]
-        min_f, max_f = np.min(field), np.max(field)
-        threshold = np.clip(iso_threshold, min_f + 1e-6, max_f - 1e-6)
-        verts, faces, _, _ = measure.marching_cubes(field, level=threshold, spacing=(x[1]-x[0], y[1]-y[0], z[1]-z[0]))
-        mesh = go.Mesh3d(
-            x=verts[:, 0], y=verts[:, 1], z=verts[:, 2],
-            i=faces[:, 0], j=faces[:, 1], k=faces[:, 2],
-            opacity=0.5, colorscale='Viridis', intensity=verts[:, 2], showscale=False
-        )
-        fig = go.Figure(data=[mesh])
-        fig.update_layout(
-            scene_camera=dict(eye=dict(x=1.2, y=1.2, z=1.2)),
-            width=700, height=700,
-            scene=dict(
-                xaxis=dict(range=[-domain_size, domain_size]),
-                yaxis=dict(range=[-domain_size, domain_size]),
-                zaxis=dict(range=[-domain_size, domain_size]),
-                aspectmode='manual',
-                aspectratio=dict(x=1, y=1, z=1),
-                xaxis_title='X',
-                yaxis_title='Y',
-                zaxis_title='Z'
-            ),
-            scene_camera=dict(eye=dict(x=1.2, y=1.2, z=1.2)),
-            width=700, height=700,
-            scene=dict(xaxis_title='X', yaxis_title='Y', zaxis_title='Z', aspectmode='data'),
-            title=f"Frame {i + 1}/{frames} | Coherence: {coherence_scores[i]:.4f}"
-        )
-        stframe.plotly_chart(fig)
-        time.sleep(0.1)
-
 elif view_mode == "Export GIF":
     from skimage import measure
     from PIL import Image
