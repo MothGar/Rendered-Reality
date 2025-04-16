@@ -42,7 +42,7 @@ st.set_page_config(layout="wide")
 st.title("TRR Full Simulator — Render Fields, Wave Interference, and Isoplane")
 
 # --- Grid Setup ---
-grid_size = 100
+grid_size = 120
 extent = 60
 lin = np.linspace(-extent, extent, grid_size)
 X, Y, Z = np.meshgrid(lin, lin, lin)
