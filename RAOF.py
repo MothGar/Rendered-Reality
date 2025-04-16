@@ -57,6 +57,9 @@ lC = st.sidebar.slider("C - Angular Mode", 0, 4, 3)
 # --- TRR Render Threshold ---
 threshold = st.sidebar.slider("Render Threshold (Tᵣ)", 0.01, 1.0, 0.25, step=0.01)
 
+view_mode = st.sidebar.radio("View Mode", ["Point Cloud", "Isosurface"])
+
+
 # --- Frequency & Phase Mapping ---
 fxA, pxA = chladni_mode_to_waveparams(rA, lA, 'x')
 fxB, pxB = chladni_mode_to_waveparams(rB, lB, 'y')
@@ -80,29 +83,41 @@ if include_C:
 render_mask = np.abs(product_field) > threshold
 xv, yv, zv = X[render_mask], Y[render_mask], Z[render_mask]
 
-# --- 3D Plot ---
-fig = go.Figure()
-fig.add_trace(go.Scatter3d(x=xv, y=yv, z=zv, mode='markers', marker=dict(size=2, color='cyan', opacity=0.5), name="Rendered Zone"))
-fig.add_trace(go.Scatter3d(x=[xA], y=[yA], z=[zA], mode='markers+text', marker=dict(size=6, color='blue'), text=["A"]))
-fig.add_trace(go.Scatter3d(x=[xB], y=[yB], z=[zB], mode='markers+text', marker=dict(size=6, color='red'), text=["B"]))
-if include_C:
-    fig.add_trace(go.Scatter3d(x=[xC], y=[yC], z=[zC], mode='markers+text', marker=dict(size=6, color='orange'), text=["C (Obs)"]))
+if np.any(render_mask):
+    if view_mode == "Point Cloud":
+        fig = go.Figure()
+        fig.add_trace(go.Scatter3d(
+            x=X[render_mask], y=Y[render_mask], z=Z[render_mask],
+            mode='markers',
+            marker=dict(size=2, color='cyan', opacity=0.5),
+            name="Rendered Zone"
+        ))
+    else:  # Isosurface view
+        fig = go.Figure()
+        fig.add_trace(go.Isosurface(
+            x=X.flatten(), y=Y.flatten(), z=Z.flatten(),
+            value=product_field.flatten(),
+            isomin=threshold,
+            isomax=product_field.max(),
+            opacity=0.6,
+            surface_count=1,
+            caps=dict(x_show=False, y_show=False, z_show=False),
+            colorscale='Viridis'
+        ))
 
-fig.update_layout(scene=dict(aspectmode="cube", xaxis=dict(range=[-30, 30]), yaxis=dict(range=[-30, 30]), zaxis=dict(range=[-30, 30])), margin=dict(l=0, r=0, t=40, b=0), title="TRR-Coherence Collapse Field")
-st.subheader("Rendered Geometry via TRR Spheroid Overlap")
-st.plotly_chart(fig, use_container_width=True)
+    # Add sphere markers (same for both modes)
+    fig.add_trace(go.Scatter3d(x=[xA], y=[yA], z=[zA], mode='markers+text', marker=dict(size=6, color='blue'), text=["A"]))
+    fig.add_trace(go.Scatter3d(x=[xB], y=[yB], z=[zB], mode='markers+text', marker=dict(size=6, color='red'), text=["B"]))
+    if include_C:
+        fig.add_trace(go.Scatter3d(x=[xC], y=[yC], z=[zC], mode='markers+text', marker=dict(size=6, color='orange'), text=["C (Obs)"]))
 
-with st.expander("TRR Render Condition"):
-    st.markdown(r"""
-    TRR visualizes rendering events when:
+    fig.update_layout(
+        scene=dict(aspectmode="cube", xaxis=dict(range=[-30, 30]), yaxis=dict(range=[-30, 30]), zaxis=dict(range=[-30, 30])),
+        margin=dict(l=0, r=0, t=40, b=0),
+        title="TRR-Coherence Collapse Field"
+    )
+    st.subheader("Rendered Geometry via TRR Spheroid Overlap")
+    st.plotly_chart(fig, use_container_width=True)
 
-    \[
-    \left| \langle \Psi_r(x, t) \mid H_{res} \mid \Phi(x, t) \rangle \right|^2 > T_r
-    \]
-
-    - Sphere A acts as internal field source.
-    - Sphere B acts as external stimulus field.
-    - Sphere C (optional) filters the field via RAO-like resonance.
-
-    If the combined field exceeds **Tᵣ**, a realization occurs — represented in this plot.
-    """)
+else:
+    st.warning("No visible geometry. Try lowering the threshold or adjusting wave parameters.")
