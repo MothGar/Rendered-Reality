@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 
 # --- Generate 3D Resonance Field ---
-def generate_field(center, freq, phase, grid, radius=40):
+def generate_field(center, freq, phase, grid, radius=60):
     X, Y, Z = grid
     dist = np.sqrt((X - center[0])**2 + (Y - center[1])**2 + (Z - center[2])**2)
     decay = np.exp(-((dist / radius)**2))
@@ -14,7 +14,7 @@ def generate_field(center, freq, phase, grid, radius=40):
     return decay * wave
 
 # --- Generate Side-View Overlapping Waves ---
-def generate_overlapping_waves(freq1, phase1_deg, freq2, phase2_deg, extent=40, resolution=1000):
+def generate_overlapping_waves(freq1, phase1_deg, freq2, phase2_deg, extent=60, resolution=1000):
     x = np.linspace(-extent, extent, resolution)
     phase1_rad = np.radians(phase1_deg)
     phase2_rad = np.radians(phase2_deg)
@@ -38,7 +38,7 @@ st.sidebar.header("Sphere A")
 xA = st.sidebar.slider("A - X Pos", -60.0, 60.0, -20.0, step=1.0)
 yA = st.sidebar.slider("A - Y Pos", -60.0, 60.0, 0.0, step=1.0)
 zA = st.sidebar.slider("A - Z Pos", -60.0, 60.0, 0.0, step=1.0)
-freqA = st.sidebar.slider("A - Frequency", 0.1, 5.0, 0.1, step=0.1)
+freqA = st.sidebar.slider("A - Frequency", 0.1, 5.0, 0.1, step=0.01)
 phaseA = st.sidebar.slider("A - Phase (°)", 0, 360, 0, step=5)
 
 st.sidebar.header("Sphere B")
