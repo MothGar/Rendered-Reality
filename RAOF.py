@@ -107,7 +107,7 @@ else:
         value=isoplane_data.flatten(),
         isomin=threshold,
         isomax=overlap.max(),
-        surface_count=1,
+        surface_count=3,
         opacity=0.6,
         colorscale='Viridis',
         caps=dict(x_show=False, y_show=False, z_show=False),
