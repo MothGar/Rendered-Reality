@@ -1,149 +1,108 @@
-# TRR Full Simulator: Interactive 3D Overlap + Wave Interference Panel + 3D Isoplane Viewer with 3 Spheres
-
 import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
-import matplotlib.pyplot as plt
 
-# --- Generate 3D Resonance Field ---
-def generate_field(center, freq, phase, grid, radius=60, helicity=6.0):
+# --- Chladni Mode → Frequency/Phase Mapping ---
+def chladni_mode_to_waveparams(r: int, l: int, axis: str):
+    base_log_freq = 6.0
+    axis_shift = {'x': 0.0, 'y': 0.1, 'z': 0.2}[axis]
+    freq = base_log_freq + 0.3 * r + axis_shift
+    phase = (l * 90) % 360
+    return 10 ** freq, np.radians(phase)
+
+# --- Generate 3D Spherical Field Using TRR Logic ---
+def generate_field(center, freq, phase, grid, radius=60):
     X, Y, Z = grid
-    dx = X - center[0]
-    dy = Y - center[1]
-    dz = Z - center[2]
-
-    r_xy = np.sqrt(dx**2 + dy**2) + 1e-5
-    theta = np.arctan2(dy, dx)
-    phase_rad = np.radians(phase)
-
-    # 🔁 True helical wrapping term
-    helix_phase = helicity * theta + freq * dz
-
-    wave = np.sin(helix_phase + phase_rad)
-    decay = np.exp(-((r_xy / radius) ** 2))  # Falloff in radial XY
-
+    dx, dy, dz = X - center[0], Y - center[1], Z - center[2]
+    r = np.sqrt(dx**2 + dy**2 + dz**2) + 1e-5
+    decay = np.exp(-((r / radius) ** 2))
+    wave = np.sin(freq * r + phase)
     return decay * wave
 
-
-# --- Generate Side-View Overlapping Waves ---
-def generate_overlapping_waves(freq1, phase1_deg, freq2, phase2_deg, extent=60, resolution=1000):
-    x = np.linspace(-extent, extent, resolution)
-    phase1_rad = np.radians(phase1_deg)
-    phase2_rad = np.radians(phase2_deg)
-    wave1 = np.sin(freq1 * x + phase1_rad)
-    wave2 = np.sin(freq2 * x + phase2_rad)
-    product = wave1 * wave2
-    return x, wave1, wave2, product
-
-# --- Setup ---
+# --- Streamlit App Layout ---
 st.set_page_config(layout="wide")
-st.title("TRR Full Simulator — Render Fields, Wave Interference, and Isoplane")
+st.title("TRR 3-Sphere Coherence Simulator (RAO + Chladni Modes)")
 
 # --- Grid Setup ---
-grid_size = 100
+grid_size = st.sidebar.slider("Grid Size", 30, 100, 55, step=5)
 extent = 60
 lin = np.linspace(-extent, extent, grid_size)
 X, Y, Z = np.meshgrid(lin, lin, lin)
 
-# --- Sidebar Controls ---
-st.sidebar.header("Sphere A")
-xA = st.sidebar.slider("A - X Pos", -60.0, 60.0, -10.0, step=1.0)
-yA = st.sidebar.slider("A - Y Pos", -60.0, 60.0, -10.0, step=1.0)
-zA = st.sidebar.slider("A - Z Pos", -60.0, 60.0, -20.0, step=1.0)
-freqA = st.sidebar.slider("A - Frequency", 0.1, 5.0, 0.25, step=0.01)
-phaseA = st.sidebar.slider("A - Phase (°)", 0, 360, 0, step=5)
+# --- Sphere A Controls ---
+st.sidebar.header("Sphere A (RAO Source)")
+xA = st.sidebar.slider("A - X", -60.0, 60.0, -20.0)
+yA = st.sidebar.slider("A - Y", -60.0, 60.0, 0.0)
+zA = st.sidebar.slider("A - Z", -60.0, 60.0, 0.0)
+rA = st.sidebar.slider("A - Radial Mode", 0, 4, 2)
+lA = st.sidebar.slider("A - Angular Mode", 0, 4, 2)
 
+# --- Sphere B Controls ---
 st.sidebar.header("Sphere B")
-xB = st.sidebar.slider("B - X Pos", -60.0, 60.0, 0.0, step=1.0)
-yB = st.sidebar.slider("B - Y Pos", -60.0, 60.0, 0.0, step=1.0)
-zB = st.sidebar.slider("B - Z Pos", -60.0, 60.0, 0.0, step=1.0)
-freqB = st.sidebar.slider("B - Frequency", 0.1, 5.0, 0.28, step=0.01)
-phaseB = st.sidebar.slider("B - Phase (°)", 0, 360, 120, step=5)
+xB = st.sidebar.slider("B - X", -60.0, 60.0, 20.0)
+yB = st.sidebar.slider("B - Y", -60.0, 60.0, 0.0)
+zB = st.sidebar.slider("B - Z", -60.0, 60.0, 0.0)
+rB = st.sidebar.slider("B - Radial Mode", 0, 4, 2)
+lB = st.sidebar.slider("B - Angular Mode", 0, 4, 1)
 
-st.sidebar.header("Sphere C (Observer)")
-xC = st.sidebar.slider("C - X Pos", -60.0, 60.0, 10.0, step=1.0)
-yC = st.sidebar.slider("C - Y Pos", -60.0, 60.0, 10.0, step=1.0)
-zC = st.sidebar.slider("C - Z Pos", -60.0, 60.0, 20.0, step=1.0)
-freqC = st.sidebar.slider("C - Frequency", 0.1, 5.0, 0.31, step=0.01)
-phaseC = st.sidebar.slider("C - Phase (°)", 0, 360, 240, step=5)
+# --- Sphere C Controls ---
+st.sidebar.header("Observer C (RAO Filter)")
+include_C = st.sidebar.checkbox("Include Sphere C (Observer)", value=True)
+xC = st.sidebar.slider("C - X", -60.0, 60.0, 0.0)
+yC = st.sidebar.slider("C - Y", -60.0, 60.0, 20.0)
+zC = st.sidebar.slider("C - Z", -60.0, 60.0, 0.0)
+rC = st.sidebar.slider("C - Radial Mode", 0, 4, 1)
+lC = st.sidebar.slider("C - Angular Mode", 0, 4, 3)
 
-threshold = st.sidebar.slider("Render Threshold", 0.05, 1.0, 0.22, step=0.01)
-include_C = st.sidebar.checkbox("Include Observer C in Calculation", value=True)
-view_mode = st.sidebar.radio("Viewer Mode", ["3D Render", "3D Isoplane View"])
+# --- TRR Render Threshold ---
+threshold = st.sidebar.slider("Render Threshold (Tᵣ)", 0.01, 1.0, 0.25, step=0.01)
 
-# --- Compute Fields ---
-centerA = np.array([xA, yA, zA])
-centerB = np.array([xB, yB, zB])
-centerC = np.array([xC, yC, zC])
-radius = 60
+# --- Frequency & Phase Mapping ---
+fxA, pxA = chladni_mode_to_waveparams(rA, lA, 'x')
+fxB, pxB = chladni_mode_to_waveparams(rB, lB, 'y')
+fxC, pxC = chladni_mode_to_waveparams(rC, lC, 'z')
 
-fieldA = generate_field(centerA, freqA, phaseA, (X, Y, Z), radius)
-fieldB = generate_field(centerB, freqB, phaseB, (X, Y, Z), radius)
-fieldC = generate_field(centerC, freqC, phaseC, (X, Y, Z), radius)
+# --- Center Points ---
+cA = np.array([xA, yA, zA])
+cB = np.array([xB, yB, zB])
+cC = np.array([xC, yC, zC])
 
-overlap = fieldA * fieldB * fieldC if include_C else fieldA * fieldB
-render_zone = np.abs(overlap) > threshold
+# --- Field Generation ---
+fieldA = generate_field(cA, fxA, pxA, (X, Y, Z))
+fieldB = generate_field(cB, fxB, pxB, (X, Y, Z))
+fieldC = generate_field(cC, fxC, pxC, (X, Y, Z))
 
-# --- Viewer Toggle ---
-if view_mode == "3D Render":
-    xv, yv, zv = X[render_zone], Y[render_zone], Z[render_zone]
-    fig3d = go.Figure()
-    fig3d.add_trace(go.Scatter3d(x=xv.flatten(), y=yv.flatten(), z=zv.flatten(), mode='markers', marker=dict(size=2, color='lime', opacity=0.5), name="Rendered Zone"))
-    fig3d.add_trace(go.Scatter3d(x=[xA], y=[yA], z=[zA], mode='markers+text', marker=dict(size=8, color='blue'), text=["Sphere A"], name="Sphere A"))
-    fig3d.add_trace(go.Scatter3d(x=[xB], y=[yB], z=[zB], mode='markers+text', marker=dict(size=8, color='red'), text=["Sphere B"], name="Sphere B"))
-    fig3d.add_trace(go.Scatter3d(x=[xC], y=[yC], z=[zC], mode='markers+text', marker=dict(size=8, color='orange'), text=["Observer C"], name="Sphere C"))
-    fig3d.update_layout(scene=dict(xaxis=dict(range=[-30, 30]), yaxis=dict(range=[-30, 30]), zaxis=dict(range=[-30, 30]), aspectmode="cube"), margin=dict(l=0, r=0, t=40, b=0), title="Rendered Reality Volume (3-Sphere Overlap)")
-    st.subheader("3D Rendered Overlap Zone")
-    st.plotly_chart(fig3d, use_container_width=True)
-else:
-    fig_iso3d = go.Figure()
-    isoplane_data = overlap if include_C else (fieldA * fieldB)
-    fig_iso3d.add_trace(go.Isosurface(
-        x=X.flatten(),
-        y=Y.flatten(),
-        z=Z.flatten(),
-        value=isoplane_data.flatten(),
-        isomin=threshold,
-        isomax=overlap.max(),
-        surface_count=1,
-        opacity=0.6,
-        colorscale='Viridis',
-        caps=dict(x_show=False, y_show=False, z_show=False),
-        showscale=True,
-        name="Isoplane Surface"
-    ))
-    fig_iso3d.update_layout(scene=dict(xaxis=dict(range=[-30, 30]), yaxis=dict(range=[-30, 30]), zaxis=dict(range=[-30, 30]), aspectmode="cube"), margin=dict(l=0, r=0, t=40, b=0), title="3-Sphere Isoplane Resonance Field")
-    st.subheader("3D Isoplane Field Structure")
-    st.plotly_chart(fig_iso3d, use_container_width=True)
+# --- TRR Render Energy Expression: |⟨Ψr · Φ⟩|² > Tᵣ ---
+product_field = fieldA * fieldB
+if include_C:
+    product_field *= fieldC
 
-# --- Wave Panel ---
-x_wave, wA, wB, wAB = generate_overlapping_waves(freqA, phaseA, freqB, phaseB)
-_, _, wC, wABC = generate_overlapping_waves(freqA * 0 + freqC, 0, freqC, phaseC)
-fig_wave, axs = plt.subplots(2, 1, figsize=(10, 5), sharex=True)
-axs[0].plot(x_wave, wA, color='blue', label='Wave A')
-axs[0].plot(x_wave, wB, color='red', label='Wave B', linestyle='dashed')
-axs[0].plot(x_wave, wC, color='orange', label='Wave C', linestyle='dotted')
-axs[0].set_ylabel("Amplitude")
-axs[0].legend()
-axs[0].set_title("Input Resonance Waves")
-axs[1].plot(x_wave, wABC, color='green', label='Product (Render Signal)')
-axs[1].axhline(0, color='gray', lw=0.5)
-axs[1].set_xlabel("Position (X)")
-axs[1].set_ylabel("Amplitude")
-axs[1].legend()
-axs[1].set_title("Wave Product (Realization Field)")
-axs[1].set_title("Wave Product (Realization Field)")
+render_mask = np.abs(product_field) > threshold
+xv, yv, zv = X[render_mask], Y[render_mask], Z[render_mask]
 
-st.subheader("Wave Interference Viewer (Side Slice)")
-st.pyplot(fig_wave)
+# --- 3D Plot ---
+fig = go.Figure()
+fig.add_trace(go.Scatter3d(x=xv, y=yv, z=zv, mode='markers', marker=dict(size=2, color='cyan', opacity=0.5), name="Rendered Zone"))
+fig.add_trace(go.Scatter3d(x=[xA], y=[yA], z=[zA], mode='markers+text', marker=dict(size=6, color='blue'), text=["A"]))
+fig.add_trace(go.Scatter3d(x=[xB], y=[yB], z=[zB], mode='markers+text', marker=dict(size=6, color='red'), text=["B"]))
+if include_C:
+    fig.add_trace(go.Scatter3d(x=[xC], y=[yC], z=[zC], mode='markers+text', marker=dict(size=6, color='orange'), text=["C (Obs)"]))
 
-with st.expander("Explanation"):
-    st.markdown("""
-    This simulation visualizes a TRR-style field overlap in multiple ways:
+fig.update_layout(scene=dict(aspectmode="cube", xaxis=dict(range=[-30, 30]), yaxis=dict(range=[-30, 30]), zaxis=dict(range=[-30, 30])), margin=dict(l=0, r=0, t=40, b=0), title="TRR-Coherence Collapse Field")
+st.subheader("Rendered Geometry via TRR Spheroid Overlap")
+st.plotly_chart(fig, use_container_width=True)
 
-    - **3D Volume**: Points where Sphere A, B, and Observer C all overlap and exceed the threshold become *rendered*.
-    - **3D Isoplane**: Collapse surfaces generated by triadic resonance alignment.
-    - **Wave Panel**: A side-view slice showing interference patterns and the strength of their product field.
+with st.expander("TRR Render Condition"):
+    st.markdown(r"""
+    TRR visualizes rendering events when:
 
-    You can use the third sphere to simulate observer tuning or add more harmonic complexity.
+    \[
+    \left| \langle \Psi_r(x, t) \mid H_{res} \mid \Phi(x, t) \rangle \right|^2 > T_r
+    \]
+
+    - Sphere A acts as internal field source.
+    - Sphere B acts as external stimulus field.
+    - Sphere C (optional) filters the field via RAO-like resonance.
+
+    If the combined field exceeds **Tᵣ**, a realization occurs — represented in this plot.
     """)
