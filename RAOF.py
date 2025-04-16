@@ -8,10 +8,24 @@ import matplotlib.pyplot as plt
 # --- Generate 3D Resonance Field ---
 def generate_field(center, freq, phase, grid, radius=60):
     X, Y, Z = grid
-    dist = np.sqrt((X - center[0])**2 + (Y - center[1])**2 + (Z - center[2])**2)
-    decay = np.exp(-((dist / radius)**2))
-    wave = np.sin(freq * dist + np.radians(phase))
+    dx = X - center[0]
+    dy = Y - center[1]
+    dz = Z - center[2]
+
+    r = np.sqrt(dx**2 + dy**2 + dz**2) + 1e-5  # Avoid divide-by-zero
+    theta = np.arctan2(dy, dx)                # Azimuth angle (XY-plane)
+    twist = dz / r                            # Z-phase contribution
+
+    phase_rad = np.radians(phase)
+
+    # Spiral wavefield with angular and vertical coupling
+    wave = np.sin(freq * r + 2 * theta + twist + phase_rad)
+
+    # Optional decay toward edges of grid
+    decay = np.exp(-((r / radius) ** 2))
+
     return decay * wave
+
 
 # --- Generate Side-View Overlapping Waves ---
 def generate_overlapping_waves(freq1, phase1_deg, freq2, phase2_deg, extent=60, resolution=1000):
