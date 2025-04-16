@@ -6,23 +6,21 @@ import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 
 # --- Generate 3D Resonance Field ---
-def generate_field(center, freq, phase, grid, radius=60):
+def generate_field(center, freq, phase, grid, radius=60, helicity=4.0):
     X, Y, Z = grid
     dx = X - center[0]
     dy = Y - center[1]
     dz = Z - center[2]
 
-    r = np.sqrt(dx**2 + dy**2 + dz**2) + 1e-5  # Avoid divide-by-zero
-    theta = np.arctan2(dy, dx)                # Azimuth angle (XY-plane)
-    twist = dz / r                            # Z-phase contribution
-
+    r_xy = np.sqrt(dx**2 + dy**2) + 1e-5
+    theta = np.arctan2(dy, dx)
     phase_rad = np.radians(phase)
 
-    # Spiral wavefield with angular and vertical coupling
-    wave = np.sin(freq * r + 2 * theta + twist + phase_rad)
+    # 🔁 True helical wrapping term
+    helix_phase = helicity * theta + freq * dz
 
-    # Optional decay toward edges of grid
-    decay = np.exp(-((r / radius) ** 2))
+    wave = np.sin(helix_phase + phase_rad)
+    decay = np.exp(-((r_xy / radius) ** 2))  # Falloff in radial XY
 
     return decay * wave
 
