@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 
 # --- Generate 3D Resonance Field ---
-def generate_field(center, freq=0.2, phase, grid, radius=60, helicity=6.0):
+def generate_field(center, freq, phase, grid, radius=60, helicity=6.0):
     X, Y, Z = grid
     dx = X - center[0]
     dy = Y - center[1]
@@ -40,7 +40,7 @@ st.set_page_config(layout="wide")
 st.title("TRR Full Simulator — Render Fields, Wave Interference, and Isoplane")
 
 # --- Grid Setup ---
-grid_size = 118
+grid_size = 100
 extent = 60
 lin = np.linspace(-extent, extent, grid_size)
 X, Y, Z = np.meshgrid(lin, lin, lin)
