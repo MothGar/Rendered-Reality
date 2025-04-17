@@ -96,50 +96,52 @@ render_zone = np.abs(overlap) > threshold
 if view_mode == "3D Render":
     xv, yv, zv = X[render_zone], Y[render_zone], Z[render_zone]
     fig3d = go.Figure()
-    fig3d.add_trace(go.Scatter3d(x=xv.flatten(), y=yv.flatten(), z=zv.flatten(), mode='markers', marker=dict(size=2, color='lime', opacity=0.5), name="Rendered Zone"))
-    fig3d.add_trace(go.Scatter3d(x=[xA], y=[yA], z=[zA], mode='markers+text', marker=dict(size=8, color='blue'), text=["Sphere A"], name="Sphere A"))
-   # Sphere B marker (only show if included)
+    fig3d.add_trace(go.Scatter3d(
+        x=xv.flatten(), y=yv.flatten(), z=zv.flatten(),
+        mode='markers',
+        marker=dict(size=2, color='lime', opacity=0.5),
+        name="Rendered Zone"
+    ))
+
+    fig3d.add_trace(go.Scatter3d(
+        x=[xA], y=[yA], z=[zA],
+        mode='markers+text',
+        marker=dict(size=8, color='blue'),
+        text=["Sphere A"],
+        name="Sphere A"
+    ))
+
     if include_B:
         fig3d.add_trace(go.Scatter3d(
-        x=[xB], y=[yB], z=[zB],
-        mode='markers+text',
-        marker=dict(size=8, color='red'),
-        text=["Sphere B"],
-        name="Sphere B"
-    ))
+            x=[xB], y=[yB], z=[zB],
+            mode='markers+text',
+            marker=dict(size=8, color='red'),
+            text=["Sphere B"],
+            name="Sphere B"
+        ))
 
-
-   if include_C:
+    if include_C:
         fig3d.add_trace(go.Scatter3d(
-        x=[xC], y=[yC], z=[zC],
-        mode='markers+text',
-        marker=dict(size=8, color='orange'),
-        text=["Observer C"],
-        name="Sphere C"
-    ))
-    fig3d.update_layout(scene=dict(xaxis=dict(range=[-30, 30]), yaxis=dict(range=[-30, 30]), zaxis=dict(range=[-30, 30]), aspectmode="cube"), margin=dict(l=0, r=0, t=40, b=0), title="Rendered Reality Volume (3-Sphere Overlap)")
+            x=[xC], y=[yC], z=[zC],
+            mode='markers+text',
+            marker=dict(size=8, color='orange'),
+            text=["Observer C"],
+            name="Sphere C"
+        ))
+
+    fig3d.update_layout(
+        scene=dict(
+            xaxis=dict(range=[-30, 30]),
+            yaxis=dict(range=[-30, 30]),
+            zaxis=dict(range=[-30, 30]),
+            aspectmode="cube"
+        ),
+        margin=dict(l=0, r=0, t=40, b=0),
+        title="Rendered Reality Volume (3-Sphere Overlap)"
+    )
     st.subheader("3D Rendered Overlap Zone")
     st.plotly_chart(fig3d, use_container_width=True)
-else:
-    fig_iso3d = go.Figure()
-    isoplane_data = overlap  # already computed properly above
-    fig_iso3d.add_trace(go.Isosurface(
-        x=X.flatten(),
-        y=Y.flatten(),
-        z=Z.flatten(),
-        value=isoplane_data.flatten(),
-        isomin=threshold,
-        isomax=overlap.max(),
-        surface_count=1,
-        opacity=0.6,
-        colorscale='Viridis',
-        caps=dict(x_show=False, y_show=False, z_show=False),
-        showscale=True,
-        name="Isoplane Surface"
-    ))
-    fig_iso3d.update_layout(scene=dict(xaxis=dict(range=[-30, 30]), yaxis=dict(range=[-30, 30]), zaxis=dict(range=[-30, 30]), aspectmode="cube"), margin=dict(l=0, r=0, t=40, b=0), title="3-Sphere Isoplane Resonance Field")
-    st.subheader("3D Isoplane Field Structure")
-    st.plotly_chart(fig_iso3d, use_container_width=True)
+
 
 # --- Wave Panel ---
 x_wave, wA, wB, wAB = generate_overlapping_waves(freqA, phaseA, freqB, phaseB)
