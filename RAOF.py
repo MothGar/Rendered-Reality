@@ -68,6 +68,7 @@ freqC = st.sidebar.slider("C - Frequency", 0.1, 5.0, 0.31, step=0.01)
 phaseC = st.sidebar.slider("C - Phase (°)", 0, 360, 240, step=5)
 
 threshold = st.sidebar.slider("Render Threshold", 0.05, 1.0, 0.22, step=0.01)
+include_B = st.sidebar.checkbox("Include Sphere B in Calculation", value=True)
 include_C = st.sidebar.checkbox("Include Observer C in Calculation", value=True)
 view_mode = st.sidebar.radio("Viewer Mode", ["3D Render", "3D Isoplane View"])
 
@@ -81,7 +82,14 @@ fieldA = generate_field(centerA, freqA, phaseA, (X, Y, Z), radius)
 fieldB = generate_field(centerB, freqB, phaseB, (X, Y, Z), radius)
 fieldC = generate_field(centerC, freqC, phaseC, (X, Y, Z), radius)
 
-overlap = fieldA * fieldB * fieldC if include_C else fieldA * fieldB
+if include_B and include_C:
+    overlap = fieldA * fieldB * fieldC
+elif include_B and not include_C:
+    overlap = fieldA * fieldB
+elif not include_B and include_C:
+    overlap = fieldA * fieldC
+else:
+    overlap = fieldA
 render_zone = np.abs(overlap) > threshold
 
 # --- Viewer Toggle ---
@@ -90,14 +98,16 @@ if view_mode == "3D Render":
     fig3d = go.Figure()
     fig3d.add_trace(go.Scatter3d(x=xv.flatten(), y=yv.flatten(), z=zv.flatten(), mode='markers', marker=dict(size=2, color='lime', opacity=0.5), name="Rendered Zone"))
     fig3d.add_trace(go.Scatter3d(x=[xA], y=[yA], z=[zA], mode='markers+text', marker=dict(size=8, color='blue'), text=["Sphere A"], name="Sphere A"))
+    if include_B:
     fig3d.add_trace(go.Scatter3d(x=[xB], y=[yB], z=[zB], mode='markers+text', marker=dict(size=8, color='red'), text=["Sphere B"], name="Sphere B"))
+
     fig3d.add_trace(go.Scatter3d(x=[xC], y=[yC], z=[zC], mode='markers+text', marker=dict(size=8, color='orange'), text=["Observer C"], name="Sphere C"))
     fig3d.update_layout(scene=dict(xaxis=dict(range=[-30, 30]), yaxis=dict(range=[-30, 30]), zaxis=dict(range=[-30, 30]), aspectmode="cube"), margin=dict(l=0, r=0, t=40, b=0), title="Rendered Reality Volume (3-Sphere Overlap)")
     st.subheader("3D Rendered Overlap Zone")
     st.plotly_chart(fig3d, use_container_width=True)
 else:
     fig_iso3d = go.Figure()
-    isoplane_data = overlap if include_C else (fieldA * fieldB)
+    isoplane_data = overlap  # already computed properly above
     fig_iso3d.add_trace(go.Isosurface(
         x=X.flatten(),
         y=Y.flatten(),
