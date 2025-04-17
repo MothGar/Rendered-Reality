@@ -1,5 +1,4 @@
-# Rewriting the corrected TRR Full Simulator script to a file again after reset
-corrected_code = """
+
 # TRR Full Simulator: Interactive 3D Overlap + Wave Interference Panel + 3D Isoplane Viewer with 3 Spheres
 
 import streamlit as st
@@ -145,7 +144,7 @@ st.subheader("Wave Interference Viewer (Side Slice)")
 st.pyplot(fig_wave)
 
 with st.expander("Explanation"):
-    st.markdown(\"\"\"
+    st.markdown("""
     This simulation visualizes a TRR-style field overlap in multiple ways:
 
     - **3D Volume**: Points where Sphere A, B, and Observer C all overlap and exceed the threshold become *rendered*.
@@ -153,10 +152,4 @@ with st.expander("Explanation"):
     - **Wave Panel**: A side-view slice showing interference patterns and the strength of their product field.
 
     You can use the third sphere to simulate observer tuning or add more harmonic complexity.
-    \"\"\")
-"""
-
-with open("/mnt/data/TRR_Full_Simulator_Corrected.py", "w") as f:
-    f.write(corrected_code)
-
-"/mnt/data/TRR_Full_Simulator_Corrected.py"
+    """)
