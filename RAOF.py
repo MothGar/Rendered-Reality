@@ -1,4 +1,3 @@
-
 import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
@@ -118,23 +117,22 @@ else:
 render_zone = np.abs(overlap) > threshold
 
 # --- Render Visualization ---
+fig = go.Figure()
+
 if view_mode == "3D Points":
     xv, yv, zv = X[render_zone], Y[render_zone], Z[render_zone]
-    fig = go.Figure()
     fig.add_trace(go.Scatter3d(x=xv.flatten(), y=yv.flatten(), z=zv.flatten(), mode='markers',
                                marker=dict(size=2, color='cyan', opacity=0.5), name="Rendered"))
 else:
-    fig = go.Figure()
-   fig.add_trace(go.Isosurface(
-    x=X.flatten(), y=Y.flatten(), z=Z.flatten(),
-    value=overlap.flatten(),
-    isomin=threshold,
-    isomax=overlap.max(),
-    surface_count=1,
-    opacity=0.6,
-    colorscale="Viridis",
-    caps=dict(x_show=False, y_show=False, z_show=False)
-))  
+    fig.add_trace(go.Isosurface(x=X.flatten(), y=Y.flatten(), z=Z.flatten(),
+                                value=overlap.flatten(),
+                                isomin=threshold,
+                                isomax=overlap.max(),
+                                surface_count=1,
+                                opacity=0.6,
+                                colorscale="Viridis",
+                                caps=dict(x_show=False, y_show=False, z_show=False)))
+
 fig.update_layout(scene=dict(aspectmode="cube"), margin=dict(l=0, r=0, t=40, b=0),
                   title="TRR Resonance Geometry")
 st.plotly_chart(fig, use_container_width=True)
