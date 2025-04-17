@@ -1,3 +1,5 @@
+# Rewriting the corrected TRR Full Simulator script to a file again after reset
+corrected_code = """
 # TRR Full Simulator: Interactive 3D Overlap + Wave Interference Panel + 3D Isoplane Viewer with 3 Spheres
 
 import streamlit as st
@@ -15,15 +17,11 @@ def generate_field(center, freq, phase, grid, radius=60, helicity=6.0):
     r_xy = np.sqrt(dx**2 + dy**2) + 1e-5
     theta = np.arctan2(dy, dx)
     phase_rad = np.radians(phase)
-
-    # 🔁 True helical wrapping term
     helix_phase = helicity * theta + freq * dz
 
     wave = np.sin(helix_phase + phase_rad)
-    decay = np.exp(-((r_xy / radius) ** 2))  # Falloff in radial XY
-
+    decay = np.exp(-((r_xy / radius) ** 2))
     return decay * wave
-
 
 # --- Generate Side-View Overlapping Waves ---
 def generate_overlapping_waves(freq1, phase1_deg, freq2, phase2_deg, extent=60, resolution=1000):
@@ -59,6 +57,7 @@ yB = st.sidebar.slider("B - Y Pos", -60.0, 60.0, 0.0, step=1.0)
 zB = st.sidebar.slider("B - Z Pos", -60.0, 60.0, 0.0, step=1.0)
 freqB = st.sidebar.slider("B - Frequency", 0.1, 5.0, 0.28, step=0.01)
 phaseB = st.sidebar.slider("B - Phase (°)", 0, 360, 120, step=5)
+include_B = st.sidebar.checkbox("Include Sphere B in Calculation", value=True)
 
 st.sidebar.header("Sphere C (Observer)")
 xC = st.sidebar.slider("C - X Pos", -60.0, 60.0, 10.0, step=1.0)
@@ -66,19 +65,9 @@ yC = st.sidebar.slider("C - Y Pos", -60.0, 60.0, 10.0, step=1.0)
 zC = st.sidebar.slider("C - Z Pos", -60.0, 60.0, 20.0, step=1.0)
 freqC = st.sidebar.slider("C - Frequency", 0.1, 5.0, 0.31, step=0.01)
 phaseC = st.sidebar.slider("C - Phase (°)", 0, 360, 240, step=5)
+include_C = st.sidebar.checkbox("Include Observer C in Calculation", value=True)
 
 threshold = st.sidebar.slider("Render Threshold", 0.05, 1.0, 0.22, step=0.01)
-include_B = st.sidebar.checkbox("Include Sphere B in Calculation", value=True)
-if include_B and include_C:
-    overlap = fieldA * fieldB * fieldC
-elif include_B:
-    overlap = fieldA * fieldB
-elif include_C:
-    overlap = fieldA * fieldC
-else:
-    overlap = fieldA
-
-include_C = st.sidebar.checkbox("Include Observer C in Calculation", value=True)
 view_mode = st.sidebar.radio("Viewer Mode", ["3D Render", "3D Isoplane View"])
 
 # --- Compute Fields ---
@@ -93,67 +82,48 @@ fieldC = generate_field(centerC, freqC, phaseC, (X, Y, Z), radius)
 
 if include_B and include_C:
     overlap = fieldA * fieldB * fieldC
-elif include_B and not include_C:
+elif include_B:
     overlap = fieldA * fieldB
-elif not include_B and include_C:
+elif include_C:
     overlap = fieldA * fieldC
 else:
     overlap = fieldA
+
 render_zone = np.abs(overlap) > threshold
 
 # --- Viewer Toggle ---
 if view_mode == "3D Render":
     xv, yv, zv = X[render_zone], Y[render_zone], Z[render_zone]
     fig3d = go.Figure()
-
-    fig3d.add_trace(go.Scatter3d(
-        x=xv.flatten(), y=yv.flatten(), z=zv.flatten(),
-        mode='markers',
-        marker=dict(size=2, color='lime', opacity=0.5),
-        name="Rendered Zone"
-    ))
-
-    fig3d.add_trace(go.Scatter3d(
-        x=[xA], y=[yA], z=[zA],
-        mode='markers+text',
-        marker=dict(size=8, color='blue'),
-        text=["Sphere A"],
-        name="Sphere A"
-    ))
+    fig3d.add_trace(go.Scatter3d(x=xv.flatten(), y=yv.flatten(), z=zv.flatten(), mode='markers', marker=dict(size=2, color='lime', opacity=0.5), name="Rendered Zone"))
+    fig3d.add_trace(go.Scatter3d(x=[xA], y=[yA], z=[zA], mode='markers+text', marker=dict(size=8, color='blue'), text=["Sphere A"], name="Sphere A"))
 
     if include_B:
-        fig3d.add_trace(go.Scatter3d(
-            x=[xB], y=[yB], z=[zB],
-            mode='markers+text',
-            marker=dict(size=8, color='red'),
-            text=["Sphere B"],
-            name="Sphere B"
-        ))
+        fig3d.add_trace(go.Scatter3d(x=[xB], y=[yB], z=[zB], mode='markers+text', marker=dict(size=8, color='red'), text=["Sphere B"], name="Sphere B"))
 
     if include_C:
-        fig3d.add_trace(go.Scatter3d(
-            x=[xC], y=[yC], z=[zC],
-            mode='markers+text',
-            marker=dict(size=8, color='orange'),
-            text=["Sphere C"],
-            name="Observer C"
-        ))
+        fig3d.add_trace(go.Scatter3d(x=[xC], y=[yC], z=[zC], mode='markers+text', marker=dict(size=8, color='orange'), text=["Sphere C"], name="Observer C"))
 
-    fig3d.update_layout(
-        scene=dict(
-            xaxis=dict(range=[-30, 30]),
-            yaxis=dict(range=[-30, 30]),
-            zaxis=dict(range=[-30, 30]),
-            aspectmode="cube"
-        ),
-        margin=dict(l=0, r=0, t=40, b=0),
-        title="Rendered Reality Volume (3-Sphere Overlap)"
-    )
-
+    fig3d.update_layout(scene=dict(xaxis=dict(range=[-30, 30]), yaxis=dict(range=[-30, 30]), zaxis=dict(range=[-30, 30]), aspectmode="cube"), margin=dict(l=0, r=0, t=40, b=0), title="Rendered Reality Volume (3-Sphere Overlap)")
     st.subheader("3D Rendered Overlap Zone")
     st.plotly_chart(fig3d, use_container_width=True)
-
-
+else:
+    fig_iso3d = go.Figure()
+    fig_iso3d.add_trace(go.Isosurface(
+        x=X.flatten(), y=Y.flatten(), z=Z.flatten(),
+        value=overlap.flatten(),
+        isomin=threshold,
+        isomax=overlap.max(),
+        surface_count=1,
+        opacity=0.6,
+        colorscale='Viridis',
+        caps=dict(x_show=False, y_show=False, z_show=False),
+        showscale=True,
+        name="Isoplane Surface"
+    ))
+    fig_iso3d.update_layout(scene=dict(xaxis=dict(range=[-30, 30]), yaxis=dict(range=[-30, 30]), zaxis=dict(range=[-30, 30]), aspectmode="cube"), margin=dict(l=0, r=0, t=40, b=0), title="3-Sphere Isoplane Resonance Field")
+    st.subheader("3D Isoplane Field Structure")
+    st.plotly_chart(fig_iso3d, use_container_width=True)
 
 # --- Wave Panel ---
 x_wave, wA, wB, wAB = generate_overlapping_waves(freqA, phaseA, freqB, phaseB)
@@ -171,13 +141,11 @@ axs[1].set_xlabel("Position (X)")
 axs[1].set_ylabel("Amplitude")
 axs[1].legend()
 axs[1].set_title("Wave Product (Realization Field)")
-axs[1].set_title("Wave Product (Realization Field)")
-
 st.subheader("Wave Interference Viewer (Side Slice)")
 st.pyplot(fig_wave)
 
 with st.expander("Explanation"):
-    st.markdown("""
+    st.markdown(\"\"\"
     This simulation visualizes a TRR-style field overlap in multiple ways:
 
     - **3D Volume**: Points where Sphere A, B, and Observer C all overlap and exceed the threshold become *rendered*.
@@ -185,4 +153,10 @@ with st.expander("Explanation"):
     - **Wave Panel**: A side-view slice showing interference patterns and the strength of their product field.
 
     You can use the third sphere to simulate observer tuning or add more harmonic complexity.
-    """)
+    \"\"\")
+"""
+
+with open("/mnt/data/TRR_Full_Simulator_Corrected.py", "w") as f:
+    f.write(corrected_code)
+
+"/mnt/data/TRR_Full_Simulator_Corrected.py"
