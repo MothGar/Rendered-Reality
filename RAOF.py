@@ -100,7 +100,7 @@ if view_mode == "3D Render":
     fig3d.add_trace(go.Scatter3d(x=[xA], y=[yA], z=[zA], mode='markers+text', marker=dict(size=8, color='blue'), text=["Sphere A"], name="Sphere A"))
    # Sphere B marker (only show if included)
     if include_B:
-    fig3d.add_trace(go.Scatter3d(
+        fig3d.add_trace(go.Scatter3d(
         x=[xB], y=[yB], z=[zB],
         mode='markers+text',
         marker=dict(size=8, color='red'),
@@ -110,7 +110,7 @@ if view_mode == "3D Render":
 
 
    if include_C:
-    fig3d.add_trace(go.Scatter3d(
+        fig3d.add_trace(go.Scatter3d(
         x=[xC], y=[yC], z=[zC],
         mode='markers+text',
         marker=dict(size=8, color='orange'),
