@@ -98,10 +98,25 @@ if view_mode == "3D Render":
     fig3d = go.Figure()
     fig3d.add_trace(go.Scatter3d(x=xv.flatten(), y=yv.flatten(), z=zv.flatten(), mode='markers', marker=dict(size=2, color='lime', opacity=0.5), name="Rendered Zone"))
     fig3d.add_trace(go.Scatter3d(x=[xA], y=[yA], z=[zA], mode='markers+text', marker=dict(size=8, color='blue'), text=["Sphere A"], name="Sphere A"))
+   # Sphere B marker (only show if included)
     if include_B:
-    fig3d.add_trace(go.Scatter3d(x=[xB], y=[yB], z=[zB], mode='markers+text', marker=dict(size=8, color='red'), text=["Sphere B"], name="Sphere B"))
+    fig3d.add_trace(go.Scatter3d(
+        x=[xB], y=[yB], z=[zB],
+        mode='markers+text',
+        marker=dict(size=8, color='red'),
+        text=["Sphere B"],
+        name="Sphere B"
+    ))
 
-    fig3d.add_trace(go.Scatter3d(x=[xC], y=[yC], z=[zC], mode='markers+text', marker=dict(size=8, color='orange'), text=["Observer C"], name="Sphere C"))
+
+   if include_C:
+    fig3d.add_trace(go.Scatter3d(
+        x=[xC], y=[yC], z=[zC],
+        mode='markers+text',
+        marker=dict(size=8, color='orange'),
+        text=["Observer C"],
+        name="Sphere C"
+    ))
     fig3d.update_layout(scene=dict(xaxis=dict(range=[-30, 30]), yaxis=dict(range=[-30, 30]), zaxis=dict(range=[-30, 30]), aspectmode="cube"), margin=dict(l=0, r=0, t=40, b=0), title="Rendered Reality Volume (3-Sphere Overlap)")
     st.subheader("3D Rendered Overlap Zone")
     st.plotly_chart(fig3d, use_container_width=True)
