@@ -125,15 +125,16 @@ if view_mode == "3D Points":
                                marker=dict(size=2, color='cyan', opacity=0.5), name="Rendered"))
 else:
     fig = go.Figure()
-    fig.add_trace(go.Isosurface(x=X.flatten(), y=Y.flatten(), z=Z.flatten(),
-                                value=overlap.flatten(),
-                                isomin=threshold,
-                                isomax=overlap.max(),
-                                surface_count=1,
-                                opacity=0.6,
-                                colorscale="Viridis",
-                                caps=dict(x_show=False, y_show=False, z_show=False))))
-
+   fig.add_trace(go.Isosurface(
+    x=X.flatten(), y=Y.flatten(), z=Z.flatten(),
+    value=overlap.flatten(),
+    isomin=threshold,
+    isomax=overlap.max(),
+    surface_count=1,
+    opacity=0.6,
+    colorscale="Viridis",
+    caps=dict(x_show=False, y_show=False, z_show=False)
+))  
 fig.update_layout(scene=dict(aspectmode="cube"), margin=dict(l=0, r=0, t=40, b=0),
                   title="TRR Resonance Geometry")
 st.plotly_chart(fig, use_container_width=True)
