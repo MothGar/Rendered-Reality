@@ -124,15 +124,37 @@ if view_mode == "3D Points":
     fig.add_trace(go.Scatter3d(x=xv.flatten(), y=yv.flatten(), z=zv.flatten(), mode='markers',
                                marker=dict(size=2, color='cyan', opacity=0.5), name="Rendered"))
 else:
-    fig.add_trace(go.Isosurface(x=X.flatten(), y=Y.flatten(), z=Z.flatten(),
-                                value=overlap.flatten(),
-                                isomin=threshold,
-                                isomax=overlap.max(),
-                                surface_count=1,
-                                opacity=0.6,
-                                colorscale="Viridis",
-                                caps=dict(x_show=False, y_show=False, z_show=False)))
+    # 🔹 Ghost visualization of the unrealized full field (low opacity)
+    fig.add_trace(go.Volume(
+        x=X.flatten(),
+        y=Y.flatten(),
+        z=Z.flatten(),
+        value=np.abs(overlap).flatten(),
+        opacity=0.1,  # very subtle
+        surface_count=15,
+        colorscale="Greys",
+        showscale=False,
+        name="Ghost Field"
+    ))
 
-fig.update_layout(scene=dict(aspectmode="cube"), margin=dict(l=0, r=0, t=40, b=0),
+    # 🔸 Primary rendered geometry
+    fig.add_trace(go.Isosurface(
+        x=X.flatten(),
+        y=Y.flatten(),
+        z=Z.flatten(),
+        value=overlap.flatten(),
+        isomin=threshold,
+        isomax=overlap.max(),
+        surface_count=1,
+        opacity=0.6,
+        colorscale="Viridis",
+        caps=dict(x_show=False, y_show=False, z_show=False),
+        name="Rendered Geometry"
+    ))
+
+# Layout styling
+fig.update_layout(scene=dict(aspectmode="cube"),
+                  margin=dict(l=0, r=0, t=40, b=0),
                   title="TRR Resonance Geometry")
 st.plotly_chart(fig, use_container_width=True)
+
