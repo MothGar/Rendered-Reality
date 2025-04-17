@@ -69,6 +69,15 @@ phaseC = st.sidebar.slider("C - Phase (°)", 0, 360, 240, step=5)
 
 threshold = st.sidebar.slider("Render Threshold", 0.05, 1.0, 0.22, step=0.01)
 include_B = st.sidebar.checkbox("Include Sphere B in Calculation", value=True)
+if include_B and include_C:
+    overlap = fieldA * fieldB * fieldC
+elif include_B:
+    overlap = fieldA * fieldB
+elif include_C:
+    overlap = fieldA * fieldC
+else:
+    overlap = fieldA
+
 include_C = st.sidebar.checkbox("Include Observer C in Calculation", value=True)
 view_mode = st.sidebar.radio("Viewer Mode", ["3D Render", "3D Isoplane View"])
 
@@ -96,6 +105,7 @@ render_zone = np.abs(overlap) > threshold
 if view_mode == "3D Render":
     xv, yv, zv = X[render_zone], Y[render_zone], Z[render_zone]
     fig3d = go.Figure()
+
     fig3d.add_trace(go.Scatter3d(
         x=xv.flatten(), y=yv.flatten(), z=zv.flatten(),
         mode='markers',
@@ -125,8 +135,8 @@ if view_mode == "3D Render":
             x=[xC], y=[yC], z=[zC],
             mode='markers+text',
             marker=dict(size=8, color='orange'),
-            text=["Observer C"],
-            name="Sphere C"
+            text=["Sphere C"],
+            name="Observer C"
         ))
 
     fig3d.update_layout(
@@ -139,8 +149,10 @@ if view_mode == "3D Render":
         margin=dict(l=0, r=0, t=40, b=0),
         title="Rendered Reality Volume (3-Sphere Overlap)"
     )
+
     st.subheader("3D Rendered Overlap Zone")
     st.plotly_chart(fig3d, use_container_width=True)
+
 
 
 # --- Wave Panel ---
