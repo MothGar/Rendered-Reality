@@ -1,3 +1,4 @@
+
 import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
@@ -109,12 +110,12 @@ else:
     overlap = fieldA
 
 # --- Plasma Threshold Field ---
-# Simulated electron density map (Gaussian blob)
 ne_field = 1e18 * np.exp(-((X**2 + Y**2 + Z**2) / (40**2)))  # in electrons/m³
-fp_field = (1 / (2 * np.pi)) * np.sqrt((ne_field * e**2) / (epsilon_0 * m_e))  # in Hz
+fp_field = (1 / (2 * np.pi)) * np.sqrt((ne_field * e**2) / (epsilon_0 * m_e))  # Hz
+fp_scaled = fp_field / fp_field.max()
 
 # --- Rendering Condition ---
-render_zone = (np.abs(overlap)**2 > fp_field)
+render_zone = (np.abs(overlap)**2 > fp_scaled)
 
 # --- Visualization ---
 fig = go.Figure()
@@ -127,8 +128,8 @@ else:
     fig.add_trace(go.Isosurface(
         x=X.flatten(), y=Y.flatten(), z=Z.flatten(),
         value=overlap.flatten(),
-        isomin=fp_field.min(),
-        isomax=fp_field.max(),
+        isomin=fp_scaled.min(),
+        isomax=fp_scaled.max(),
         surface_count=1,
         opacity=0.6,
         colorscale="Viridis",
