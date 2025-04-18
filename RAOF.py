@@ -131,7 +131,7 @@ else:
         z=Z.flatten(),
         value=np.abs(overlap).flatten(),
         opacity=0.1,  # very subtle
-        surface_count=5,
+        surface_count=3,
         colorscale="Greys",
         showscale=False,
         name="Ghost Field"
