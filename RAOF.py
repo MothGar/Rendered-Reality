@@ -3,6 +3,11 @@ import numpy as np
 import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 
+# Physical constants for plasma frequency
+e = 1.602e-19       # Elementary charge (C)
+epsilon_0 = 8.854e-12  # Vacuum permittivity (F/m)
+m_e = 9.109e-31     # Electron mass (kg)
+
 # --- Generalized TRR Field Generator ---
 def generate_field(center, freq, phase, grid, radius=60, mode="radial", helicity=6.0, kvec=None):
     X, Y, Z = grid
@@ -34,19 +39,9 @@ def generate_field(center, freq, phase, grid, radius=60, mode="radial", helicity
     decay = np.exp(-(((X - cx)**2 + (Y - cy)**2 + (Z - cz)**2) / radius**2))
     return decay * wave
 
-# --- Generate Side-View Overlapping Waves ---
-def generate_overlapping_waves(freq1, phase1_deg, freq2, phase2_deg, extent=60, resolution=1000):
-    x = np.linspace(-extent, extent, resolution)
-    phase1_rad = np.radians(phase1_deg)
-    phase2_rad = np.radians(phase2_deg)
-    wave1 = np.sin(freq1 * x + phase1_rad)
-    wave2 = np.sin(freq2 * x + phase2_rad)
-    product = wave1 * wave2
-    return x, wave1, wave2, product
-
 # --- Setup ---
 st.set_page_config(layout="wide")
-st.title("TRR Generalized Resonance Simulator")
+st.title("TRR Plasma-Threshold Resonance Simulator")
 
 # --- Grid Setup ---
 grid_size = 100
@@ -93,7 +88,6 @@ kvec_C = np.array([st.sidebar.slider("C - kx", -1.0, 1.0, 0.0),
 helicity_C = st.sidebar.slider("C - Helicity", 0.0, 12.0, 6.0)
 include_C = st.sidebar.checkbox("Include Sphere C", value=True)
 
-threshold = st.sidebar.slider("Render Threshold", 0.01, 1.0, 0.25)
 view_mode = st.sidebar.radio("Viewer Mode", ["3D Points", "Isosurface"])
 
 # --- Compute Fields ---
@@ -114,47 +108,35 @@ elif include_C:
 else:
     overlap = fieldA
 
-render_zone = np.abs(overlap) > threshold
+# --- Plasma Threshold Field ---
+# Simulated electron density map (Gaussian blob)
+ne_field = 1e18 * np.exp(-((X**2 + Y**2 + Z**2) / (40**2)))  # in electrons/m³
+fp_field = (1 / (2 * np.pi)) * np.sqrt((ne_field * e**2) / (epsilon_0 * m_e))  # in Hz
 
-# --- Render Visualization ---
+# --- Rendering Condition ---
+render_zone = (np.abs(overlap)**2 > fp_field)
+
+# --- Visualization ---
 fig = go.Figure()
 
 if view_mode == "3D Points":
     xv, yv, zv = X[render_zone], Y[render_zone], Z[render_zone]
-    fig.add_trace(go.Scatter3d(x=xv.flatten(), y=yv.flatten(), z=zv.flatten(), mode='markers',
-                               marker=dict(size=2, color='cyan', opacity=0.5), name="Rendered"))
+    fig.add_trace(go.Scatter3d(x=xv.flatten(), y=yv.flatten(), z=zv.flatten(),
+                               mode='markers', marker=dict(size=2, color='cyan'), name="Rendered"))
 else:
-    # 🔹 Ghost visualization of the unrealized full field (low opacity)
-    fig.add_trace(go.Volume(
-        x=X.flatten(),
-        y=Y.flatten(),
-        z=Z.flatten(),
-        value=np.abs(overlap).flatten(),
-        opacity=0.1,  # very subtle
-        surface_count=3,
-        colorscale="Greys",
-        showscale=False,
-        name="Ghost Field"
-    ))
-
-    # 🔸 Primary rendered geometry
     fig.add_trace(go.Isosurface(
-        x=X.flatten(),
-        y=Y.flatten(),
-        z=Z.flatten(),
+        x=X.flatten(), y=Y.flatten(), z=Z.flatten(),
         value=overlap.flatten(),
-        isomin=threshold,
-        isomax=overlap.max(),
+        isomin=fp_field.min(),
+        isomax=fp_field.max(),
         surface_count=1,
         opacity=0.6,
         colorscale="Viridis",
         caps=dict(x_show=False, y_show=False, z_show=False),
-        name="Rendered Geometry"
+        name="Rendered Isosurface"
     ))
 
-# Layout styling
 fig.update_layout(scene=dict(aspectmode="cube"),
                   margin=dict(l=0, r=0, t=40, b=0),
-                  title="TRR Resonance Geometry")
+                  title="Plasma-Constrained Resonance Geometry")
 st.plotly_chart(fig, use_container_width=True)
-
