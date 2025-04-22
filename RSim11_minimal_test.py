@@ -31,6 +31,19 @@ y = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
 z = np.linspace(-domain_scale / 2, domain_scale / 2, grid_size)
 X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
 
+log_fx_val = clamp_log(st.session_state.get("log_fx", 6.0))
+log_fy_val = clamp_log(st.session_state.get("log_fy", 6.0))
+log_fz_val = clamp_log(st.session_state.get("log_fz", 6.0))
+
+log_fx = st.sidebar.slider("X Wave Frequency (log₁₀ Hz)", -3.0, 20.0, value=log_fx_val, step=0.1, key="log_fx")
+log_fy = st.sidebar.slider("Y Wave Frequency (log₁₀ Hz)", -3.0, 20.0, value=log_fy_val, step=0.1, key="log_fy")
+log_fz = st.sidebar.slider("Z Wave Frequency (log₁₀ Hz)", -3.0, 20.0, value=log_fz_val, step=0.1, key="log_fz")
+
+fx = 10 ** log_fx
+fy = 10 ** log_fy
+fz = 10 ** log_fz
+
+
 # Wave interference
 EX = np.sin(fx * X + phase_x)
 EY = np.sin(fy * Y + phase_y)
