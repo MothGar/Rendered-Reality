@@ -16,12 +16,7 @@ def clamp_log(value, minval=-3.0, maxval=20.0):
     return max(min(val, maxval), minval)
 
 st.set_page_config(layout="wide")
-st.title("TRR Resonance Cluster Visualizer")
 
-# Parameters
-fx = 13.5
-fy = 13.5
-fz = 13.5
 phase_x = np.radians(90)
 phase_y = np.radians(90)
 phase_z = np.radians(90)
@@ -48,20 +43,23 @@ lock_mask = ((field_norm > threshold - lock_strength) & (field_norm < threshold 
 xv, yv, zv = X[lock_mask], Y[lock_mask], Z[lock_mask]
 points = np.vstack((xv.flatten(), yv.flatten(), zv.flatten())).T
 
-if len(points) > 0:
-    # DBSCAN clustering
+if len(xv) > 0:
+    # Combine points
+    points = np.vstack((xv.flatten(), yv.flatten(), zv.flatten())).T
+
+    # Run clustering
     db = DBSCAN(eps=0.05, min_samples=10).fit(points)
     labels = db.labels_
 
     # Color assignment
-    colors = []
+    cluster_colors = []
     for label in labels:
         if label == -1:
-            colors.append('gray')
+            cluster_colors.append('gray')  # noise
         elif label % 2 == 0:
-            colors.append('orange')
+            cluster_colors.append('orange')
         else:
-            colors.append('blue')
+            cluster_colors.append('blue')
 
     # Plot
     fig = go.Figure()
@@ -70,16 +68,20 @@ if len(points) > 0:
         mode='markers',
         marker=dict(
             size=2,
-            color=colors,
+            color=cluster_colors,
             opacity=0.6
         )
     ))
+
     fig.update_layout(
         scene=dict(xaxis_title="X", yaxis_title="Y", zaxis_title="Z"),
         margin=dict(l=0, r=0, b=0, t=0),
-        paper_bgcolor='black', scene_bgcolor='black',
+        paper_bgcolor='black',
+        scene_bgcolor='black',
         height=700
     )
+
     st.plotly_chart(fig, use_container_width=True)
+
 else:
-    st.warning("No visible geometry. Try adjusting threshold or resonance settings.")
+    st.warning("No visible geometry. Adjust threshold or resonance parameters.")
