@@ -6,3 +6,5 @@ plotly
 scipy
 scikit-image
 kaleido
+scikit-learn
+
