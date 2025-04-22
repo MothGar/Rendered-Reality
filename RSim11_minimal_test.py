@@ -3,6 +3,19 @@ import numpy as np
 import plotly.graph_objects as go
 import plotly.io as pio
 import math
+from sklearn.cluster import DBSCAN
+
+# Apply clustering to the rendered points
+points = np.vstack((xv.flatten(), yv.flatten(), zv.flatten())).T
+db = DBSCAN(eps=0.05, min_samples=10).fit(points)
+labels = db.labels_
+
+# Assign orange to clustered points, gray to noise
+cluster_colors = ['orange' if label != -1 else 'gray' for label in labels]
+
+# Output colors for use in Plotly
+cluster_colors[:5]  # Return preview only
+
 
 def clamp_log(value, minval=-3.0, maxval=20.0):
     # If value is missing, non-numeric, or nan, default to 6.0
@@ -514,8 +527,7 @@ if len(xv) > 0:
         mode='markers',
         marker=dict(
             size=2,
-            color=color_vals if view_mode == "Wave Overlay" else "white",
-            colorscale='Viridis' if view_mode == "Wave Overlay" else None,
+            color=cluster_colors,
             opacity=0.6,
         )
     ))
