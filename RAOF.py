@@ -56,7 +56,7 @@ field = cached_mode(n, l, m, R, Ngrid)
 field *= np.cos(phase_rad)                    # simple phase shift
 
 # ---------- RAO filter ---------------------------------------------------
-if dk_tol < 0.99:
+if dk_tol < 0.20:
     Fx = np.fft.fftn(field)
     kx = np.fft.fftfreq(Ngrid, d=lin[1]-lin[0]) * 2*np.pi
     KX, KY, KZ = np.meshgrid(kx, kx, kx, indexing="ij")
@@ -99,8 +99,8 @@ else:  # isosurface
     fig.add_trace(go.Isosurface(
         x=X.ravel(), y=Y.ravel(), z=Z.ravel(),
         value=field.ravel(),
-        isomin=+0.05*abs_max, isomax=abs_max,
-        opacity=0.5, colorscale="Viridis", name="+"))
+        isomin=+0.20*abs_max, isomax=+abs_max,
+        opacity=0.7, colorscale="Viridis", name="+"))
     # - lobe
     neg_peak = np.abs(field[field < 0]).max()
     fig.add_trace(
@@ -110,7 +110,7 @@ else:  # isosurface
             isomin=-neg_peak,
             isomax=-.02*neg_peak,   # 2 %
             surface_count=1,
-            opacity=0.8, colorscale="Plasma", name="- lobe",
+            opacity=0.3, colorscale="Plasma", name="- lobe",
         caps=dict(x_show=False, y_show=False, z_show=False),
         )
     )
