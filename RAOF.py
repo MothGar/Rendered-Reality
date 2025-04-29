@@ -115,7 +115,7 @@ if view_mode == "3D Points":
     else:
         st.warning("No voxels rendered – raise η or lower Lock / threshold.")
 else:
-abs_max = np.abs(field).max()
+        abs_max = np.abs(field).max()
 
 fig.add_trace(
     go.Isosurface(
