@@ -115,18 +115,29 @@ if view_mode == "3D Points":
     else:
         st.warning("No voxels rendered – raise η or lower Lock / threshold.")
 else:
-    fig.add_trace(
-        go.Isosurface(
-            x = X.flatten(), y = Y.flatten(), z = Z.flatten(),
-            value = field.flatten(),
-            isomin = T_r, isomax = field.max(),
-            surface_count = 1,
-            opacity = 0.6,
-            colorscale = "Viridis",
-            caps = dict(x_show=False, y_show=False, z_show=False),
-            name = "Isosurface",
-        )
+abs_max = np.abs(field).max()
+
+fig.add_trace(
+    go.Isosurface(
+        x=X.flatten(), y=Y.flatten(), z=Z.flatten(),
+        value=field.flatten(),
+        isomin=+0.3*abs_max, isomax=abs_max,
+        surface_count=1, opacity=0.6,
+        colorscale="Viridis", name="+ lobe",
+        caps=dict(x_show=False, y_show=False, z_show=False)
     )
+)
+fig.add_trace(
+    go.Isosurface(
+        x=X.flatten(), y=Y.flatten(), z=Z.flatten(),
+        value=field.flatten(),
+        isomin=-abs_max, isomax=-0.3*abs_max,
+        surface_count=1, opacity=0.6,
+        colorscale="Plasma", name="- lobe",
+        caps=dict(x_show=False, y_show=False, z_show=False)
+    )
+)
+
 
 fig.update_layout(
     scene=dict(aspectmode="cube"),
