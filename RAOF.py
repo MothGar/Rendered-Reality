@@ -69,8 +69,8 @@ kx   = np.fft.fftfreq(grid_size, d=lin[1] - lin[0]) * 2 * np.pi
 KX, KY, KZ = np.meshgrid(kx, kx, kx, indexing="ij")
 k_mag    = np.sqrt(KX ** 2 + KY ** 2 + KZ ** 2)
 k_target = zeros_jl[l][n - 1] / domain_R
-mask = np.abs(k_mag - k_target) < dk_allowed
-field = np.fft.ifftn(Fx * mask).real
+k_mask = np.abs(k_mag - k_target) < dk_allowed
+field = np.fft.ifftn(Fx * k_mask).real
 
 # ---------- 5. Simple gain–damping update (one time step) ---------------
 if "field_prev" not in st.session_state:
