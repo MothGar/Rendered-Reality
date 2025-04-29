@@ -80,28 +80,36 @@ field_next = (2 - kappa) * field - (1 - kappa) * st.session_state.field_prev + e
 st.session_state.field_prev = field.copy()
 field = field_next
 
-# ---------- 6. Logistic render probability ------------------------------
-T_r = 0.20                                        # fixed threshold (can expose slider)
-iso = st.sidebar.slider("Point isovalue", 0.5, 0.99, 0.95)
-Prender = 1.0 / (1.0 + np.exp(-alpha_lock * (field ** 2 - T_r)))
-rng = np.random.default_rng(42)
-render_zone = rng.random(field.shape) < Prender
-submask = rng.random(field.shape) < 0.02          # 2 % keep
-render_zone &= submask
+# ---------- 6. Logistic render probability + voxel mask ---------------
+T_r = 0.20                                          # render threshold
+iso = st.sidebar.slider("Point isovalue", 0.50, 0.99, 0.95)
+
+Prender = 1.0 / (1.0 + np.exp(-alpha_lock * (field**2 - T_r)))
+
+rng   = np.random.default_rng(42)
+mask  = (Prender > iso)                            # keep only high-prob voxels
+mask &= rng.random(field.shape) < 0.02             # 2 % subsample
+
+r = np.sqrt(X**2 + Y**2 + Z**2)                    # radial coord for colouring
 
 
-# ---------- 7. Visualisation --------------------------------------------
+
+# ---------- 7. Visualisation ------------------------------------------
 fig = go.Figure()
 
 if view_mode == "3D Points":
-    xv, yv, zv = X[render_zone], Y[render_zone], Z[render_zone]
-    if xv.size:
+    if mask.any():
         fig.add_trace(
             go.Scatter3d(
-                x = X[render_zone],  y = Y[render_zone],  z = Z[render_zone],
+                x = X[mask],  y = Y[mask],  z = Z[mask],
                 mode   = "markers",
-                marker = dict(size = 3, opacity = 0.7, color = r[render_zone], colorscale = "Turbo"),
-                name="Rendered points"
+                marker = dict(
+                    size       = 3,
+                    opacity    = 0.7,
+                    color      = r[mask],           # colour-gradient
+                    colorscale = "Turbo",
+                ),
+                name = "Rendered voxels",
             )
         )
     else:
@@ -109,14 +117,14 @@ if view_mode == "3D Points":
 else:
     fig.add_trace(
         go.Isosurface(
-            x=X.flatten(), y=Y.flatten(), z=Z.flatten(),
-            value=field.flatten(),
-            isomin=T_r, isomax=field.max(),
-            surface_count=1,
-            opacity=0.6,
-            colorscale="Viridis",
-            caps=dict(x_show=False, y_show=False, z_show=False),
-            name="Isosurface"
+            x = X.flatten(), y = Y.flatten(), z = Z.flatten(),
+            value = field.flatten(),
+            isomin = T_r, isomax = field.max(),
+            surface_count = 1,
+            opacity = 0.6,
+            colorscale = "Viridis",
+            caps = dict(x_show=False, y_show=False, z_show=False),
+            name = "Isosurface",
         )
     )
 
