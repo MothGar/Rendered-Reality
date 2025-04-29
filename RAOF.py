@@ -100,7 +100,7 @@ else:  # isosurface
         x=X.ravel(), y=Y.ravel(), z=Z.ravel(),
         value=field.ravel(),
         isomin=+0.05*abs_max, isomax=abs_max,
-        opacity=0.6, colorscale="Viridis", name="+"))
+        opacity=0.5, colorscale="Viridis", name="+"))
     # - lobe
     neg_peak = np.abs(field[field < 0]).max()
     fig.add_trace(
@@ -110,7 +110,7 @@ else:  # isosurface
             isomin=-neg_peak,
             isomax=-.02*neg_peak,   # 2 % instead of 15 %
             surface_count=1,
-            opacity=0.4, colorscale="Plasma", name="- lobe",
+            opacity=0.8, colorscale="Plasma", name="- lobe",
         caps=dict(x_show=False, y_show=False, z_show=False),
         )
     )
