@@ -97,45 +97,47 @@ r = np.sqrt(X**2 + Y**2 + Z**2)                    # radial coord for colouring
 # ---------- 7. Visualisation ------------------------------------------
 fig = go.Figure()
 
-if view_mode == "3D Points":
+if view_mode == "3D Points":                            # -----------------
     if mask.any():
         fig.add_trace(
             go.Scatter3d(
                 x=X[mask], y=Y[mask], z=Z[mask],
                 mode="markers",
                 marker=dict(size=3, opacity=0.7,
-                            color=r[mask], colorscale="Turbo"),
-                name="Rendered voxels"
+                            color=r[mask],  colorscale="Turbo"),
+                name="Rendered voxels",
             )
         )
     else:
         st.warning("No voxels rendered – raise η or lower Lock / threshold.")
 
-else:   # ----------------------  Isosurface branch  ----------------------
+else:                                                   # ---- Isosurface —
     abs_max = np.abs(field).max()
 
-    # positive lobes
+    # positive lobes (two polar caps)
     fig.add_trace(
         go.Isosurface(
             x=X.flatten(), y=Y.flatten(), z=Z.flatten(),
             value=field.flatten(),
-            isomin=+0.15*abs_max, isomax=abs_max,
-            surface_count=1, opacity=0.6,
+            isomin=+0.05*abs_max, isomax=+abs_max,     # 0.05 picks up even
+            surface_count=1, opacity=0.6,              #   weak amplitude
             colorscale="Viridis", name="+ lobe",
-            caps=dict(x_show=False, y_show=False, z_show=False)
+            caps=dict(x_show=False, y_show=False, z_show=False),
         )
     )
-    # negative lobes
+
+    # negative lobes (four around equator)
     fig.add_trace(
         go.Isosurface(
             x=X.flatten(), y=Y.flatten(), z=Z.flatten(),
             value=field.flatten(),
-            isomin=-abs_max, isomax=-0.15*abs_max,
+            isomin=-abs_max, isomax=-0.05*abs_max,
             surface_count=1, opacity=0.6,
             colorscale="Plasma", name="- lobe",
-            caps=dict(x_show=False, y_show=False, z_show=False)
+            caps=dict(x_show=False, y_show=False, z_show=False),
         )
     )
+
 
 fig.update_layout(
     scene=dict(aspectmode="cube"),
