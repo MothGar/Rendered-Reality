@@ -1,147 +1,119 @@
-
+# ------------------------------------------------------------
+# TRR Resonant-Sphere Simulator  –  CWWE + RAO reference build
+# ------------------------------------------------------------
 import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
-import matplotlib.pyplot as plt
+from scipy.special import spherical_jn, sph_harm
+from scipy import special                       # Bessel zeros
 
-# Physical constants for plasma frequency
-e = 1.602e-19       # Elementary charge (C)
-epsilon_0 = 8.854e-12  # Vacuum permittivity (F/m)
-m_e = 9.109e-31     # Electron mass (kg)
+# ---------- 1. utilities -------------------------------------------------
+MAX_L = 6                                       # raise if you want higher l
+zeros_jl = {l: special.jn_zeros(l, 5) for l in range(MAX_L + 1)}  # pre-tabulate
 
-# --- Generalized TRR Field Generator ---
-def generate_field(center, freq, phase, grid, radius=60, mode="radial", helicity=6.0, kvec=None):
+def spherical_mode(n: int, l: int, m: int, R: float, grid):
+    """
+    Real part of the (n,l,m) spherical eigen-mode inside a hard sphere radius R.
+    n starts at 1 (first radial zero).
+    """
     X, Y, Z = grid
-    cx, cy, cz = center
-    phase_rad = np.radians(phase)
+    r  = np.sqrt(X ** 2 + Y ** 2 + Z ** 2) + 1e-12
+    th = np.arccos(np.clip(Z / r, -1.0, 1.0))
+    ph = np.arctan2(Y, X)
 
-    if mode == "radial":
-        r = np.sqrt((X - cx)**2 + (Y - cy)**2 + (Z - cz)**2) + 1e-5
-        wave = np.sin(freq * r + phase_rad)
+    k_nl = zeros_jl[l][n - 1] / R               # wave-number
+    field = spherical_jn(l, k_nl * r) * sph_harm(m, l, ph, th)
+    field = field.real
+    field[r > R] = 0.0                          # zero outside sphere
+    return field
 
-    elif mode == "linear":
-        if kvec is None:
-            kvec = np.array([1.0, 0.0, 0.0])
-        kx, ky, kz = kvec
-        kdotr = kx * X + ky * Y + kz * Z
-        wave = np.sin(freq * kdotr + phase_rad)
-
-    elif mode == "helical":
-        dx = X - cx
-        dy = Y - cy
-        dz = Z - cz
-        theta = np.arctan2(dy, dx)
-        helix_phase = helicity * theta + freq * dz
-        wave = np.sin(helix_phase + phase_rad)
-
-    else:
-        wave = np.zeros_like(X)
-
-    decay = np.exp(-(((X - cx)**2 + (Y - cy)**2 + (Z - cz)**2) / radius**2))
-    return decay * wave
-
-# --- Setup ---
+# ---------- 2. Streamlit page / sidebar ----------------------------------
 st.set_page_config(layout="wide")
-st.title("TRR Plasma-Threshold Resonance Simulator")
+st.title("TRR Resonant-Sphere Simulator")
 
-# --- Grid Setup ---
+st.sidebar.header("Mode selection")
+n = st.sidebar.slider("Radial index  n", 1, 3, 1)
+l = st.sidebar.slider("Angular index l", 0, 4, 2)
+m = st.sidebar.slider("m  (-l … l)", -l, l, 0)
+
+phase_deg = st.sidebar.slider("Common phase (°)", 0, 360, 0)
+phase_rad = np.radians(phase_deg)
+domain_R  = st.sidebar.slider("Sphere radius R (grid units)", 20.0, 60.0, 36.0)
+
+dk_allowed = st.sidebar.slider("Δk tolerance  (RAO filter)", 0.0, 1.0, 0.4)
+alpha_lock = 1.0 / st.sidebar.slider("Lock  (steepness)", 0.02, 0.20, 0.10)
+
+eta   = st.sidebar.slider("Gain  η",    0.0, 5.0,   1.3)
+kappa = st.sidebar.slider("Damping κ",  0.0, 0.10,  0.04)
+
+view_mode = st.sidebar.radio("Viewer mode", ["3D Points", "Isosurface"])
+
+# ---------- 3. Grid ------------------------------------------------------
 grid_size = 100
-extent = 60
+extent = 60.0
 lin = np.linspace(-extent, extent, grid_size)
-X, Y, Z = np.meshgrid(lin, lin, lin)
+X, Y, Z = np.meshgrid(lin, lin, lin, indexing="ij")
 
-# --- Sidebar Controls ---
-st.sidebar.header("Sphere A")
-xA = st.sidebar.slider("A - X", -60.0, 60.0, -15.0)
-yA = st.sidebar.slider("A - Y", -60.0, 60.0, 0.0)
-zA = st.sidebar.slider("A - Z", -60.0, 60.0, 0.0)
-freqA = st.sidebar.slider("A - Frequency", 0.1, 5.0, 1.80)
-phaseA = st.sidebar.slider("A - Phase", 0, 360, 0)
-mode_A = st.sidebar.selectbox("A - Mode", ["radial", "linear", "helical"])
-kvec_A = np.array([st.sidebar.slider("A - kx", -1.0, 1.0, 1.0),
-                   st.sidebar.slider("A - ky", -1.0, 1.0, 0.0),
-                   st.sidebar.slider("A - kz", -1.0, 1.0, 0.0)])
-helicity_A = st.sidebar.slider("A - Helicity", 0.0, 12.0, 0.0)
+# ---------- 4. Build carrier field --------------------------------------
+field = spherical_mode(n, l, m, domain_R, (X, Y, Z))
+field = np.cos(phase_rad) * field - np.sin(phase_rad) * field   # global phase shift
 
-st.sidebar.header("Sphere B")
-xB = st.sidebar.slider("B - X", -60.0, 60.0, 15.0)
-yB = st.sidebar.slider("B - Y", -60.0, 60.0, 0.0)
-zB = st.sidebar.slider("B - Z", -60.0, 60.0, 0.0)
-freqB = st.sidebar.slider("B - Frequency", 0.1, 5.0, 1.80)
-phaseB = st.sidebar.slider("B - Phase", 0, 360, 120)
-mode_B = st.sidebar.selectbox("B - Mode", ["radial", "linear", "helical"])
-kvec_B = np.array([st.sidebar.slider("B - kx", -1.0, 1.0, 0.0),
-                   st.sidebar.slider("B - ky", -1.0, 1.0, 1.0),
-                   st.sidebar.slider("B - kz", -1.0, 1.0, 0.0)])
-helicity_B = st.sidebar.slider("B - Helicity", 0.0, 12.0, 8.0)
-include_B = st.sidebar.checkbox("Include Sphere B", value=True)
+# ----- optional k-space RAO filter (keeps modes within dk_allowed) -------
+Fx   = np.fft.fftn(field)
+kx   = np.fft.fftfreq(grid_size, d=lin[1] - lin[0]) * 2 * np.pi
+KX, KY, KZ = np.meshgrid(kx, kx, kx, indexing="ij")
+k_mag    = np.sqrt(KX ** 2 + KY ** 2 + KZ ** 2)
+k_target = zeros_jl[l][n - 1] / domain_R
+mask = np.abs(k_mag - k_target) < dk_allowed
+field = np.fft.ifftn(Fx * mask).real
 
-st.sidebar.header("Sphere C (Observer)")
-xC = st.sidebar.slider("C - X", -60.0, 60.0, 0.0)
-yC = st.sidebar.slider("C - Y", -60.0, 60.0, 20.0)
-zC = st.sidebar.slider("C - Z", -60.0, 60.0, 0.0)
-freqC = st.sidebar.slider("C - Frequency", 0.1, 5.0, 1.80)
-phaseC = st.sidebar.slider("C - Phase", 0, 360, 240)
-mode_C = st.sidebar.selectbox("C - Mode", ["radial", "linear", "helical"])
-kvec_C = np.array([st.sidebar.slider("C - kx", -1.0, 1.0, 0.0),
-                   st.sidebar.slider("C - ky", -1.0, 1.0, 0.0),
-                   st.sidebar.slider("C - kz", -1.0, 1.0, 1.0)])
-helicity_C = st.sidebar.slider("C - Helicity", 0.0, 12.0, 0.0)
-include_C = st.sidebar.checkbox("Include Sphere C", value=True)
+# ---------- 5. Simple gain–damping update (one time step) ---------------
+if "field_prev" not in st.session_state:
+    st.session_state.field_prev = np.zeros_like(field)
 
-view_mode = st.sidebar.radio("Viewer Mode", ["3D Points", "Isosurface"])
-threshold_scale = st.sidebar.slider("Plasma Threshold Scale", 0.0, 1.0, 0.3)
+field_next = (2 - kappa) * field - (1 - kappa) * st.session_state.field_prev + eta * field
+st.session_state.field_prev = field.copy()
+field = field_next
 
-# --- Compute Fields ---
-centerA = np.array([xA, yA, zA])
-centerB = np.array([xB, yB, zB])
-centerC = np.array([xC, yC, zC])
+# ---------- 6. Logistic render probability ------------------------------
+T_r = 0.20                                        # fixed threshold (can expose slider)
+Prender = 1.0 / (1.0 + np.exp(-alpha_lock * (field ** 2 - T_r)))
+rng = np.random.default_rng(42)
+render_zone = rng.random(field.shape) < Prender
 
-fieldA = generate_field(centerA, freqA, phaseA, (X, Y, Z), 60, mode_A, helicity_A, kvec_A)
-fieldB = generate_field(centerB, freqB, phaseB, (X, Y, Z), 60, mode_B, helicity_B, kvec_B)
-fieldC = generate_field(centerC, freqC, phaseC, (X, Y, Z), 60, mode_C, helicity_C, kvec_C)
-
-if include_B and include_C:
-    overlap = fieldA * fieldB * fieldC
-elif include_B:
-    overlap = fieldA * fieldB
-elif include_C:
-    overlap = fieldA * fieldC
-else:
-    overlap = fieldA
-
-# --- Plasma Threshold Field ---
-ne_field = 1e18 * np.exp(-((X**2 + Y**2 + Z**2) / (40**2)))  # in electrons/m³
-fp_field = (1 / (2 * np.pi)) * np.sqrt((ne_field * e**2) / (epsilon_0 * m_e))  # Hz
-fp_scaled = (fp_field / fp_field.max()) * threshold_scale
-
-# --- Rendering Condition ---
-render_zone = (np.abs(overlap)**2 > fp_scaled)
-
-# --- Visualization ---
+# ---------- 7. Visualisation --------------------------------------------
 fig = go.Figure()
 
 if view_mode == "3D Points":
     xv, yv, zv = X[render_zone], Y[render_zone], Z[render_zone]
-    if xv.size > 0:
-        fig.add_trace(go.Scatter3d(x=xv.flatten(), y=yv.flatten(), z=zv.flatten(),
-                                   mode='markers', marker=dict(size=2, color='cyan'), name="Rendered"))
+    if xv.size:
+        fig.add_trace(
+            go.Scatter3d(
+                x=xv, y=yv, z=zv,
+                mode="markers",
+                marker=dict(size=2, color="cyan"),
+                name="Rendered points"
+            )
+        )
     else:
-        st.warning("No points passed the threshold — try lowering the plasma scale.")
+        st.warning("No voxels rendered – raise η or lower Lock / threshold.")
 else:
-    fig.add_trace(go.Isosurface(
-        x=X.flatten(), y=Y.flatten(), z=Z.flatten(),
-        value=overlap.flatten(),
-        isomin=fp_scaled.min(),
-        isomax=fp_scaled.max(),
-        surface_count=1,
-        opacity=0.6,
-        colorscale="Viridis",
-        caps=dict(x_show=False, y_show=False, z_show=False),
-        name="Rendered Isosurface"
-    ))
+    fig.add_trace(
+        go.Isosurface(
+            x=X.flatten(), y=Y.flatten(), z=Z.flatten(),
+            value=field.flatten(),
+            isomin=T_r, isomax=field.max(),
+            surface_count=1,
+            opacity=0.6,
+            colorscale="Viridis",
+            caps=dict(x_show=False, y_show=False, z_show=False),
+            name="Isosurface"
+        )
+    )
 
-fig.update_layout(scene=dict(aspectmode="cube"),
-                  margin=dict(l=0, r=0, t=40, b=0),
-                  title="Plasma-Constrained Resonance Geometry")
+fig.update_layout(
+    scene=dict(aspectmode="cube"),
+    margin=dict(l=0, r=0, t=40, b=0),
+    title=f"n={n}, l={l}, m={m} | η={eta:.2f}, κ={kappa:.2f}, Lock={1/alpha_lock:.3f}"
+)
 st.plotly_chart(fig, use_container_width=True)
