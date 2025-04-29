@@ -81,7 +81,7 @@ r = np.sqrt(X**2 + Y**2 + Z**2)               # for colour
 # ---------- visualisation -----------------------------------------------
 fig = go.Figure()
 
-if view == "3-D points":
+if view == "3-D points":          # ────────────────────────── points mode
     if mask.any():
         fig.add_trace(
             go.Scatter3d(
@@ -93,29 +93,43 @@ if view == "3-D points":
     else:
         st.warning("No voxels passed the cut.")
 
-else:  # isosurface
+else:                             # ────────────────────────── isosurface mode
     abs_max = np.abs(field).max()
-    # + lobe
-    fig.add_trace(go.Isosurface(
-        x=X.ravel(), y=Y.ravel(), z=Z.ravel(),
-        value=field.ravel(),
-        isomin=+0.20*abs_max, isomax=+abs_max,
-        opacity=0.7, 
-        colorscale = [[0.0, "rgb(255,180,  0)"],   # start-colour  (orange)
-                     [1.0, "rgb(255,100,  0)"]], name="+"))
-    # - lobe
-    neg_peak = np.abs(field[field < 0]).max()
+
+    # ---------- positive lobe -------------------------------------------
     fig.add_trace(
         go.Isosurface(
-            x=X.ravel(),  y=Y.ravel(),  z=Z.ravel(),
+            x=X.ravel(), y=Y.ravel(), z=Z.ravel(),
             value=field.ravel(),
-            isomin=-neg_peak,
-            isomax=-.02*neg_peak,   # 2 %
-            surface_count=1,
-            opacity=0.3, colorscale="Plasma", name="- lobe",
-        caps=dict(x_show=False, y_show=False, z_show=False),
+            isomin=+0.20 * abs_max, isomax=abs_max,
+            opacity=0.70,
+            colorscale=[[0.0, "rgb(255,180,0)"],   # orange → dark-orange
+                        [1.0, "rgb(255,100,0)"]],
+            name="+ lobe",
+            caps=dict(x_show=False, y_show=False, z_show=False),
         )
     )
+
+    # ---------- negative lobe (only if it exists) -----------------------
+    neg_slice = field[field < 0]          # voxels with negative field
+    if neg_slice.size:                    # <- safeguard against empty array
+        neg_peak = np.abs(neg_slice).max()
+
+        fig.add_trace(
+            go.Isosurface(
+                x=X.ravel(), y=Y.ravel(), z=Z.ravel(),
+                value=field.ravel(),
+                isomin=-neg_peak,                # full negative range
+                isomax=-0.02 * neg_peak,        # keep inner 2 %
+                opacity=0.30,
+                colorscale="Plasma",
+                name="- lobe",
+                caps=dict(x_show=False, y_show=False, z_show=False),
+            )
+        )
+    else:
+        st.info("No negative field values in this frame – skipped ‘− lobe’.")
+
 
 fig.update_layout(scene=dict(aspectmode="cube"),
                   margin=dict(l=20, r=20, t=40, b=0),
