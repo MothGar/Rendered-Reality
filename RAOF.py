@@ -107,8 +107,8 @@ else:  # isosurface
         go.Isosurface(
             x=X.ravel(),  y=Y.ravel(),  z=Z.ravel(),
             value=field.ravel(),
-            isomin=-neg_peak,
-            isomax=-2*neg_peak,   # 2 % instead of 15 %
+            isomin=-5*neg_peak,
+            isomax=-.001*neg_peak,   # 2 % instead of 15 %
             surface_count=1,
             opacity=0.4, colorscale="Plasma", name="- lobe",
         caps=dict(x_show=False, y_show=False, z_show=False),
