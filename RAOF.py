@@ -82,10 +82,11 @@ field = field_next
 
 # ---------- 6. Logistic render probability ------------------------------
 T_r = 0.20                                        # fixed threshold (can expose slider)
+iso = st.sidebar.slider("Point isovalue", 0.5, 0.99, 0.95)
 Prender = 1.0 / (1.0 + np.exp(-alpha_lock * (field ** 2 - T_r)))
 rng = np.random.default_rng(42)
 render_zone = rng.random(field.shape) < Prender
-submask = rng.random(field.shape) < 0.10          # 10 % keep
+submask = rng.random(field.shape) < 0.02          # 2 % keep
 render_zone &= submask
 
 
@@ -99,7 +100,7 @@ if view_mode == "3D Points":
             go.Scatter3d(
                 x = X[render_zone],  y = Y[render_zone],  z = Z[render_zone],
                 mode   = "markers",
-                marker = dict(size = 2, opacity = 0.6, color = "cyan"),
+                marker = dict(size = 3, opacity = 0.7, color = r[render_zone], colorscale = "Turbo"),
                 name="Rendered points"
             )
         )
