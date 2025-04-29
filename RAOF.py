@@ -109,7 +109,7 @@ else:  # isosurface
             value=field.ravel(),
             isomin=-neg_peak,
             isomax=-.15*neg_peak,   # 15 %
-            surface_count=3,
+            surface_count=1,
             opacity=0.8, colorscale="Plasma", name="- lobe",
         caps=dict(x_show=False, y_show=False, z_show=False),
         )
