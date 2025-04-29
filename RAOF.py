@@ -100,7 +100,9 @@ else:  # isosurface
         x=X.ravel(), y=Y.ravel(), z=Z.ravel(),
         value=field.ravel(),
         isomin=+0.20*abs_max, isomax=+abs_max,
-        opacity=0.7, colorscale="Viridis", name="+"))
+        opacity=0.7, 
+        colorscale = [[0.0, "rgb(255,180,  0)"],   # start-colour  (orange)
+                     [1.0, "rgb(255,100,  0)"]], name="+"))
     # - lobe
     neg_peak = np.abs(field[field < 0]).max()
     fig.add_trace(
