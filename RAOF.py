@@ -131,12 +131,14 @@ else:                                                   # ---- Isosurface —
         go.Isosurface(
             x=X.flatten(), y=Y.flatten(), z=Z.flatten(),
             value=field.flatten(),
-            isomin=-abs_max, isomax=-0.05*abs_max,
+            isomin=-abs_max,          # keep full negative range
+            isomax=-0.01*abs_max,     # <- 1 % of peak is low enough
             surface_count=1, opacity=0.6,
             colorscale="Plasma", name="- lobe",
             caps=dict(x_show=False, y_show=False, z_show=False),
         )
     )
+
 
 
 fig.update_layout(
