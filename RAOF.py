@@ -7,6 +7,24 @@ import plotly.graph_objects as go
 from scipy.special import spherical_jn, sph_harm
 from scipy import special                       # Bessel zeros
 
+import functools, numpy as np
+try:
+    import cupy as xp      # falls back to numpy if no GPU
+except ImportError:
+    xp = np
+
+@st.cache_resource
+def precompute_mode(n,l,m,R,N):
+    # returns xp.ndarray if xp is cupy
+    lin = xp.linspace(-R,R,N)
+    X,Y,Z = xp.meshgrid(lin,lin,lin,indexing='ij')
+    return spherical_mode(n,l,m,R,(X,Y,Z))
+
+# --- build / reuse carrier ---
+mode = precompute_mode(n,l,m,domain_R,grid_size)
+field = xp.asnumpy(mode)           # only if xp is cupy; else no-op
+
+
 # ---------- 1. utilities -------------------------------------------------
 MAX_L = 6                                       # raise if you want higher l
 zeros_jl = {l: special.jn_zeros(l, 5) for l in range(MAX_L + 1)}  # pre-tabulate
@@ -147,4 +165,8 @@ fig.update_layout(
     title=f"n={n}, l={l}, m={m} | η={eta:.2f}, κ={kappa:.2f}, Lock={1/alpha_lock:.3f}",
     height = 700
 )
+pts = np.column_stack((Xf[mask], Yf[mask], Zf[mask]))
+if len(pts) > 20000:
+    pts = pts[np.random.choice(len(pts), 20000, replace=False)]
+
 st.plotly_chart(fig, use_container_width=True)
