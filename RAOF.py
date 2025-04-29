@@ -34,7 +34,12 @@ st.title("TRR Resonant-Sphere Simulator")
 st.sidebar.header("Mode selection")
 n = st.sidebar.slider("Radial index  n", 1, 3, 1)
 l = st.sidebar.slider("Angular index l", 0, 4, 2)
-m = st.sidebar.slider("m  (-l … l)", -l, l, 0)
+
+if l == 0:
+    m = 0
+    st.sidebar.write("m = 0 (only value for l = 0)")
+else:
+    m = st.sidebar.slider("m  (-l … l)", -l, l, 0)
 
 phase_deg = st.sidebar.slider("Common phase (°)", 0, 360, 0)
 phase_rad = np.radians(phase_deg)
@@ -80,6 +85,9 @@ T_r = 0.20                                        # fixed threshold (can expose 
 Prender = 1.0 / (1.0 + np.exp(-alpha_lock * (field ** 2 - T_r)))
 rng = np.random.default_rng(42)
 render_zone = rng.random(field.shape) < Prender
+submask = rng.random(field.shape) < 0.10          # 10 % keep
+render_zone &= submask
+
 
 # ---------- 7. Visualisation --------------------------------------------
 fig = go.Figure()
@@ -89,9 +97,9 @@ if view_mode == "3D Points":
     if xv.size:
         fig.add_trace(
             go.Scatter3d(
-                x=xv, y=yv, z=zv,
-                mode="markers",
-                marker=dict(size=2, color="cyan"),
+                x = X[render_zone],  y = Y[render_zone],  z = Z[render_zone],
+                mode   = "markers",
+                marker = dict(size = 2, opacity = 0.6, color = "cyan"),
                 name="Rendered points"
             )
         )
