@@ -40,7 +40,7 @@ with st.sidebar:
     phase_deg = st.slider("Common phase (°)", 0, 360, 0)
     phase_rad = np.radians(phase_deg)
     R = st.slider("Sphere radius R", 20.0, 60.0, 36.0)
-    dk_tol = st.slider("Δk tolerance (RAO)", 0.0, 1.0, 0.40)
+    dk_tol = st.slider("Δk tolerance (RAO)", 0.0, 1.0, 0.30)
     alpha = 1 / st.slider("Lock (steepness)", 0.02, 0.20, 0.10)
     eta   = st.slider("Gain η",    0.0, 5.0, 1.30)
     kappa = st.slider("Damping κ", 0.0, 0.10, 0.02)
@@ -101,8 +101,8 @@ else:                             # ──────────────�
         go.Isosurface(
             x=X.ravel(), y=Y.ravel(), z=Z.ravel(),
             value=field.ravel(),
-            isomin=+0.20 * abs_max, isomax=abs_max,
-            opacity=0.70,
+            isomin=+0.02 * abs_max, isomax=abs_max,
+            opacity=0.80,
             colorscale=[[0.0, "rgb(255,180,0)"],   # orange → dark-orange
                         [1.0, "rgb(255,100,0)"]],
             name="+ lobe",
