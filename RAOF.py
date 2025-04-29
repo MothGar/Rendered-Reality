@@ -1,5 +1,5 @@
 # ------------------------------------------------------------
-# TRR Resonant-Sphere Simulator  –  CWWE + RAO reference build
+# TRR Resonant-Sphere Simulator (fast cached version)
 # ------------------------------------------------------------
 import streamlit as st
 import numpy as np
@@ -7,166 +7,110 @@ import plotly.graph_objects as go
 from scipy.special import spherical_jn, sph_harm
 from scipy import special                       # Bessel zeros
 
-import functools, numpy as np
-try:
-    import cupy as xp      # falls back to numpy if no GPU
-except ImportError:
-    xp = np
+# ---------- utilities ----------------------------------------------------
+MAX_L = 6
+zeros_jl = {l: special.jn_zeros(l, 5) for l in range(MAX_L + 1)}
 
-@st.cache_resource
-def precompute_mode(n,l,m,R,N):
-    # returns xp.ndarray if xp is cupy
-    lin = xp.linspace(-R,R,N)
-    X,Y,Z = xp.meshgrid(lin,lin,lin,indexing='ij')
-    return spherical_mode(n,l,m,R,(X,Y,Z))
-
-# --- build / reuse carrier ---
-mode = precompute_mode(n,l,m,domain_R,grid_size)
-field = xp.asnumpy(mode)           # only if xp is cupy; else no-op
-
-
-# ---------- 1. utilities -------------------------------------------------
-MAX_L = 6                                       # raise if you want higher l
-zeros_jl = {l: special.jn_zeros(l, 5) for l in range(MAX_L + 1)}  # pre-tabulate
-
-def spherical_mode(n: int, l: int, m: int, R: float, grid):
-    """
-    Real part of the (n,l,m) spherical eigen-mode inside a hard sphere radius R.
-    n starts at 1 (first radial zero).
-    """
+def spherical_mode(n, l, m, R, grid):
     X, Y, Z = grid
-    r  = np.sqrt(X ** 2 + Y ** 2 + Z ** 2) + 1e-12
+    r  = np.sqrt(X**2 + Y**2 + Z**2) + 1e-12
     th = np.arccos(np.clip(Z / r, -1.0, 1.0))
     ph = np.arctan2(Y, X)
-
-    k_nl = zeros_jl[l][n - 1] / R               # wave-number
+    k_nl = zeros_jl[l][n-1] / R
     field = spherical_jn(l, k_nl * r) * sph_harm(m, l, ph, th)
     field = field.real
-    field[r > R] = 0.0                          # zero outside sphere
+    field[r > R] = 0.0
     return field
 
-# ---------- 2. Streamlit page / sidebar ----------------------------------
+@st.cache_resource
+def cached_mode(n, l, m, R, N):
+    lin = np.linspace(-R, R, N)
+    grid = np.meshgrid(lin, lin, lin, indexing="ij")
+    return spherical_mode(n, l, m, R, grid)
+
+# ---------- UI -----------------------------------------------------------
 st.set_page_config(layout="wide")
 st.title("TRR Resonant-Sphere Simulator")
 
-st.sidebar.header("Mode selection")
-n = st.sidebar.slider("Radial index  n", 1, 3, 1)
-l = st.sidebar.slider("Angular index l", 0, 4, 2)
+with st.sidebar:
+    st.header("Mode selection")
+    n = st.slider("Radial index n", 1, 3, 1)
+    l = st.slider("Angular index l", 0, 4, 2)
+    m = 0 if l == 0 else st.slider("m (-l … l)", -l, l, 0)
+    phase_deg = st.slider("Common phase (°)", 0, 360, 0)
+    phase_rad = np.radians(phase_deg)
+    R = st.slider("Sphere radius R", 20.0, 60.0, 36.0)
+    dk_tol = st.slider("Δk tolerance (RAO)", 0.0, 1.0, 0.40)
+    alpha = 1 / st.slider("Lock (steepness)", 0.02, 0.20, 0.10)
+    eta   = st.slider("Gain η",    0.0, 5.0, 1.30)
+    kappa = st.slider("Damping κ", 0.0, 0.10, 0.02)
+    view  = st.radio("Viewer", ["3-D points", "Isosurface"])
+    iso_pt= st.slider("Point isovalue", 0.50, 0.99, 0.95)
 
-if l == 0:
-    m = 0
-    st.sidebar.write("m = 0 (only value for l = 0)")
-else:
-    m = st.sidebar.slider("m  (-l … l)", -l, l, 0)
-
-phase_deg = st.sidebar.slider("Common phase (°)", 0, 360, 0)
-phase_rad = np.radians(phase_deg)
-domain_R  = st.sidebar.slider("Sphere radius R (grid units)", 20.0, 60.0, 36.0)
-
-dk_allowed = st.sidebar.slider("Δk tolerance  (RAO filter)", 0.0, 1.0, 0.4)
-alpha_lock = 1.0 / st.sidebar.slider("Lock  (steepness)", 0.02, 0.20, 0.10)
-
-eta   = st.sidebar.slider("Gain  η",    0.0, 5.0,   1.3)
-kappa = st.sidebar.slider("Damping κ",  0.0, 0.10,  0.04)
-
-view_mode = st.sidebar.radio("Viewer mode", ["3D Points", "Isosurface"])
-
-# ---------- 3. Grid ------------------------------------------------------
-grid_size = 100
-extent = 60.0
-lin = np.linspace(-extent, extent, grid_size)
+# ---------- grid & mode --------------------------------------------------
+Ngrid = 100
+lin = np.linspace(-60, 60, Ngrid)
 X, Y, Z = np.meshgrid(lin, lin, lin, indexing="ij")
 
-# ---------- 4. Build carrier field --------------------------------------
-field = spherical_mode(n, l, m, domain_R, (X, Y, Z))
-field = np.cos(phase_rad) * field - np.sin(phase_rad) * field   # global phase shift
+field = cached_mode(n, l, m, R, Ngrid)
+field *= np.cos(phase_rad)                    # simple phase shift
 
-# ----- optional k-space RAO filter (keeps modes within dk_allowed) -------
-Fx   = np.fft.fftn(field)
-kx   = np.fft.fftfreq(grid_size, d=lin[1] - lin[0]) * 2 * np.pi
-KX, KY, KZ = np.meshgrid(kx, kx, kx, indexing="ij")
-k_mag    = np.sqrt(KX ** 2 + KY ** 2 + KZ ** 2)
-k_target = zeros_jl[l][n - 1] / domain_R
-k_mask = np.abs(k_mag - k_target) < dk_allowed
-field = np.fft.ifftn(Fx * k_mask).real
+# ---------- RAO filter ---------------------------------------------------
+if dk_tol < 0.99:
+    Fx = np.fft.fftn(field)
+    kx = np.fft.fftfreq(Ngrid, d=lin[1]-lin[0]) * 2*np.pi
+    KX, KY, KZ = np.meshgrid(kx, kx, kx, indexing="ij")
+    kmag   = np.sqrt(KX**2 + KY**2 + KZ**2)
+    k_tgt  = zeros_jl[l][n-1] / R
+    mask_k = np.abs(kmag - k_tgt) < dk_tol
+    field  = np.fft.ifftn(Fx * mask_k).real
 
-# ---------- 5. Simple gain–damping update (one time step) ---------------
-if "field_prev" not in st.session_state:
-    st.session_state.field_prev = np.zeros_like(field)
+# ---------- simple gain-damp --------------------------------------------
+if "prev" not in st.session_state:
+    st.session_state.prev = np.zeros_like(field)
+field = (2-kappa)*field - (1-kappa)*st.session_state.prev + eta*field
+st.session_state.prev = field.copy()
 
-field_next = (2 - kappa) * field - (1 - kappa) * st.session_state.field_prev + eta * field
-st.session_state.field_prev = field.copy()
-field = field_next
+# ---------- probability mask --------------------------------------------
+T_r = 0.20
+P = 1 / (1 + np.exp(-alpha * (field**2 - T_r)))
+rng = np.random.default_rng(42)
+mask = (P > iso_pt) & (rng.random(field.shape) < 0.02)
+r = np.sqrt(X**2 + Y**2 + Z**2)               # for colour
 
-# ---------- 6. Logistic render probability + voxel mask ---------------
-T_r = 0.20                                          # render threshold
-iso = st.sidebar.slider("Point isovalue", 0.50, 0.99, 0.95)
-
-Prender = 1.0 / (1.0 + np.exp(-alpha_lock * (field**2 - T_r)))
-
-rng   = np.random.default_rng(42)
-mask  = (Prender > iso)                            # keep only high-prob voxels
-mask &= rng.random(field.shape) < 0.02             # 2 % subsample
-
-r = np.sqrt(X**2 + Y**2 + Z**2)                    # radial coord for colouring
-
-
-
-# ---------- 7. Visualisation ------------------------------------------
+# ---------- visualisation -----------------------------------------------
 fig = go.Figure()
 
-if view_mode == "3D Points":                            # -----------------
+if view == "3-D points":
     if mask.any():
         fig.add_trace(
             go.Scatter3d(
                 x=X[mask], y=Y[mask], z=Z[mask],
                 mode="markers",
                 marker=dict(size=3, opacity=0.7,
-                            color=r[mask],  colorscale="Turbo"),
-                name="Rendered voxels",
-            )
-        )
+                            color=r[mask], colorscale="Turbo"),
+                name="voxels"))
     else:
-        st.warning("No voxels rendered – raise η or lower Lock / threshold.")
+        st.warning("No voxels passed the cut.")
 
-else:                                                   # ---- Isosurface —
+else:  # isosurface
     abs_max = np.abs(field).max()
-
-    # positive lobes (two polar caps)
-    fig.add_trace(
-        go.Isosurface(
-            x=X.flatten(), y=Y.flatten(), z=Z.flatten(),
-            value=field.flatten(),
-            isomin=+0.05*abs_max, isomax=+abs_max,     # 0.05 picks up even
-            surface_count=1, opacity=0.6,              #   weak amplitude
-            colorscale="Viridis", name="+ lobe",
-            caps=dict(x_show=False, y_show=False, z_show=False),
-        )
-    )
-
-    # negative lobes (four around equator)
+    # + lobe
+    fig.add_trace(go.Isosurface(
+        x=X.ravel(), y=Y.ravel(), z=Z.ravel(),
+        value=field.ravel(),
+        isomin=+0.05*abs_max, isomax=abs_max,
+        opacity=0.6, colorscale="Viridis", name="+"))
+    # - lobe
     neg_peak = np.abs(field[field < 0]).max()
-    fig.add_trace(
-        go.Isosurface(
-            x=X.ravel(),  y=Y.ravel(),  z=Z.ravel(),
-            value=field.ravel(),
-            isomin=-neg_peak,             # full negative range
-            isomax=-0.15*neg_peak,        # –15 % of its own peak
-            opacity=0.6, colorscale="Plasma", name="- lobe",
-            caps=dict(x_show=False, y_show=False, z_show=False),
-        )
-    )
+    fig.add_trace(go.Isosurface(
+        x=X.ravel(), y=Y.ravel(), z=Z.ravel(),
+        value=field.ravel(),
+        isomin=-neg_peak, isomax=-0.05*neg_peak,
+        opacity=0.6, colorscale="Plasma", name="-"))
 
-
-
-fig.update_layout(
-    scene=dict(aspectmode="cube"),
-    margin=dict(l=20, r=20, t=40, b=0),
-    title=f"n={n}, l={l}, m={m} | η={eta:.2f}, κ={kappa:.2f}, Lock={1/alpha_lock:.3f}",
-    height = 700
-)
-pts = np.column_stack((Xf[mask], Yf[mask], Zf[mask]))
-if len(pts) > 20000:
-    pts = pts[np.random.choice(len(pts), 20000, replace=False)]
-
+fig.update_layout(scene=dict(aspectmode="cube"),
+                  margin=dict(l=20, r=20, t=40, b=0),
+                  height=700,
+                  title=f"n={n}, l={l}, m={m} | η={eta:.2f}, κ={kappa:.2f}")
 st.plotly_chart(fig, use_container_width=True)
