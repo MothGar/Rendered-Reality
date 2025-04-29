@@ -1,6 +1,3 @@
-# ------------------------------------------------------------
-# TRR Resonant-Sphere Simulator (fast cached version)
-# ------------------------------------------------------------
 import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
@@ -30,7 +27,7 @@ def cached_mode(n, l, m, R, N):
 
 # ---------- UI -----------------------------------------------------------
 st.set_page_config(layout="wide")
-st.title("TRR Resonant-Sphere Simulator")
+st.title("TRR Resonant-Sphere Simulator with Tier-Coupling")
 
 with st.sidebar:
     st.header("Mode selection")
@@ -40,6 +37,18 @@ with st.sidebar:
     phase_deg = st.slider("Common phase (°)", 0, 360, 0)
     phase_rad = np.radians(phase_deg)
     R = st.slider("Sphere radius R", 20.0, 60.0, 36.0)
+
+    st.markdown("---")
+    st.header("Tier-Coupling Biases")
+    # Governing layer coupling
+    alpha_CG = st.slider("G-layer coupling α_CG", 0.0, 2.0, 0.5, step=0.05)
+    B_G = st.slider("G-layer bias B_G", -1.0, 1.0, 0.0, step=0.01)
+    # Cognitive layer coupling
+    alpha_CC = st.slider("C-layer coupling α_CC", 0.0, 2.0, 0.5, step=0.05)
+    B_C = st.slider("C-layer bias B_C", -1.0, 1.0, 0.0, step=0.01)
+
+    st.markdown("---")
+    st.header("RAO / Dynamics")
     dk_tol = st.slider("Δk tolerance (RAO)", 0.0, 1.0, 0.30)
     alpha = 1 / st.slider("Lock (steepness)", 0.02, 0.20, 0.10)
     eta   = st.slider("Gain η",    0.0, 5.0, 1.30)
@@ -49,7 +58,7 @@ with st.sidebar:
 
 # ---------- grid & mode --------------------------------------------------
 Ngrid = 100
-lin = np.linspace(-60, 60, Ngrid)
+lin = np.linspace(-R, R, Ngrid)
 X, Y, Z = np.meshgrid(lin, lin, lin, indexing="ij")
 
 field = cached_mode(n, l, m, R, Ngrid)
@@ -71,8 +80,13 @@ if "prev" not in st.session_state:
 field = (2-kappa)*field - (1-kappa)*st.session_state.prev + eta*field
 st.session_state.prev = field.copy()
 
+# ---------- dynamic threshold -------------------------------------------
+# baseline threshold
+T_r0 = st.slider("Baseline threshold T_r0", 0.0, 1.0, 0.20, step=0.01)
+# compute time-dependent render threshold
+T_r = T_r0 - alpha_CG * B_G - alpha_CC * B_C
+
 # ---------- probability mask --------------------------------------------
-T_r = 0.20
 P = 1 / (1 + np.exp(-alpha * (field**2 - T_r)))
 rng = np.random.default_rng(42)
 mask = (P > iso_pt) & (rng.random(field.shape) < 0.02)
@@ -81,7 +95,7 @@ r = np.sqrt(X**2 + Y**2 + Z**2)               # for colour
 # ---------- visualisation -----------------------------------------------
 fig = go.Figure()
 
-if view == "3-D points":          # ────────────────────────── points mode
+if view == "3-D points":
     if mask.any():
         fig.add_trace(
             go.Scatter3d(
@@ -92,35 +106,28 @@ if view == "3-D points":          # ──────────────�
                 name="voxels"))
     else:
         st.warning("No voxels passed the cut.")
-
-else:                             # ────────────────────────── isosurface mode
+else:
     abs_max = np.abs(field).max()
-
-    # ---------- positive lobe -------------------------------------------
     fig.add_trace(
         go.Isosurface(
             x=X.ravel(), y=Y.ravel(), z=Z.ravel(),
             value=field.ravel(),
             isomin=+0.02 * abs_max, isomax=abs_max,
             opacity=0.80,
-            colorscale=[[0.0, "rgb(255,180,0)"],   # orange → dark-orange
+            colorscale=[[0.0, "rgb(255,180,0)"],
                         [1.0, "rgb(255,100,0)"]],
             name="+ lobe",
             caps=dict(x_show=False, y_show=False, z_show=False),
         )
     )
-
-    # ---------- negative lobe (only if it exists) -----------------------
-    neg_slice = field[field < 0]          # voxels with negative field
-    if neg_slice.size:                    # <- safeguard against empty array
+    neg_slice = field[field < 0]
+    if neg_slice.size:
         neg_peak = np.abs(neg_slice).max()
-
         fig.add_trace(
             go.Isosurface(
                 x=X.ravel(), y=Y.ravel(), z=Z.ravel(),
                 value=field.ravel(),
-                isomin=-neg_peak,                # full negative range
-                isomax=-0.02 * neg_peak,        # keep inner 2 %
+                isomin=-neg_peak, isomax=-0.02 * neg_peak,
                 opacity=0.30,
                 colorscale="Plasma",
                 name="- lobe",
@@ -130,9 +137,8 @@ else:                             # ──────────────�
     else:
         st.info("No negative field values in this frame – skipped ‘− lobe’.")
 
-
 fig.update_layout(scene=dict(aspectmode="cube"),
                   margin=dict(l=20, r=20, t=40, b=0),
                   height=700,
-                  title=f"n={n}, l={l}, m={m} | η={eta:.2f}, κ={kappa:.2f}")
+                  title=f"n={n}, l={l}, m={m} | T_r={T_r:.2f}")
 st.plotly_chart(fig, use_container_width=True)
