@@ -131,7 +131,7 @@ else:
 fig.update_layout(
     scene=dict(aspectmode="cube"),
     margin=dict(l=20, r=20, t=40, b=0),
-    title=f"n={n}, l={l}, m={m} | η={eta:.2f}, κ={kappa:.2f}, Lock={1/alpha_lock:.3f}"
+    title=f"n={n}, l={l}, m={m} | η={eta:.2f}, κ={kappa:.2f}, Lock={1/alpha_lock:.3f}",
     height = 700
 )
 st.plotly_chart(fig, use_container_width=True)
