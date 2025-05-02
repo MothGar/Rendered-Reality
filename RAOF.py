@@ -87,7 +87,7 @@ if dk_tol < 0.20:
     KX, KY, KZ = np.meshgrid(kx, kx, kx, indexing="ij")
     kmag   = np.sqrt(KX**2 + KY**2 + KZ**2)
     k_tgt = zeros_jl[l_A][n_A - 1] / R_A
-     mask_k = np.abs(kmag - k_tgt) < dk_tol
+    mask_k = np.abs(kmag - k_tgt) < dk_tol
     field  = np.fft.ifftn(Fx * mask_k).real
 
 # ---------- simple gain-damp --------------------------------------------
