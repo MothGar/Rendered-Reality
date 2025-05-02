@@ -56,8 +56,8 @@ with col_left:
     R_C = st.slider("Radius R (C)", 20.0, 60.0, 36.0, step=2.0, key="RC")
 
 # ========== Grid Setup ==========
-Ngrid = 90
-lin = np.linspace(-90, 90, Ngrid)
+Ngrid = 100
+lin = np.linspace(-100, 100, Ngrid)
 X, Y, Z = np.meshgrid(lin, lin, lin, indexing="ij")
 
 # Sphere positions
