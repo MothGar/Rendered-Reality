@@ -77,7 +77,7 @@ with col_right:
     alpha = 1 / st.slider("Lock (steepness)", 0.02, 0.20, 0.10)
     eta   = st.slider("Gain η",    0.0, 5.0, 1.30)
     kappa = st.slider("Damping κ", 0.0, 0.10, 0.02)
-    iso_pt = st.slider("Point isovalue", 0.50, 0.99, 0.95)
+    iso_pt = st.slider("Point isovalue", 0.50, 0.99, 0.85)
     field = (field_A + field_B + field_C) / 3.0
 
 # ---------- RAO filter ---------------------------------------------------
@@ -114,7 +114,7 @@ T_r = T_r0 - alpha_CG * B_G - alpha_CC * B_C
 # ---------- probability mask --------------------------------------------
 P = 1 / (1 + np.exp(-alpha * (field**2 - T_r)))
 rng = np.random
-mask = (P > iso_pt) & (rng.random(field.shape) < 0.02)
+mask = (P > iso_pt) & (rng.random(field.shape) < 0.10)
 
 
 fig = go.Figure()
