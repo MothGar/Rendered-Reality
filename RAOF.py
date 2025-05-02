@@ -55,13 +55,6 @@ with col_left:
     m_C = 0 if l_C == 0 else st.slider("m (C)", -l_C, l_C, 0, key="mC")
     R_C = st.slider("Radius R (C)", 20.0, 60.0, 36.0, key="RC")
 
-if "apply_triggered" not in st.session_state:
-    st.session_state.apply_triggered = False
-
-apply_clicked = st.button("✅ Apply Changes", key="apply_button_right")
-if apply_clicked:
-    st.session_state.apply_triggered = True
-
 # ========== Grid Setup ==========
 Ngrid = 100
 lin = np.linspace(-60, 60, Ngrid)
@@ -71,7 +64,6 @@ X, Y, Z = np.meshgrid(lin, lin, lin, indexing="ij")
 offset_A = np.array([0.0, 0.0, 0.0])
 offset_B = np.array([60.0, 0.0, 0.0])
 offset_C = np.array([0.0, 60.0, 0.0])
-if st.session_state.get("apply_triggered", False):
 
 # ========== Mode Calculations ==========
     field_A = spherical_mode(n_A, l_A, m_A, R_A, (X - offset_A[0], Y - offset_A[1], Z - offset_A[2]))
@@ -181,5 +173,3 @@ if st.session_state.get("apply_triggered", False):
         with col_middle:
             st.plotly_chart(fig, use_container_width=True)
 
-    # Reset trigger
-    st.session_state.apply_triggered = False
