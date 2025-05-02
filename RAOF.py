@@ -27,26 +27,29 @@ def cached_mode(n, l, m, R, N):
 
 # ---------- UI -----------------------------------------------------------
 st.set_page_config(layout="wide")
-col_left, col_right = st.columns([3, 1])
+col_left, col_middle, col_right = st.columns([1.5, 2.5, 1.5])
 with col_left:
     st.title("TRR Resonant-Sphere Simulator")
 
 # Viewer will be inserted here later (see step 3)
 
 # ========== Independent Sphere Parameters ==========
-with st.sidebar.expander("🔴 Sphere A — Central", expanded=True):
+with col_left:
+    st.subheader("🔴 Sphere A — Central")
     n_A = st.slider("n (A)", 1, 3, 1, key="nA")
     l_A = st.slider("l (A)", 0, 4, 2, key="lA")
     m_A = 0 if l_A == 0 else st.slider("m (A)", -l_A, l_A, 0, key="mA")
     R_A = st.slider("Radius R (A)", 20.0, 60.0, 36.0, key="RA")
 
-with st.sidebar.expander("🔵 Sphere B — X Offset", expanded=True):
+with col_left
+    st.subheader("🔵 Sphere B — X Offset")
     n_B = st.slider("n (B)", 1, 3, 1, key="nB")
     l_B = st.slider("l (B)", 0, 4, 2, key="lB")
     m_B = 0 if l_B == 0 else st.slider("m (B)", -l_B, l_B, 0, key="mB")
     R_B = st.slider("Radius R (B)", 20.0, 60.0, 36.0, key="RB")
 
-with st.sidebar.expander("🟢 Sphere C — Y Offset", expanded=True):
+with col_left
+    st.subheader("🟢 Sphere C — Y Offset")
     n_C = st.slider("n (C)", 1, 3, 1, key="nC")
     l_C = st.slider("l (C)", 0, 4, 2, key="lC")
     m_C = 0 if l_C == 0 else st.slider("m (C)", -l_C, l_C, 0, key="mC")
@@ -174,7 +177,8 @@ if st.session_state.get("apply_triggered", False):
                       margin=dict(l=20, r=20, t=40, b=0),
                       height=700,
                       title=f"A(n={n_A}, l={l_A}, m={m_A}) | B(n={n_B}, l={l_B}, m={m_B}) | C(n={n_C}, l={l_C}, m={m_C}) | T_r={T_r:.2f}")
-    st.plotly_chart(fig, use_container_width=True)
+    with col_middle:
+        st.plotly_chart(fig, use_container_width=True)
 
     # Reset trigger
     st.session_state.apply_triggered = False
