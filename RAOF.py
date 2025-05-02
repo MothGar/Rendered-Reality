@@ -119,54 +119,54 @@ r = np.sqrt(X**2 + Y**2 + Z**2)               # for colour
 
 fig = go.Figure()
 
-    if view == "3-D points":
-        if mask.any():
-            fig.add_trace(
-                 go.Scatter3d(
-                     x=X[mask], y=Y[mask], z=Z[mask],
-                     mode="markers",
-                     marker=dict(size=3, opacity=0.7,
-                                color=r[mask], colorscale="Turbo"),
-                    name="voxels"))
-        else:
-            st.warning("No voxels passed the cut.")
+if view == "3-D points":
+    if mask.any():
+        fig.add_trace(
+                go.Scatter3d(
+                    x=X[mask], y=Y[mask], z=Z[mask],
+                    mode="markers",
+                    marker=dict(size=3, opacity=0.7,
+                            color=r[mask], colorscale="Turbo"),
+                name="voxels"))
+     else:
+        st.warning("No voxels passed the cut.")
 
-    elif view == "Isosurface":
-        abs_max = np.abs(field).max()
+elif view == "Isosurface":
+    abs_max = np.abs(field).max()
+    fig.add_trace(
+        go.Isosurface(
+            x=X.ravel(), y=Y.ravel(), z=Z.ravel(),
+            value=field.ravel(),
+            isomin=+0.02 * abs_max, isomax=abs_max,
+            opacity=0.80,
+            colorscale=[[0.0, "rgb(255,180,0)"],
+                        [1.0, "rgb(255,100,0)"]],
+            name="+ lobe",
+            caps=dict(x_show=False, y_show=False, z_show=False),
+        )
+    )
+
+    neg_slice = field[field < 0]
+    if neg_slice.size:
+        neg_peak = np.abs(neg_slice).max()
         fig.add_trace(
             go.Isosurface(
                 x=X.ravel(), y=Y.ravel(), z=Z.ravel(),
                 value=field.ravel(),
-                isomin=+0.02 * abs_max, isomax=abs_max,
-                opacity=0.80,
-                colorscale=[[0.0, "rgb(255,180,0)"],
-                            [1.0, "rgb(255,100,0)"]],
-                name="+ lobe",
+                isomin=-neg_peak, isomax=-0.02 * neg_peak,
+                opacity=0.30,
+                colorscale="Plasma",
+                 name="- lobe",
                 caps=dict(x_show=False, y_show=False, z_show=False),
             )
         )
+    else:
+        st.info("No negative field values in this frame – skipped ‘− lobe’.")
 
-        neg_slice = field[field < 0]
-        if neg_slice.size:
-            neg_peak = np.abs(neg_slice).max()
-            fig.add_trace(
-                go.Isosurface(
-                    x=X.ravel(), y=Y.ravel(), z=Z.ravel(),
-                    value=field.ravel(),
-                    isomin=-neg_peak, isomax=-0.02 * neg_peak,
-                    opacity=0.30,
-                    colorscale="Plasma",
-                    name="- lobe",
-                    caps=dict(x_show=False, y_show=False, z_show=False),
-                )
-            )
-        else:
-            st.info("No negative field values in this frame – skipped ‘− lobe’.")
-
-    fig.update_layout(scene=dict(aspectmode="cube"),
-                        margin=dict(l=20, r=20, t=40, b=0),
-                        height=700,
-                        title=f"A(n={n_A}, l={l_A}, m={m_A}) | B(n={n_B}, l={l_B}, m={m_B}) | C(n={n_C}, l={l_C}, m={m_C}) | T_r={T_r:.2f}")
-    with col_middle:
-        st.plotly_chart(fig, use_container_width=True)
+fig.update_layout(scene=dict(aspectmode="cube"),
+                margin=dict(l=20, r=20, t=40, b=0),
+                height=700,
+                title=f"A(n={n_A}, l={l_A}, m={m_A}) | B(n={n_B}, l={l_B}, m={m_B}) | C(n={n_C}, l={l_C}, m={m_C}) | T_r={T_r:.2f}")
+with col_middle:
+    st.plotly_chart(fig, use_container_width=True)
 
