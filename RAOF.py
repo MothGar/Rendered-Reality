@@ -128,8 +128,8 @@ if view == "3-D points":
                     marker=dict(size=3, opacity=0.7,
                             color=r[mask], colorscale="Turbo"),
                 name="voxels"))
-     else:
-        st.warning("No voxels passed the cut.")
+ else:
+    st.warning("No voxels passed the cut.")
 
 elif view == "Isosurface":
     abs_max = np.abs(field).max()
