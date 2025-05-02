@@ -27,7 +27,11 @@ def cached_mode(n, l, m, R, N):
 
 # ---------- UI -----------------------------------------------------------
 st.set_page_config(layout="wide")
-st.title("TRR Resonant-Sphere Simulator with Tier-Coupling")
+col_left, col_right = st.columns([3, 1])
+with col_left:
+    st.title("TRR Resonant-Sphere Simulator")
+
+# Viewer will be inserted here later (see step 3)
 
 # ========== Independent Sphere Parameters ==========
 with st.sidebar.expander("🔴 Sphere A — Central", expanded=True):
@@ -71,12 +75,14 @@ field_B = spherical_mode(n_B, l_B, m_B, R_B, (X - offset_B[0], Y - offset_B[1], 
 field_C = spherical_mode(n_C, l_C, m_C, R_C, (X - offset_C[0], Y - offset_C[1], Z - offset_C[2]))
 
 # Combine fields (average or weighted sum if desired)
-dk_tol = st.slider("Δk tolerance (RAO)", 0.0, 1.0, 0.30)
-alpha = 1 / st.slider("Lock (steepness)", 0.02, 0.20, 0.10)
-eta   = st.slider("Gain η",    0.0, 5.0, 1.30)
-kappa = st.slider("Damping κ", 0.0, 0.10, 0.02)
-iso_pt = st.slider("Point isovalue", 0.50, 0.99, 0.95)
-field = (field_A + field_B + field_C) / 3.0
+with col_right:
+    st.subheader("⚙️ Render Settings")
+    dk_tol = st.slider("Δk tolerance (RAO)", 0.0, 1.0, 0.30)
+    alpha = 1 / st.slider("Lock (steepness)", 0.02, 0.20, 0.10)
+    eta   = st.slider("Gain η",    0.0, 5.0, 1.30)
+    kappa = st.slider("Damping κ", 0.0, 0.10, 0.02)
+    iso_pt = st.slider("Point isovalue", 0.50, 0.99, 0.95)
+    field = (field_A + field_B + field_C) / 3.0
 
 # ---------- RAO filter ---------------------------------------------------
 if dk_tol < 0.20:
@@ -104,7 +110,11 @@ B_G = st.slider("G-layer bias B_G", -1.0, 1.0, 0.0, step=0.01)
 # Cognitive layer coupling
 alpha_CC = st.slider("C-layer coupling α_CC", 0.0, 2.0, 0.5, step=0.05)
 B_C = st.slider("C-layer bias B_C", -1.0, 1.0, 0.0, step=0.01)
-
+view = st.radio("Viewer", ["3-D points", "Isosurface"])
+    apply_clicked = st.button("✅ Apply Changes")
+    if apply_clicked:
+        st.session_state.apply_triggered = True
+        
 T_r = T_r0 - alpha_CG * B_G - alpha_CC * B_C
 
 # ---------- probability mask --------------------------------------------
