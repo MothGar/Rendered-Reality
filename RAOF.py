@@ -131,7 +131,8 @@ if view == "3-D points":
             )
         )
     else:
-        st.warning("No voxels passed the cut.")
+        with col_middle:
+            st.warning("No voxels passed the cut.")
 
 elif view == "Isosurface":
     abs_max = np.abs(field).max()
