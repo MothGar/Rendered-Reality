@@ -121,7 +121,6 @@ P = 1 / (1 + np.exp(-alpha * (field**2 - T_r)))
 rng = np.random.default_rng(42)
 mask = (P > iso_pt) & (rng.random(field.shape) < 0.02)
 r = np.sqrt(X**2 + Y**2 + Z**2)               # for colour
-view = st.radio("Viewer", ["3-D points", "Isosurface"])
 
 # Apply-triggered rendering block
 if st.session_state.get("apply_triggered", False):
