@@ -56,7 +56,7 @@ with col_left:
     R_C = st.slider("Radius R (C)", 20.0, 60.0, 36.0, key="RC")
 
 # ========== Grid Setup ==========
-Ngrid = 100
+Ngrid = 60
 lin = np.linspace(-60, 60, Ngrid)
 X, Y, Z = np.meshgrid(lin, lin, lin, indexing="ij")
 
@@ -64,7 +64,7 @@ X, Y, Z = np.meshgrid(lin, lin, lin, indexing="ij")
 offset_A = np.array([0.0, 0.0, 0.0])
 offset_B = np.array([60.0, 0.0, 0.0])
 offset_C = np.array([0.0, 60.0, 0.0])
-
+r = np.sqrt(X**2 + Y**2 + Z**2)               # for colour
 # ========== Mode Calculations ==========
 field_A = spherical_mode(n_A, l_A, m_A, R_A, (X - offset_A[0], Y - offset_A[1], Z - offset_A[2]))
 field_B = spherical_mode(n_B, l_B, m_B, R_B, (X - offset_B[0], Y - offset_B[1], Z - offset_B[2]))
@@ -81,7 +81,7 @@ with col_right:
     field = (field_A + field_B + field_C) / 3.0
 
 # ---------- RAO filter ---------------------------------------------------
-if dk_tol < 0.20:
+if dk_tol < 0.15:
     Fx = np.fft.fftn(field)
     kx = np.fft.fftfreq(Ngrid, d=lin[1]-lin[0]) * 2*np.pi
     KX, KY, KZ = np.meshgrid(kx, kx, kx, indexing="ij")
@@ -113,9 +113,9 @@ T_r = T_r0 - alpha_CG * B_G - alpha_CC * B_C
 
 # ---------- probability mask --------------------------------------------
 P = 1 / (1 + np.exp(-alpha * (field**2 - T_r)))
-rng = np.random.default_rng(42)
+rng = np.random
 mask = (P > iso_pt) & (rng.random(field.shape) < 0.02)
-r = np.sqrt(X**2 + Y**2 + Z**2)               # for colour
+
 
 fig = go.Figure()
 
