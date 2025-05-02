@@ -65,7 +65,6 @@ field_C = spherical_mode(n_C, l_C, m_C, R_C, (X - offset_C[0], Y - offset_C[1], 
 
 # Combine fields (average or weighted sum if desired)
 field = (field_A + field_B + field_C) / 3.0
-field *= np.cos(phase_rad)                    # simple phase shift
 
 # ---------- RAO filter ---------------------------------------------------
 if dk_tol < 0.20:
