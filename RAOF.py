@@ -155,5 +155,5 @@ else:
 fig.update_layout(scene=dict(aspectmode="cube"),
                   margin=dict(l=20, r=20, t=40, b=0),
                   height=700,
-                  title=f"n={n}, l={l}, m={m} | T_r={T_r:.2f}")
+                  title=f"A(n={n_A}, l={l_A}, m={m_A}) | B(n={n_B}, l={l_B}, m={m_B}) | C(n={n_C}, l={l_C}, m={m_C}) | T_r={T_r:.2f}")
 st.plotly_chart(fig, use_container_width=True)
