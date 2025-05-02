@@ -29,39 +29,42 @@ def cached_mode(n, l, m, R, N):
 st.set_page_config(layout="wide")
 st.title("TRR Resonant-Sphere Simulator with Tier-Coupling")
 
-with st.sidebar:
-    st.header("Mode selection")
-    n = st.slider("Radial index n", 1, 3, 1)
-    l = st.slider("Angular index l", 0, 4, 2)
-    m = 0 if l == 0 else st.slider("m (-l … l)", -l, l, 0)
-    phase_deg = st.slider("Common phase (°)", 0, 360, 0)
-    phase_rad = np.radians(phase_deg)
-    R = st.slider("Sphere radius R", 20.0, 60.0, 36.0)
+# ========== Independent Sphere Parameters ==========
+with st.sidebar.expander("🔴 Sphere A — Central", expanded=True):
+    n_A = st.slider("n (A)", 1, 3, 1, key="nA")
+    l_A = st.slider("l (A)", 0, 4, 2, key="lA")
+    m_A = 0 if l_A == 0 else st.slider("m (A)", -l_A, l_A, 0, key="mA")
+    R_A = st.slider("Radius R (A)", 20.0, 60.0, 36.0, key="RA")
 
-    st.markdown("---")
-    st.header("Tier-Coupling Biases")
-    # Governing layer coupling
-    alpha_CG = st.slider("G-layer coupling α_CG", 0.0, 2.0, 0.5, step=0.05)
-    B_G = st.slider("G-layer bias B_G", -1.0, 1.0, 0.0, step=0.01)
-    # Cognitive layer coupling
-    alpha_CC = st.slider("C-layer coupling α_CC", 0.0, 2.0, 0.5, step=0.05)
-    B_C = st.slider("C-layer bias B_C", -1.0, 1.0, 0.0, step=0.01)
+with st.sidebar.expander("🔵 Sphere B — X Offset", expanded=True):
+    n_B = st.slider("n (B)", 1, 3, 1, key="nB")
+    l_B = st.slider("l (B)", 0, 4, 2, key="lB")
+    m_B = 0 if l_B == 0 else st.slider("m (B)", -l_B, l_B, 0, key="mB")
+    R_B = st.slider("Radius R (B)", 20.0, 60.0, 36.0, key="RB")
 
-    st.markdown("---")
-    st.header("RAO / Dynamics")
-    dk_tol = st.slider("Δk tolerance (RAO)", 0.0, 1.0, 0.30)
-    alpha = 1 / st.slider("Lock (steepness)", 0.02, 0.20, 0.10)
-    eta   = st.slider("Gain η",    0.0, 5.0, 1.30)
-    kappa = st.slider("Damping κ", 0.0, 0.10, 0.02)
-    view  = st.radio("Viewer", ["3-D points", "Isosurface"])
-    iso_pt= st.slider("Point isovalue", 0.50, 0.99, 0.95)
+with st.sidebar.expander("🟢 Sphere C — Y Offset", expanded=True):
+    n_C = st.slider("n (C)", 1, 3, 1, key="nC")
+    l_C = st.slider("l (C)", 0, 4, 2, key="lC")
+    m_C = 0 if l_C == 0 else st.slider("m (C)", -l_C, l_C, 0, key="mC")
+    R_C = st.slider("Radius R (C)", 20.0, 60.0, 36.0, key="RC")
 
-# ---------- grid & mode --------------------------------------------------
+# ========== Grid Setup ==========
 Ngrid = 100
-lin = np.linspace(-R, R, Ngrid)
+lin = np.linspace(-60, 60, Ngrid)
 X, Y, Z = np.meshgrid(lin, lin, lin, indexing="ij")
 
-field = cached_mode(n, l, m, R, Ngrid)
+# Sphere positions
+offset_A = np.array([0.0, 0.0, 0.0])
+offset_B = np.array([60.0, 0.0, 0.0])
+offset_C = np.array([0.0, 60.0, 0.0])
+
+# ========== Mode Calculations ==========
+field_A = spherical_mode(n_A, l_A, m_A, R_A, (X - offset_A[0], Y - offset_A[1], Z - offset_A[2]))
+field_B = spherical_mode(n_B, l_B, m_B, R_B, (X - offset_B[0], Y - offset_B[1], Z - offset_B[2]))
+field_C = spherical_mode(n_C, l_C, m_C, R_C, (X - offset_C[0], Y - offset_C[1], Z - offset_C[2]))
+
+# Combine fields (average or weighted sum if desired)
+field = (field_A + field_B + field_C) / 3.0
 field *= np.cos(phase_rad)                    # simple phase shift
 
 # ---------- RAO filter ---------------------------------------------------
