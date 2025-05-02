@@ -83,7 +83,7 @@ if dk_tol < 0.20:
     kx = np.fft.fftfreq(Ngrid, d=lin[1]-lin[0]) * 2*np.pi
     KX, KY, KZ = np.meshgrid(kx, kx, kx, indexing="ij")
     kmag   = np.sqrt(KX**2 + KY**2 + KZ**2)
-    k_tgt  = zeros_jl[l][n-1] / R
+    k_tgt = zeros_jl[l_A][n_A - 1] / R_A
     mask_k = np.abs(kmag - k_tgt) < dk_tol
     field  = np.fft.ifftn(Fx * mask_k).real
 
@@ -169,4 +169,4 @@ if st.session_state.get("apply_triggered", False):
     st.plotly_chart(fig, use_container_width=True)
 
     # Reset trigger
-st.session_state.apply_triggered = False
+    st.session_state.apply_triggered = False
