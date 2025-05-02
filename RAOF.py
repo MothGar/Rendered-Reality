@@ -68,6 +68,7 @@ dk_tol = st.slider("Δk tolerance (RAO)", 0.0, 1.0, 0.30)
 alpha = 1 / st.slider("Lock (steepness)", 0.02, 0.20, 0.10)
 eta   = st.slider("Gain η",    0.0, 5.0, 1.30)
 kappa = st.slider("Damping κ", 0.0, 0.10, 0.02)
+iso_pt = st.slider("Point isovalue", 0.50, 0.99, 0.95)
 field = (field_A + field_B + field_C) / 3.0
 
 # ---------- RAO filter ---------------------------------------------------
