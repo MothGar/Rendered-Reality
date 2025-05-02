@@ -117,7 +117,7 @@ rng = np.random.default_rng(42)
 mask = (P > iso_pt) & (rng.random(field.shape) < 0.02)
 r = np.sqrt(X**2 + Y**2 + Z**2)               # for colour
 
-    fig = go.Figure()
+fig = go.Figure()
 
     if view == "3-D points":
         if mask.any():
