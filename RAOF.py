@@ -55,7 +55,7 @@ with st.sidebar.expander("🟢 Sphere C — Y Offset", expanded=True):
 if "apply_triggered" not in st.session_state:
     st.session_state.apply_triggered = False
 
-apply_clicked = st.sidebar.button("✅ Apply Changes")
+apply_clicked = st.button("✅ Apply Changes", key="apply_button_right")
 if apply_clicked:
     st.session_state.apply_triggered = True
 
@@ -111,7 +111,6 @@ B_G = st.slider("G-layer bias B_G", -1.0, 1.0, 0.0, step=0.01)
 alpha_CC = st.slider("C-layer coupling α_CC", 0.0, 2.0, 0.5, step=0.05)
 B_C = st.slider("C-layer bias B_C", -1.0, 1.0, 0.0, step=0.01)
 view = st.radio("Viewer", ["3-D points", "Isosurface"])
-apply_clicked = st.button("✅ Apply Changes")
 if apply_clicked:
     st.session_state.apply_triggered = True
         
