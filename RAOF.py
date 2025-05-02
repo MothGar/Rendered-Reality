@@ -71,7 +71,7 @@ X, Y, Z = np.meshgrid(lin, lin, lin, indexing="ij")
 offset_A = np.array([0.0, 0.0, 0.0])
 offset_B = np.array([60.0, 0.0, 0.0])
 offset_C = np.array([0.0, 60.0, 0.0])
-if st.session_state.get("apply_triggered", False)
+if st.session_state.get("apply_triggered", False):
 
 # ========== Mode Calculations ==========
     field_A = spherical_mode(n_A, l_A, m_A, R_A, (X - offset_A[0], Y - offset_A[1], Z - offset_A[2]))
