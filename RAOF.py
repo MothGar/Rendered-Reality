@@ -28,12 +28,6 @@ def cached_mode(n, l, m, R, N):
 # ---------- UI -----------------------------------------------------------
 st.set_page_config(layout="wide")
 st.title("TRR Resonant-Sphere Simulator with Tier-Coupling")
-if "apply_triggered" not in st.session_state:
-    st.session_state.apply_triggered = False
-
-apply_clicked = st.sidebar.button("✅ Apply Changes")
-if apply_clicked:
-    st.session_state.apply_triggered = True
 
 # ========== Independent Sphere Parameters ==========
 with st.sidebar.expander("🔴 Sphere A — Central", expanded=True):
@@ -53,6 +47,13 @@ with st.sidebar.expander("🟢 Sphere C — Y Offset", expanded=True):
     l_C = st.slider("l (C)", 0, 4, 2, key="lC")
     m_C = 0 if l_C == 0 else st.slider("m (C)", -l_C, l_C, 0, key="mC")
     R_C = st.slider("Radius R (C)", 20.0, 60.0, 36.0, key="RC")
+
+if "apply_triggered" not in st.session_state:
+    st.session_state.apply_triggered = False
+
+apply_clicked = st.sidebar.button("✅ Apply Changes")
+if apply_clicked:
+    st.session_state.apply_triggered = True
 
 # ========== Grid Setup ==========
 Ngrid = 100
