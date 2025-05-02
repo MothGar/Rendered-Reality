@@ -41,14 +41,14 @@ with col_left:
     m_A = 0 if l_A == 0 else st.slider("m (A)", -l_A, l_A, 0, key="mA")
     R_A = st.slider("Radius R (A)", 20.0, 60.0, 36.0, key="RA")
 
-with col_left
+with col_left:
     st.subheader("🔵 Sphere B — X Offset")
     n_B = st.slider("n (B)", 1, 3, 1, key="nB")
     l_B = st.slider("l (B)", 0, 4, 2, key="lB")
     m_B = 0 if l_B == 0 else st.slider("m (B)", -l_B, l_B, 0, key="mB")
     R_B = st.slider("Radius R (B)", 20.0, 60.0, 36.0, key="RB")
 
-with col_left
+with col_left:
     st.subheader("🟢 Sphere C — Y Offset")
     n_C = st.slider("n (C)", 1, 3, 1, key="nC")
     l_C = st.slider("l (C)", 0, 4, 2, key="lC")
