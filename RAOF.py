@@ -90,7 +90,7 @@ except ValueError:
     st.sidebar.error("Invalid input. Please enter a numeric value.")
     freq = (freq_min + freq_max) / 2
 
-phase = st.sidebar.slider("Phase (degrees)", 0, 360, 0)
+phase = st.sidebar.slider("Phase (degrees)", 0, 360, 0, step=45)
 
 x_index = st.sidebar.selectbox("X Axis Mode (l,r)", list(range(16)), format_func=lambda i: f"{i+1}. {mode_labels[i]}")
 y_index = st.sidebar.selectbox("Y Axis Mode (l,r)", list(range(16)), format_func=lambda i: f"{i+1}. {mode_labels[i]}")
