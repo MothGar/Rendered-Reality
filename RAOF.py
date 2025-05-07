@@ -89,8 +89,8 @@ fig.update_layout(title="3D Isosurface of Combined Chladni Modes",
                   scene=dict(xaxis_title='X', yaxis_title='Y', zaxis_title='Z'))
 st.plotly_chart(fig, use_container_width=True)
 
-# Show mode legend thumbnails
-st.markdown("## Mode Legend Thumbnails")
+# Show static mode legend thumbnails
+st.markdown("## Static Mode Legend Thumbnails")
 fig_thumbs, axs = plt.subplots(4, 4, figsize=(10, 10))
 r = np.linspace(0, 1, 100)
 theta = np.linspace(0, 2 * np.pi, 100)
@@ -100,7 +100,7 @@ Y = R * np.sin(T)
 
 for idx, (l, r) in enumerate(modes):
     ax = axs[idx // 4][idx % 4]
-    Z = chladni_pattern(R, T, l, r, freq, phase)
+    Z = chladni_pattern(R, T, l, r, 1, 0)  # Static frequency and phase
     cf = ax.contourf(X, Y, Z, levels=500, cmap='plasma')
     ax.contour(X, Y, Z, levels=[0], colors='red', linewidths=1.6)  # thin nodal lines
     ax.set_title(f"l{l}r{r}", fontsize=10)
@@ -112,6 +112,5 @@ st.pyplot(fig_thumbs)
 st.markdown("""
 Each axis now selects one of the **16 canonical Chladni patterns**, labeled by `(l, r)` mode pairs.
 
-Use the thumbnails above as visual references for each `(l, r)` mode.
-Adjust the frequency and phase to explore dynamic resonance patterns.
+The thumbnails are static and represent the canonical patterns. Use these as a visual guide when selecting modes for the 3D isosurface.
 """)
