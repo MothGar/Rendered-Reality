@@ -145,7 +145,7 @@ else:
         isomin=fp_scaled.min(),
         isomax=fp_scaled.max(),
         surface_count=1,
-        opacity=0.6,
+        opacity=0.8,
         colorscale="Viridis",
         caps=dict(x_show=False, y_show=False, z_show=False),
         name="Rendered Isosurface"
@@ -159,7 +159,7 @@ if include_C:
     add_transparent_sphere(fig, [xC, yC, zC], radius=30, opacity=0.2, color="green")
 
 fig.update_layout(scene=dict(aspectmode="cube"),
-                  margin=dict(l=0, r=0, t=40, b=0),
+                  margin=dict(l=0, r=0, t=60, b=0),
                   title="Plasma-Constrained Resonance Geometry")
 st.plotly_chart(fig, use_container_width=True)
 
