@@ -58,10 +58,10 @@ st.sidebar.header("Sphere A")
 xA = st.sidebar.slider("A - X", -60.0, 60.0, -15.0)
 yA = st.sidebar.slider("A - Y", -60.0, 60.0, 0.0)
 zA = st.sidebar.slider("A - Z", -60.0, 60.0, 0.0)
-freqA = st.sidebar.slider("A - Frequency (Hz)", 0.01, 1e16, 1.8e3)
+freqA = st.sidebar.slider("A - Frequency (Hz)", 0.01, 1e16, 14.6)
 phaseA = st.sidebar.slider("A - Phase", 0, 360, 0)
 mode_A = st.sidebar.selectbox("A - Mode", ["radial", "linear", "helical"])
-kvec_A = np.array([st.sidebar.slider("A - kx", -1.0, 1.0, 1.0),
+kvec_A = np.array([st.sidebar.slider("A - kx", -1.0, 1.0, 0.0),
                    st.sidebar.slider("A - ky", -1.0, 1.0, 0.0),
                    st.sidebar.slider("A - kz", -1.0, 1.0, 0.0)])
 helicity_A = st.sidebar.slider("A - Helicity", 0.0, 12.0, 0.0)
@@ -71,31 +71,31 @@ include_B = st.sidebar.checkbox("Include Sphere B", value=True)
 xB = st.sidebar.slider("B - X", -60.0, 60.0, 15.0)
 yB = st.sidebar.slider("B - Y", -60.0, 60.0, 0.0)
 zB = st.sidebar.slider("B - Z", -60.0, 60.0, 0.0)
-freqB = st.sidebar.slider("B - Frequency (Hz)", 0.01, 1e16, 1.8e3)
-phaseB = st.sidebar.slider("B - Phase", 0, 360, 120)
+freqB = st.sidebar.slider("B - Frequency (Hz)", 0.01, 1e16, 14.6)
+phaseB = st.sidebar.slider("B - Phase", 0, 360, 0)
 mode_B = st.sidebar.selectbox("B - Mode", ["radial", "linear", "helical"])
 kvec_B = np.array([st.sidebar.slider("B - kx", -1.0, 1.0, 0.0),
-                   st.sidebar.slider("B - ky", -1.0, 1.0, 1.0),
+                   st.sidebar.slider("B - ky", -1.0, 1.0, 0.0),
                    st.sidebar.slider("B - kz", -1.0, 1.0, 0.0)])
-helicity_B = st.sidebar.slider("B - Helicity", 0.0, 12.0, 8.0)
+helicity_B = st.sidebar.slider("B - Helicity", 0.0, 12.0, 0.0)
 
 
 st.sidebar.header("Sphere C (Observer)")
-include_C = st.sidebar.checkbox("Include Sphere C", value=True)
+include_C = st.sidebar.checkbox("Include Sphere C", value=False)
 xC = st.sidebar.slider("C - X", -60.0, 60.0, 0.0)
 yC = st.sidebar.slider("C - Y", -60.0, 60.0, 20.0)
 zC = st.sidebar.slider("C - Z", -60.0, 60.0, 0.0)
-freqC = st.sidebar.slider("C - Frequency (Hz)", 0.01, 1e16, 1.8e3)
-phaseC = st.sidebar.slider("C - Phase", 0, 360, 240)
+freqC = st.sidebar.slider("C - Frequency (Hz)", 0.01, 1e16, 14.6)
+phaseC = st.sidebar.slider("C - Phase", 0, 360, 0)
 mode_C = st.sidebar.selectbox("C - Mode", ["radial", "linear", "helical"])
 kvec_C = np.array([st.sidebar.slider("C - kx", -1.0, 1.0, 0.0),
                    st.sidebar.slider("C - ky", -1.0, 1.0, 0.0),
-                   st.sidebar.slider("C - kz", -1.0, 1.0, 1.0)])
+                   st.sidebar.slider("C - kz", -1.0, 1.0, 0.0)])
 helicity_C = st.sidebar.slider("C - Helicity", 0.0, 12.0, 0.0)
 
 
 view_mode = st.sidebar.radio("Viewer Mode", ["3D Points", "Isosurface"])
-threshold_scale = st.sidebar.slider("Plasma Threshold Scale", 0.0, 1.0, 0.3)
+threshold_scale = st.sidebar.slider("Plasma Threshold Scale", 0.0, 1.0, 0.51)
 
 # --- Compute Fields ---
 centerA = np.array([xA, yA, zA])
