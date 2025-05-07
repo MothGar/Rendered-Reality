@@ -1,75 +1,127 @@
+# TRR Full Simulator: Interactive 3D Overlap + Wave Interference Panel + 3D Isoplane Viewer
+
 import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
-from skimage.measure import marching_cubes
+import matplotlib.pyplot as plt
 
+# --- Generate 3D Resonance Field ---
+def generate_field(center, freq, phase, grid, radius=60):
+    X, Y, Z = grid
+    dist = np.sqrt((X - center[0])**2 + (Y - center[1])**2 + (Z - center[2])**2)
+    decay = np.exp(-((dist / radius)**2))
+    wave = np.sin(freq * dist + np.radians(phase))
+    return decay * wave
+
+# --- Generate Side-View Overlapping Waves ---
+def generate_overlapping_waves(freq1, phase1_deg, freq2, phase2_deg, extent=60, resolution=1000):
+    x = np.linspace(-extent, extent, resolution)
+    phase1_rad = np.radians(phase1_deg)
+    phase2_rad = np.radians(phase2_deg)
+    wave1 = np.sin(freq1 * x + phase1_rad)
+    wave2 = np.sin(freq2 * x + phase2_rad)
+    product = wave1 * wave2
+    return x, wave1, wave2, product
+
+# --- Generate 3D Isoplane From Overlap ---
+def generate_3d_isoplane_from_overlap(fieldA, fieldB, threshold):
+    overlap = fieldA * fieldB
+    mask = np.abs(overlap) > threshold
+    return X[mask], Y[mask], Z[mask]
+
+# --- Setup ---
 st.set_page_config(layout="wide")
-st.title("TRR Isoplane Geometry Simulator – RSim11 (Surface Mode)")
+st.title("TRR Full Simulator — Render Fields, Wave Interference, and Isoplane")
 
-st.markdown("""
-This simulator renders **surface isoplanes** extracted using the **Marching Cubes algorithm**, based on resonance waves in X, Y, Z.
-""")
+# --- Grid Setup ---
+grid_size = 100
+extent = 60
+lin = np.linspace(-extent, extent, grid_size)
+X, Y, Z = np.meshgrid(lin, lin, lin)
 
-# Presets
-presets = {
-    "Stable Quantum Node": {"fx": 6.0, "fy": 6.0, "fz": 6.0, "px": 0, "py": 0, "pz": 0, "threshold": 0.05},
-    "Decoherence Shift": {"fx": 6.0, "fy": 6.0, "fz": 6.0, "px": 45, "py": 0, "pz": 0, "threshold": 0.05},
-    "Chladni Mimic": {"fx": 3.0, "fy": 4.0, "fz": 4.0, "px": 0, "py": 0, "pz": 0, "threshold": 0.1},
-    "Reality Fog": {"fx": 5.5, "fy": 6.0, "fz": 6.5, "px": 90, "py": 45, "pz": 180, "threshold": 0.3},
-    "Observer Disruption": {"fx": 7.0, "fy": 7.0, "fz": 7.0, "px": 90, "py": 90, "pz": 90, "threshold": 0.05},
-}
+# --- Sidebar Controls ---
+st.sidebar.header("Sphere A")
+xA = st.sidebar.slider("A - X Pos", -60.0, 60.0, -10.0, step=1.0)
+yA = st.sidebar.slider("A - Y Pos", -60.0, 60.0, 0.0, step=1.0)
+zA = st.sidebar.slider("A - Z Pos", -60.0, 60.0, 0.0, step=1.0)
+freqA = st.sidebar.slider("A - Frequency", 0.1, 5.0, 2.0, step=0.1)
+phaseA = st.sidebar.slider("A - Phase (°)", 0, 360, 45, step=5)
 
-selected = st.sidebar.selectbox("Choose TRR Demo Preset", list(presets.keys()))
-preset = presets[selected]
+st.sidebar.header("Sphere B")
+xB = st.sidebar.slider("B - X Pos", -60.0, 60.0, 10.0, step=1.0)
+yB = st.sidebar.slider("B - Y Pos", -60.0, 60.0, 0.0, step=1.0)
+zB = st.sidebar.slider("B - Z Pos", -60.0, 60.0, 0.0, step=1.0)
+freqB = st.sidebar.slider("B - Frequency", 0.1, 5.0, 2.0, step=0.1)
+phaseB = st.sidebar.slider("B - Phase (°)", 0, 360, 135, step=5)
 
-domain_scale = st.sidebar.slider("Visual Grid Scale", 1.0, 30.0, 10.0, 1.0)
-grid_size = st.sidebar.slider("Grid Resolution", 20, 60, 40, 5)
+threshold = st.sidebar.slider("Render Threshold", 0.05, 1.0, 0.5, step=0.05)
+view_mode = st.sidebar.radio("Viewer Mode", ["3D Render", "3D Isoplane View"])
 
-log_fx = st.sidebar.slider("X Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fx"], 0.1)
-log_fy = st.sidebar.slider("Y Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fy"], 0.1)
-log_fz = st.sidebar.slider("Z Frequency (log₁₀ Hz)", -1.0, 17.0, preset["fz"], 0.1)
-phase_x = np.radians(st.sidebar.slider("X Phase Shift (°)", 0, 360, preset["px"], 10))
-phase_y = np.radians(st.sidebar.slider("Y Phase Shift (°)", 0, 360, preset["py"], 10))
-phase_z = np.radians(st.sidebar.slider("Z Phase Shift (°)", 0, 360, preset["pz"], 10))
-threshold = st.sidebar.slider("Isoplane Threshold", 0.0, 1.0, preset["threshold"], 0.01)
+# --- Compute Fields ---
+centerA = np.array([xA, yA, zA])
+centerB = np.array([xB, yB, zB])
+radius = 60
 
-fx, fy, fz = 10**log_fx, 10**log_fy, 10**log_fz
+fieldA = generate_field(centerA, freqA, phaseA, (X, Y, Z), radius)
+fieldB = generate_field(centerB, freqB, phaseB, (X, Y, Z), radius)
+overlap = fieldA * fieldB
+render_zone = np.abs(overlap) > threshold
 
-x = np.linspace(0, domain_scale, grid_size)
-y = np.linspace(0, domain_scale, grid_size)
-z = np.linspace(0, domain_scale, grid_size)
-X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
+# --- Viewer Toggle ---
+if view_mode == "3D Render":
+    xv, yv, zv = X[render_zone], Y[render_zone], Z[render_zone]
+    fig3d = go.Figure()
+    fig3d.add_trace(go.Scatter3d(x=xv.flatten(), y=yv.flatten(), z=zv.flatten(), mode='markers', marker=dict(size=2, color='lime', opacity=0.5), name="Rendered Zone"))
+    fig3d.add_trace(go.Scatter3d(x=[xA], y=[yA], z=[zA], mode='markers+text', marker=dict(size=8, color='blue'), text=["Sphere A"], name="Sphere A"))
+    fig3d.add_trace(go.Scatter3d(x=[xB], y=[yB], z=[zB], mode='markers+text', marker=dict(size=8, color='red'), text=["Sphere B"], name="Sphere B"))
+    fig3d.update_layout(scene=dict(xaxis=dict(range=[-30, 30]), yaxis=dict(range=[-30, 30]), zaxis=dict(range=[-30, 30]), aspectmode="cube"), margin=dict(l=0, r=0, t=60, b=0), title="Rendered Reality Volume (Overlap Zone)")
+    st.subheader("3D Rendered Overlap Zone")
+    st.plotly_chart(fig3d, use_container_width=True)
+else:
+    fig_iso3d = go.Figure()
+fig_iso3d.add_trace(go.Isosurface(
+    x=X.flatten(),
+    y=Y.flatten(),
+    z=Z.flatten(),
+    value=(fieldA * fieldB).flatten(),
+    isomin=threshold,
+    isomax=(fieldA * fieldB).max(),
+    surface_count=1,
+    opacity=0.6,
+    colorscale='Viridis',
+    caps=dict(x_show=False, y_show=False, z_show=False),
+    showscale=True,
+    name="Isoplane Surface"
+))
+fig_iso3d.update_layout(scene=dict(xaxis=dict(range=[-30, 30]), yaxis=dict(range=[-30, 30]), zaxis=dict(range=[-30, 30]), aspectmode="cube"), margin=dict(l=0, r=0, t=60, b=0), title="3D Isoplane Resonance Field")
+st.subheader("3D Isoplane Field Structure")
+st.plotly_chart(fig_iso3d, use_container_width=True)
 
-# Field generation
-EX = np.sin(fx * np.pi * X + phase_x)
-EY = np.sin(fy * np.pi * Y + phase_y)
-EZ = np.sin(fz * np.pi * Z + phase_z)
-interference = np.abs(EX * EY * EZ)
+# --- Wave Panel ---
+x_wave, wA, wB, wProduct = generate_overlapping_waves(freqA, phaseA, freqB, phaseB)
+fig_wave, axs = plt.subplots(2, 1, figsize=(10, 5), sharex=True)
+axs[0].plot(x_wave, wA, color='blue', label='Wave A')
+axs[0].plot(x_wave, wB, color='red', label='Wave B', linestyle='dashed')
+axs[0].set_ylabel("Amplitude")
+axs[0].legend()
+axs[0].set_title("Input Resonance Waves")
+axs[1].plot(x_wave, wProduct, color='green', label='Product (Render Signal)')
+axs[1].axhline(0, color='gray', lw=0.5)
+axs[1].set_xlabel("Position (X)")
+axs[1].set_ylabel("Amplitude")
+axs[1].legend()
+axs[1].set_title("Wave Product (Realization Field)")
 
-# Normalize field
-field_norm = (interference - np.min(interference)) / (np.max(interference) - np.min(interference))
-st.write("Marching on scalar field with shape:", field_norm.shape)
+st.subheader("Wave Interference Viewer (Side Slice)")
+st.pyplot(fig_wave)
 
-# Run marching cubes
-try:
-    verts, faces, _, _ = marching_cubes(field_norm, level=threshold)
-    verts *= domain_scale / grid_size  # scale to match physical space
-    x, y, z = verts.T
-    i, j, k = faces.T
+with st.expander("Explanation"):
+    st.markdown("""
+    This simulation visualizes a TRR-style field overlap in multiple ways:
 
-    fig = go.Figure(data=[go.Mesh3d(
-        x=x, y=y, z=z,
-        i=i, j=j, k=k,
-        color='cyan',
-        opacity=0.6
-    )])
-    fig.update_layout(scene=dict(
-        xaxis_title="X", yaxis_title="Y", zaxis_title="Z",
-        bgcolor="black"
-    ), paper_bgcolor="black", margin=dict(l=0, r=0, t=0, b=0), height=800)
-    st.plotly_chart(fig, use_container_width=True)
+    - **3D Volume**: Points where Sphere A and B overlap in space and exceed the threshold become *rendered* (visible green dots).
+    - **3D Isoplane**: Geometry of realization using the product field threshold — a true collapse shell.
+    - **Wave Panel**: A side-view slice showing interference patterns and the strength of their product field.
 
-except Exception as e:
-    st.error(f"Surface extraction failed: {e}")
-
-st.markdown(f"**Threshold**: {threshold:.2f} — Frequencies: X=10^{log_fx:.1f}Hz, Y=10^{log_fy:.1f}Hz, Z=10^{log_fz:.1f}Hz")
+    These regions model the quantum-collapse-like rendering event in the Theory of Rendered Reality.
+    """)
