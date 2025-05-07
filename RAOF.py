@@ -65,6 +65,7 @@ kvec_A = np.array([st.sidebar.slider("A - kx", -1.0, 1.0, 1.0),
 helicity_A = st.sidebar.slider("A - Helicity", 0.0, 12.0, 0.0)
 
 st.sidebar.header("Sphere B")
+include_B = st.sidebar.checkbox("Include Sphere B", value=True)
 xB = st.sidebar.slider("B - X", -60.0, 60.0, 15.0)
 yB = st.sidebar.slider("B - Y", -60.0, 60.0, 0.0)
 zB = st.sidebar.slider("B - Z", -60.0, 60.0, 0.0)
@@ -75,9 +76,10 @@ kvec_B = np.array([st.sidebar.slider("B - kx", -1.0, 1.0, 0.0),
                    st.sidebar.slider("B - ky", -1.0, 1.0, 1.0),
                    st.sidebar.slider("B - kz", -1.0, 1.0, 0.0)])
 helicity_B = st.sidebar.slider("B - Helicity", 0.0, 12.0, 8.0)
-include_B = st.sidebar.checkbox("Include Sphere B", value=True)
+
 
 st.sidebar.header("Sphere C (Observer)")
+include_C = st.sidebar.checkbox("Include Sphere C", value=True)
 xC = st.sidebar.slider("C - X", -60.0, 60.0, 0.0)
 yC = st.sidebar.slider("C - Y", -60.0, 60.0, 20.0)
 zC = st.sidebar.slider("C - Z", -60.0, 60.0, 0.0)
@@ -88,7 +90,7 @@ kvec_C = np.array([st.sidebar.slider("C - kx", -1.0, 1.0, 0.0),
                    st.sidebar.slider("C - ky", -1.0, 1.0, 0.0),
                    st.sidebar.slider("C - kz", -1.0, 1.0, 1.0)])
 helicity_C = st.sidebar.slider("C - Helicity", 0.0, 12.0, 0.0)
-include_C = st.sidebar.checkbox("Include Sphere C", value=True)
+
 
 view_mode = st.sidebar.radio("Viewer Mode", ["3D Points", "Isosurface"])
 threshold_scale = st.sidebar.slider("Plasma Threshold Scale", 0.0, 1.0, 0.3)
