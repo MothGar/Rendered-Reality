@@ -33,6 +33,10 @@ Theta_yz = np.arctan2(Zg, Yg)
 R_zx = np.sqrt(Zg**2 + Xg**2)
 Theta_zx = np.arctan2(Xg, Zg)
 
+# Chladni mode list
+modes = [(l, r) for l in range(4) for r in range(4)]
+mode_labels = [f"l{l}r{r}" for l in range(4) for r in range(4)]
+
 # Chladni pattern generator
 def chladni_pattern(R, Theta, l, r, freq, phase):
     n = r + 1
@@ -62,9 +66,9 @@ except ValueError:
 phase = st.sidebar.slider("Phase (degrees)", 0, 360, 0, step=45)
 domain_size = st.sidebar.slider("Domain Display Size", 1.0, 10.0, 2.0, step=0.5)
 
-x_index = st.sidebar.selectbox("X Axis Mode (l,r)", list(range(16)), format_func=lambda i: f"{i+1}. {modes[i]}")
-y_index = st.sidebar.selectbox("Y Axis Mode (l,r)", list(range(16)), format_func=lambda i: f"{i+1}. {modes[i]}")
-z_index = st.sidebar.selectbox("Z Axis Mode (l,r)", list(range(16)), format_func=lambda i: f"{i+1}. {modes[i]}")
+x_index = st.sidebar.selectbox("X Axis Mode (l,r)", list(range(16)), format_func=lambda i: f"{i+1}. {mode_labels[i]}")
+y_index = st.sidebar.selectbox("Y Axis Mode (l,r)", list(range(16)), format_func=lambda i: f"{i+1}. {mode_labels[i]}")
+z_index = st.sidebar.selectbox("Z Axis Mode (l,r)", list(range(16)), format_func=lambda i: f"{i+1}. {mode_labels[i]}")
 
 x_l, x_r = modes[x_index]
 y_l, y_r = modes[y_index]
