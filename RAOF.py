@@ -120,7 +120,7 @@ render_zone = (np.abs(overlap)**2 > fp_scaled)
 # --- Visualization ---
 fig = go.Figure()
 
-def add_transparent_sphere(fig, center, radius=30, opacity=0.8, color="blue"):
+def add_transparent_sphere(fig, center, radius=30, opacity=0.2, color="blue"):
     phi = np.linspace(0, np.pi, 20)
     theta = np.linspace(0, 2 * np.pi, 40)
     phi, theta = np.meshgrid(phi, theta)
