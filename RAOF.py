@@ -158,9 +158,12 @@ if include_B:
 if include_C:
     add_transparent_sphere(fig, [xC, yC, zC], radius=30, opacity=0.2, color="green")
 
-fig.update_layout(scene=dict(aspectmode="cube"),
-                  margin=dict(l=0, r=0, t=60, b=0),
-                  title="Plasma-Constrained Resonance Geometry")
+fig.update_layout(scene=dict(
+    aspectmode="manual",
+    aspectratio=dict(x=1, y=1, z=1)  # Ensures equal scaling on all axes
+), margin=dict(l=0, r=0, t=60, b=0),
+    title="Plasma-Constrained Resonance Geometry")
+
 st.plotly_chart(fig, use_container_width=True)
 
 
