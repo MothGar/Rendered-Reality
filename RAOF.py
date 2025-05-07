@@ -1,143 +1,65 @@
-
 import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
-import matplotlib.pyplot as plt
 
-# Physical constants for plasma frequency
-e = 1.602e-19       # Elementary charge (C)
-epsilon_0 = 8.854e-12  # Vacuum permittivity (F/m)
-m_e = 9.109e-31     # Electron mass (kg)
-
-# --- Generalized TRR Field Generator ---
-def generate_field(center, freq, phase, grid, radius=60, mode="radial", helicity=6.0, kvec=None):
-    X, Y, Z = grid
-    cx, cy, cz = center
-    phase_rad = np.radians(phase)
-
-    if mode == "radial":
-        r = np.sqrt((X - cx)**2 + (Y - cy)**2 + (Z - cz)**2) + 1e-5
-        wave = np.sin(freq * r + phase_rad)
-
-    elif mode == "linear":
-        if kvec is None:
-            kvec = np.array([1.0, 0.0, 0.0])
-        kx, ky, kz = kvec
-        kdotr = kx * X + ky * Y + kz * Z
-        wave = np.sin(freq * kdotr + phase_rad)
-
-    elif mode == "helical":
-        dx = X - cx
-        dy = Y - cy
-        dz = Z - cz
-        theta = np.arctan2(dy, dx)
-        helix_phase = helicity * theta + freq * dz
-        wave = np.sin(helix_phase + phase_rad)
-
-    else:
-        wave = np.zeros_like(X)
-
-    decay = np.exp(-(((X - cx)**2 + (Y - cy)**2 + (Z - cz)**2) / radius**2))
-    return decay * wave
-
-# --- Setup ---
+# --- Page Config ---
 st.set_page_config(layout="wide")
-st.title("TRR Plasma-Threshold Resonance Simulator")
+st.title("TRR 3D Resonant Field: Spherical Wavefronts in Reflective Boundary")
+
+# --- Parameters ---
+st.sidebar.header("Simulation Controls")
+c = 1.0  # Wave speed in normalized units
+R = st.sidebar.slider("Aluminum Sphere Radius (R)", 1.0, 10.0, 5.0)
+frequency = st.sidebar.slider("RAO Frequency (Hz)", 0.5, 10.0, 2.0)
+duration = st.sidebar.slider("Simulation Duration (s)", 1.0, 10.0, 5.0)
+frames = st.sidebar.slider("Frames (Time Steps)", 10, 200, 50)
 
 # --- Grid Setup ---
-grid_size = 100
-extent = 60
-lin = np.linspace(-extent, extent, grid_size)
-X, Y, Z = np.meshgrid(lin, lin, lin)
+grid_res = 50
+domain_size = R * 1.2  # Slightly larger than sphere
+x = np.linspace(-domain_size, domain_size, grid_res)
+y = np.linspace(-domain_size, domain_size, grid_res)
+z = np.linspace(-domain_size, domain_size, grid_res)
+X, Y, Z = np.meshgrid(x, y, z)
+r = np.sqrt(X**2 + Y**2 + Z**2)
 
-# --- Sidebar Controls ---
-st.sidebar.header("Sphere A")
-xA = st.sidebar.slider("A - X", -60.0, 60.0, -10.0)
-yA = st.sidebar.slider("A - Y", -60.0, 60.0, -10.0)
-zA = st.sidebar.slider("A - Z", -60.0, 60.0, -20.0)
-freqA = st.sidebar.slider("A - Frequency", 0.1, 5.0, 0.25)
-phaseA = st.sidebar.slider("A - Phase", 0, 360, 0)
-mode_A = st.sidebar.selectbox("A - Mode", ["radial", "linear", "helical"])
-kvec_A = np.array([st.sidebar.slider("A - kx", -1.0, 1.0, 1.0),
-                   st.sidebar.slider("A - ky", -1.0, 1.0, 0.0),
-                   st.sidebar.slider("A - kz", -1.0, 1.0, 0.0)])
-helicity_A = st.sidebar.slider("A - Helicity", 0.0, 12.0, 6.0)
+# --- Time Discretization ---
+t_vals = np.linspace(0, duration, frames)
+k = 2 * np.pi * frequency
 
-st.sidebar.header("Sphere B")
-xB = st.sidebar.slider("B - X", -60.0, 60.0, 0.0)
-yB = st.sidebar.slider("B - Y", -60.0, 60.0, 0.0)
-zB = st.sidebar.slider("B - Z", -60.0, 60.0, 0.0)
-freqB = st.sidebar.slider("B - Frequency", 0.1, 5.0, 0.28)
-phaseB = st.sidebar.slider("B - Phase", 0, 360, 120)
-mode_B = st.sidebar.selectbox("B - Mode", ["radial", "linear", "helical"])
-kvec_B = np.array([st.sidebar.slider("B - kx", -1.0, 1.0, 0.0),
-                   st.sidebar.slider("B - ky", -1.0, 1.0, 1.0),
-                   st.sidebar.slider("B - kz", -1.0, 1.0, 0.0)])
-helicity_B = st.sidebar.slider("B - Helicity", 0.0, 12.0, 6.0)
-include_B = st.sidebar.checkbox("Include Sphere B", value=True)
+# --- Field Simulation ---
+fields = []
+for t in t_vals:
+    wave = np.sin(k * (r - c * t)) / (r + 1e-6)  # Spherical wave
+    wave[r >= R] = 0  # Reflective boundary condition
+    fields.append(wave)
 
-st.sidebar.header("Sphere C (Observer)")
-xC = st.sidebar.slider("C - X", -60.0, 60.0, 10.0)
-yC = st.sidebar.slider("C - Y", -60.0, 60.0, 10.0)
-zC = st.sidebar.slider("C - Z", -60.0, 60.0, 20.0)
-freqC = st.sidebar.slider("C - Frequency", 0.1, 5.0, 0.31)
-phaseC = st.sidebar.slider("C - Phase", 0, 360, 240)
-mode_C = st.sidebar.selectbox("C - Mode", ["radial", "linear", "helical"])
-kvec_C = np.array([st.sidebar.slider("C - kx", -1.0, 1.0, 0.0),
-                   st.sidebar.slider("C - ky", -1.0, 1.0, 0.0),
-                   st.sidebar.slider("C - kz", -1.0, 1.0, 1.0)])
-helicity_C = st.sidebar.slider("C - Helicity", 0.0, 12.0, 6.0)
-include_C = st.sidebar.checkbox("Include Sphere C", value=True)
+# --- Visualization: Show One Frame ---
+st.sidebar.markdown("---")
+selected_frame = st.sidebar.slider("View Frame", 0, frames - 1, 0)
+st.write(f"Frame: {selected_frame + 1} / {frames}")
 
-view_mode = st.sidebar.radio("Viewer Mode", ["3D Points", "Isosurface"])
+field = fields[selected_frame]
+slice_z = field[:, :, grid_res // 2]  # Middle Z slice
 
-# --- Compute Fields ---
-centerA = np.array([xA, yA, zA])
-centerB = np.array([xB, yB, zB])
-centerC = np.array([xC, yC, zC])
+fig = go.Figure(data=go.Heatmap(
+    z=slice_z,
+    x=x,
+    y=y,
+    colorscale='RdBu',
+    zmid=0,
+    colorbar=dict(title='Field Amplitude')
+))
+fig.update_layout(
+    width=700,
+    height=700,
+    title="Central XY Slice of Resonant Field",
+    xaxis_title="X",
+    yaxis_title="Y"
+)
+st.plotly_chart(fig)
 
-fieldA = generate_field(centerA, freqA, phaseA, (X, Y, Z), 60, mode_A, helicity_A, kvec_A)
-fieldB = generate_field(centerB, freqB, phaseB, (X, Y, Z), 60, mode_B, helicity_B, kvec_B)
-fieldC = generate_field(centerC, freqC, phaseC, (X, Y, Z), 60, mode_C, helicity_C, kvec_C)
-
-if include_B and include_C:
-    overlap = fieldA * fieldB * fieldC
-elif include_B:
-    overlap = fieldA * fieldB
-elif include_C:
-    overlap = fieldA * fieldC
-else:
-    overlap = fieldA
-
-# --- Plasma Threshold Field ---
-# Simulated electron density map (Gaussian blob)
-ne_field = 1e18 * np.exp(-((X**2 + Y**2 + Z**2) / (40**2)))  # in electrons/m³
-fp_field = (1 / (2 * np.pi)) * np.sqrt((ne_field * e**2) / (epsilon_0 * m_e))  # in Hz
-
-# --- Rendering Condition ---
-render_zone = (np.abs(overlap)**2 > fp_field)
-
-# --- Visualization ---
-fig = go.Figure()
-
-if view_mode == "3D Points":
-    xv, yv, zv = X[render_zone], Y[render_zone], Z[render_zone]
-    fig.add_trace(go.Scatter3d(x=xv.flatten(), y=yv.flatten(), z=zv.flatten(),
-                               mode='markers', marker=dict(size=2, color='cyan'), name="Rendered"))
-else:
-    fig.add_trace(go.Isosurface(
-        x=X.flatten(), y=Y.flatten(), z=Z.flatten(),
-        value=overlap.flatten(),
-        isomin=fp_field.min(),
-        isomax=fp_field.max(),
-        surface_count=1,
-        opacity=0.6,
-        colorscale="Viridis",
-        caps=dict(x_show=False, y_show=False, z_show=False),
-        name="Rendered Isosurface"
-    ))
-
-fig.update_layout(scene=dict(aspectmode="cube"),
-                  margin=dict(l=0, r=0, t=40, b=0),
-                  title="Plasma-Constrained Resonance Geometry")
-st.plotly_chart(fig, use_container_width=True)
+st.markdown("""
+This is a first-pass dynamic simulation of RAO-triggered spherical wavefronts inside a reflective aluminum boundary. 
+Wavefronts are cut at the spherical edge and reflections will be modeled in the next version.
+""")
