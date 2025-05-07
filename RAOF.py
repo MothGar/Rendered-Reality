@@ -1,4 +1,3 @@
-
 import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
@@ -52,44 +51,45 @@ X, Y, Z = np.meshgrid(lin, lin, lin)
 
 # --- Sidebar Controls ---
 st.sidebar.header("Sphere A")
-xA = st.sidebar.slider("A - X", -60.0, 60.0, -10.0)
-yA = st.sidebar.slider("A - Y", -60.0, 60.0, -10.0)
-zA = st.sidebar.slider("A - Z", -60.0, 60.0, -20.0)
-freqA = st.sidebar.slider("A - Frequency", 0.1, 5.0, 0.25)
+xA = st.sidebar.slider("A - X", -60.0, 60.0, -15.0)
+yA = st.sidebar.slider("A - Y", -60.0, 60.0, 0.0)
+zA = st.sidebar.slider("A - Z", -60.0, 60.0, 0.0)
+freqA = st.sidebar.slider("A - Frequency", 0.1, 5.0, 1.80)
 phaseA = st.sidebar.slider("A - Phase", 0, 360, 0)
 mode_A = st.sidebar.selectbox("A - Mode", ["radial", "linear", "helical"])
 kvec_A = np.array([st.sidebar.slider("A - kx", -1.0, 1.0, 1.0),
                    st.sidebar.slider("A - ky", -1.0, 1.0, 0.0),
                    st.sidebar.slider("A - kz", -1.0, 1.0, 0.0)])
-helicity_A = st.sidebar.slider("A - Helicity", 0.0, 12.0, 6.0)
+helicity_A = st.sidebar.slider("A - Helicity", 0.0, 12.0, 0.0)
 
 st.sidebar.header("Sphere B")
-xB = st.sidebar.slider("B - X", -60.0, 60.0, 0.0)
+xB = st.sidebar.slider("B - X", -60.0, 60.0, 15.0)
 yB = st.sidebar.slider("B - Y", -60.0, 60.0, 0.0)
 zB = st.sidebar.slider("B - Z", -60.0, 60.0, 0.0)
-freqB = st.sidebar.slider("B - Frequency", 0.1, 5.0, 0.28)
+freqB = st.sidebar.slider("B - Frequency", 0.1, 5.0, 1.80)
 phaseB = st.sidebar.slider("B - Phase", 0, 360, 120)
 mode_B = st.sidebar.selectbox("B - Mode", ["radial", "linear", "helical"])
 kvec_B = np.array([st.sidebar.slider("B - kx", -1.0, 1.0, 0.0),
                    st.sidebar.slider("B - ky", -1.0, 1.0, 1.0),
                    st.sidebar.slider("B - kz", -1.0, 1.0, 0.0)])
-helicity_B = st.sidebar.slider("B - Helicity", 0.0, 12.0, 6.0)
+helicity_B = st.sidebar.slider("B - Helicity", 0.0, 12.0, 8.0)
 include_B = st.sidebar.checkbox("Include Sphere B", value=True)
 
 st.sidebar.header("Sphere C (Observer)")
-xC = st.sidebar.slider("C - X", -60.0, 60.0, 10.0)
-yC = st.sidebar.slider("C - Y", -60.0, 60.0, 10.0)
-zC = st.sidebar.slider("C - Z", -60.0, 60.0, 20.0)
-freqC = st.sidebar.slider("C - Frequency", 0.1, 5.0, 0.31)
+xC = st.sidebar.slider("C - X", -60.0, 60.0, 0.0)
+yC = st.sidebar.slider("C - Y", -60.0, 60.0, 20.0)
+zC = st.sidebar.slider("C - Z", -60.0, 60.0, 0.0)
+freqC = st.sidebar.slider("C - Frequency", 0.1, 5.0, 1.80)
 phaseC = st.sidebar.slider("C - Phase", 0, 360, 240)
 mode_C = st.sidebar.selectbox("C - Mode", ["radial", "linear", "helical"])
 kvec_C = np.array([st.sidebar.slider("C - kx", -1.0, 1.0, 0.0),
                    st.sidebar.slider("C - ky", -1.0, 1.0, 0.0),
                    st.sidebar.slider("C - kz", -1.0, 1.0, 1.0)])
-helicity_C = st.sidebar.slider("C - Helicity", 0.0, 12.0, 6.0)
+helicity_C = st.sidebar.slider("C - Helicity", 0.0, 12.0, 0.0)
 include_C = st.sidebar.checkbox("Include Sphere C", value=True)
 
 view_mode = st.sidebar.radio("Viewer Mode", ["3D Points", "Isosurface"])
+threshold_scale = st.sidebar.slider("Plasma Threshold Scale", 0.0, 1.0, 0.3)
 
 # --- Compute Fields ---
 centerA = np.array([xA, yA, zA])
@@ -112,7 +112,7 @@ else:
 # --- Plasma Threshold Field ---
 ne_field = 1e18 * np.exp(-((X**2 + Y**2 + Z**2) / (40**2)))  # in electrons/m³
 fp_field = (1 / (2 * np.pi)) * np.sqrt((ne_field * e**2) / (epsilon_0 * m_e))  # Hz
-fp_scaled = fp_field / fp_field.max()
+fp_scaled = (fp_field / fp_field.max()) * threshold_scale
 
 # --- Rendering Condition ---
 render_zone = (np.abs(overlap)**2 > fp_scaled)
@@ -122,8 +122,11 @@ fig = go.Figure()
 
 if view_mode == "3D Points":
     xv, yv, zv = X[render_zone], Y[render_zone], Z[render_zone]
-    fig.add_trace(go.Scatter3d(x=xv.flatten(), y=yv.flatten(), z=zv.flatten(),
-                               mode='markers', marker=dict(size=2, color='cyan'), name="Rendered"))
+    if xv.size > 0:
+        fig.add_trace(go.Scatter3d(x=xv.flatten(), y=yv.flatten(), z=zv.flatten(),
+                                   mode='markers', marker=dict(size=2, color='cyan'), name="Rendered"))
+    else:
+        st.warning("No points passed the threshold — try lowering the plasma scale.")
 else:
     fig.add_trace(go.Isosurface(
         x=X.flatten(), y=Y.flatten(), z=Z.flatten(),
