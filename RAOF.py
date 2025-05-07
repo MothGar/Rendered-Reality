@@ -120,9 +120,8 @@ fig = go.Figure(data=go.Isosurface(
     surface_count=4,
     opacity=0.7,
     colorscale='Plasma',
-    caps=dict(x_show=False, y_show=False, z_show=False),
-    height = 700
-))
+    caps=dict(x_show=False, y_show=False, z_show=False)
+    ))
 
 fig.update_layout(title="3D Isosurface of Frequency-Driven Chladni Modes",
                   scene=dict(xaxis_title='X', yaxis_title='Y', zaxis_title='Z'))
