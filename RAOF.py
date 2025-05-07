@@ -140,7 +140,15 @@ else:
         name="Rendered Isosurface"
     ))
 
+# Adding Transparent Spheres
+add_transparent_sphere(fig, [xA, yA, zA], radius=30, opacity=0.8, color="cyan")
+if include_B:
+    add_transparent_sphere(fig, [xB, yB, zB], radius=30, opacity=0.8, color="red")
+if include_C:
+    add_transparent_sphere(fig, [xC, yC, zC], radius=30, opacity=0.8, color="green")
+
 fig.update_layout(scene=dict(aspectmode="cube"),
                   margin=dict(l=0, r=0, t=40, b=0),
                   title="Plasma-Constrained Resonance Geometry")
 st.plotly_chart(fig, use_container_width=True)
+
