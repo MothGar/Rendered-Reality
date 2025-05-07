@@ -52,9 +52,6 @@ extent = 60
 lin = np.linspace(-extent, extent, grid_size)
 X, Y, Z = np.meshgrid(lin, lin, lin, indexing='xy')
 
-st.sidebar.write(f"Frequency A: {freqA:.2e} Hz")
-st.sidebar.write(f"Frequency B: {freqB:.2e} Hz")
-st.sidebar.write(f"Frequency C: {freqC:.2e} Hz")
 
 # --- Sidebar Controls ---
 st.sidebar.header("Sphere A")
