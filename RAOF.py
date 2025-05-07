@@ -78,7 +78,18 @@ def chladni_pattern(R, Theta, l, r, freq, phase):
 st.sidebar.title("Mode Selection and Frequency")
 freq_range_name = st.sidebar.selectbox("Frequency Range", list(freq_ranges.keys()))
 freq_min, freq_max = get_frequency_range(freq_range_name)
-freq = st.sidebar.slider("Frequency (Hz)", freq_min, freq_max, (freq_min + freq_max) / 2)
+
+# Text input for frequency
+freq_input = st.sidebar.text_input(f"Frequency (Hz) [{freq_min} - {freq_max}]", value=str((freq_min + freq_max) / 2))
+try:
+    freq = float(freq_input)
+    if not (freq_min <= freq <= freq_max):
+        st.sidebar.error(f"Please enter a frequency between {freq_min} and {freq_max}.")
+        freq = (freq_min + freq_max) / 2
+except ValueError:
+    st.sidebar.error("Invalid input. Please enter a numeric value.")
+    freq = (freq_min + freq_max) / 2
+
 phase = st.sidebar.slider("Phase (degrees)", 0, 360, 0)
 
 x_index = st.sidebar.selectbox("X Axis Mode (l,r)", list(range(16)), format_func=lambda i: f"{i+1}. {mode_labels[i]}")
