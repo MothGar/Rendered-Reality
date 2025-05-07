@@ -47,7 +47,8 @@ st.title("TRR Plasma-Threshold Resonance Simulator")
 grid_size = 100
 extent = 60
 lin = np.linspace(-extent, extent, grid_size)
-X, Y, Z = np.meshgrid(lin, lin, lin, indexing='ij')
+X, Y, Z = np.meshgrid(lin, lin, lin, indexing='xy')
+
 
 
 # --- Sidebar Controls ---
@@ -166,10 +167,13 @@ if include_C:
     add_transparent_sphere(fig, [xC, yC, zC], radius=30, opacity=0.2, color="green")
 
 fig.update_layout(scene=dict(
-    aspectmode="manual",
-    aspectratio=dict(x=1, y=1, z=1)  # Ensures equal scaling on all axes
+    aspectmode="cube",  # Enforces equal scaling for all axes
+    xaxis=dict(range=[-extent, extent]),
+    yaxis=dict(range=[-extent, extent]),
+    zaxis=dict(range=[-extent, extent])
 ), margin=dict(l=0, r=0, t=60, b=0),
     title="Plasma-Constrained Resonance Geometry")
+
 
 st.plotly_chart(fig, use_container_width=True)
 
