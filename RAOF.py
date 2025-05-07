@@ -112,15 +112,11 @@ W = Wx * Wy * Wz
 W = np.nan_to_num(W)
 W /= np.max(np.abs(W)) + 1e-9
 
-# Dynamic threshold based on frequency
-threshold = np.percentile(W, 99)  # Show top 1% constructive zones
-constructive_zone = W > threshold
-
 # Plotly isosurface rendering
 fig = go.Figure(data=go.Isosurface(
     x=Xg.flatten(), y=Yg.flatten(), z=Zg.flatten(),
     value=W.flatten(),
-    isomin=threshold, isomax=0.9,
+    isomin=0.5, isomax=0.9,
     surface_count=4,
     opacity=0.7,
     colorscale='Plasma',
