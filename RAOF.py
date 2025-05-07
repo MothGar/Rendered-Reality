@@ -47,7 +47,8 @@ st.title("TRR Plasma-Threshold Resonance Simulator")
 grid_size = 100
 extent = 60
 lin = np.linspace(-extent, extent, grid_size)
-X, Y, Z = np.meshgrid(lin, lin, lin)
+X, Y, Z = np.meshgrid(lin, lin, lin, indexing='ij')
+
 
 # --- Sidebar Controls ---
 st.sidebar.header("Sphere A")
