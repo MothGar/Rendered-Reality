@@ -4,8 +4,21 @@ import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 from scipy.special import jn, jn_zeros
 
+# Streamlit setup
 st.set_page_config(layout="wide")
-st.title("3D Isosurface Viewer: Canonical Chladni Modes")
+st.title("3D Isosurface Viewer: Canonical Chladni Modes with Frequency")
+
+# Frequency Ranges
+freq_ranges = {
+    "Low (0.01 Hz - 1 kHz)": (0.01, 1e3),
+    "Mid (1 kHz - 1 MHz)": (1e3, 1e6),
+    "High (1 MHz - 1 GHz)": (1e6, 1e9),
+    "Ultra-High (1 GHz - 1 THz)": (1e9, 1e12),
+    "Extreme (1 THz - 1 PHz)": (1e12, 1e15),
+}
+
+def get_frequency_range(range_name):
+    return freq_ranges[range_name]
 
 # Grid resolution
 grid_size = 64
@@ -23,14 +36,24 @@ Theta_zx = np.arctan2(Xg, Zg)
 # Precompute all 16 Chladni waveforms in 2D
 modes = [(l, r) for l in range(4) for r in range(4)]
 mode_labels = [f"l{l}r{r}" for l in range(4) for r in range(4)]
-def chladni_pattern(R, Theta, l, r):
+
+def chladni_pattern(R, Theta, l, r, freq, phase):
     n = r + 1
     zeros = jn_zeros(l, n)
     k_ln = zeros[-1] if len(zeros) > 0 else 1.0
-    return np.cos(l * Theta) * jn(l, np.clip(R, 0, 1) * k_ln)
+    omega = 2 * np.pi * freq
+    wave = np.cos(l * Theta + omega * R + np.radians(phase)) * jn(l, np.clip(R, 0, 1) * k_ln)
+    return wave
 
 # Sidebar controls
-st.sidebar.title("Mode Selection")
+st.sidebar.title("Mode Selection and Frequency")
+
+# Frequency Selection
+freq_range_name = st.sidebar.selectbox("Frequency Range", list(freq_ranges.keys()))
+freq_min, freq_max = get_frequency_range(freq_range_name)
+freq = st.sidebar.slider("Frequency (Hz)", freq_min, freq_max, (freq_min + freq_max) / 2)
+phase = st.sidebar.slider("Phase (degrees)", 0, 360, 0)
+
 x_index = st.sidebar.selectbox("X Axis Mode (l,r)", list(range(16)), format_func=lambda i: f"{i+1}. {mode_labels[i]}")
 y_index = st.sidebar.selectbox("Y Axis Mode (l,r)", list(range(16)), format_func=lambda i: f"{i+1}. {mode_labels[i]}")
 z_index = st.sidebar.selectbox("Z Axis Mode (l,r)", list(range(16)), format_func=lambda i: f"{i+1}. {mode_labels[i]}")
@@ -39,10 +62,10 @@ x_l, x_r = modes[x_index]
 y_l, y_r = modes[y_index]
 z_l, z_r = modes[z_index]
 
-# Compute Chladni wave on each plane, then broadcast to 3D
-Wx = chladni_pattern(R_yz, Theta_yz, x_l, x_r)  # varies with y,z
-Wy = chladni_pattern(R_zx, Theta_zx, y_l, y_r)  # varies with z,x
-Wz = chladni_pattern(R_xy, Theta_xy, z_l, z_r)  # varies with x,y
+# Compute Chladni wave on each plane with frequency and phase
+Wx = chladni_pattern(R_yz, Theta_yz, x_l, x_r, freq, phase)  # varies with y,z
+Wy = chladni_pattern(R_zx, Theta_zx, y_l, y_r, freq, phase)  # varies with z,x
+Wz = chladni_pattern(R_xy, Theta_xy, z_l, z_r, freq, phase)  # varies with x,y
 
 # Combine into 3D field (multiplicative model)
 W = Wx * Wy * Wz
@@ -57,6 +80,7 @@ fig = go.Figure(data=go.Isosurface(
     value=W.flatten(),
     isomin=0.1, isomax=0.9,
     surface_count=4,
+    opacity=0.7,
     colorscale='Plasma',
     caps=dict(x_show=False, y_show=False, z_show=False)
 ))
@@ -76,8 +100,8 @@ Y = R * np.sin(T)
 
 for idx, (l, r) in enumerate(modes):
     ax = axs[idx // 4][idx % 4]
-    Z = chladni_pattern(R, T, l, r)
-    cf = ax.contourf(X, Y, Z, levels=500, cmap='plasma')  # tighter gradients
+    Z = chladni_pattern(R, T, l, r, freq, phase)
+    cf = ax.contourf(X, Y, Z, levels=500, cmap='plasma')
     ax.contour(X, Y, Z, levels=[0], colors='red', linewidths=1.6)  # thin nodal lines
     ax.set_title(f"l{l}r{r}", fontsize=10)
     ax.axis('off')
@@ -89,4 +113,5 @@ st.markdown("""
 Each axis now selects one of the **16 canonical Chladni patterns**, labeled by `(l, r)` mode pairs.
 
 Use the thumbnails above as visual references for each `(l, r)` mode.
+Adjust the frequency and phase to explore dynamic resonance patterns.
 """)
