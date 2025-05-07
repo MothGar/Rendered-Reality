@@ -33,24 +33,49 @@ Theta_yz = np.arctan2(Zg, Yg)
 R_zx = np.sqrt(Zg**2 + Xg**2)
 Theta_zx = np.arctan2(Xg, Zg)
 
-# Precompute all 16 Chladni waveforms in 2D
+# Precompute all 16 Chladni waveforms in 2D (Static)
 modes = [(l, r) for l in range(4) for r in range(4)]
 mode_labels = [f"l{l}r{r}" for l in range(4) for r in range(4)]
 
+@st.cache_resource
+def precompute_static_thumbnails():
+    fig_thumbs, axs = plt.subplots(4, 4, figsize=(10, 10))
+    r = np.linspace(0, 1, 100)
+    theta = np.linspace(0, 2 * np.pi, 100)
+    R, T = np.meshgrid(r, theta)
+    X = R * np.cos(T)
+    Y = R * np.sin(T)
+
+    def chladni_static_pattern(R, Theta, l, r):
+        n = r + 1
+        zeros = jn_zeros(l, n)
+        k_ln = zeros[-1] if len(zeros) > 0 else 1.0
+        Z = np.cos(l * Theta) * jn(l, np.clip(R, 0, 1) * k_ln)
+        return Z
+
+    for idx, (l, r) in enumerate(modes):
+        ax = axs[idx // 4][idx % 4]
+        Z = chladni_static_pattern(R, T, l, r)
+        ax.contourf(X, Y, Z, levels=500, cmap='plasma')
+        ax.contour(X, Y, Z, levels=[0], colors='red', linewidths=1.6)
+        ax.set_title(f"l{l}r{r}", fontsize=10)
+        ax.axis('off')
+
+    plt.tight_layout()
+    return fig_thumbs
+
+# Dynamic frequency-driven pattern
 def chladni_pattern(R, Theta, l, r, freq, phase):
     n = r + 1
     zeros = jn_zeros(l, n)
     k_ln = zeros[-1] if len(zeros) > 0 else 1.0
     omega = 2 * np.pi * freq
-    # Properly scaling the radial term with frequency to avoid spiraling
     scaled_R = np.clip(R, 0, 1) * (k_ln * (freq / 1000)**0.5)
     wave = np.cos(l * Theta + omega * scaled_R + np.radians(phase)) * jn(l, scaled_R)
     return wave
 
 # Sidebar controls
 st.sidebar.title("Mode Selection and Frequency")
-
-# Frequency Selection
 freq_range_name = st.sidebar.selectbox("Frequency Range", list(freq_ranges.keys()))
 freq_min, freq_max = get_frequency_range(freq_range_name)
 freq = st.sidebar.slider("Frequency (Hz)", freq_min, freq_max, (freq_min + freq_max) / 2)
@@ -65,9 +90,9 @@ y_l, y_r = modes[y_index]
 z_l, z_r = modes[z_index]
 
 # Compute Chladni wave on each plane with frequency and phase
-Wx = chladni_pattern(R_yz, Theta_yz, x_l, x_r, freq, phase)  # varies with y,z
-Wy = chladni_pattern(R_zx, Theta_zx, y_l, y_r, freq, phase)  # varies with z,x
-Wz = chladni_pattern(R_xy, Theta_xy, z_l, z_r, freq, phase)  # varies with x,y
+Wx = chladni_pattern(R_yz, Theta_yz, x_l, x_r, freq, phase)
+Wy = chladni_pattern(R_zx, Theta_zx, y_l, y_r, freq, phase)
+Wz = chladni_pattern(R_xy, Theta_xy, z_l, z_r, freq, phase)
 
 # Combine into 3D field (multiplicative model)
 W = Wx * Wy * Wz
@@ -91,28 +116,12 @@ fig.update_layout(title="3D Isosurface of Frequency-Driven Chladni Modes",
                   scene=dict(xaxis_title='X', yaxis_title='Y', zaxis_title='Z'))
 st.plotly_chart(fig, use_container_width=True)
 
-# Show static mode legend thumbnails
+# Display precomputed static thumbnails
 st.markdown("## Static Mode Legend Thumbnails")
-fig_thumbs, axs = plt.subplots(4, 4, figsize=(10, 10))
-r = np.linspace(0, 1, 100)
-theta = np.linspace(0, 2 * np.pi, 100)
-R, T = np.meshgrid(r, theta)
-X = R * np.cos(T)
-Y = R * np.sin(T)
-
-for idx, (l, r) in enumerate(modes):
-    ax = axs[idx // 4][idx % 4]
-    Z = chladni_pattern(R, T, l, r, 1000, 0)  # Static reference frequency
-    cf = ax.contourf(X, Y, Z, levels=500, cmap='plasma')
-    ax.contour(X, Y, Z, levels=[0], colors='red', linewidths=1.6)
-    ax.set_title(f"l{l}r{r}", fontsize=10)
-    ax.axis('off')
-
-plt.tight_layout()
+fig_thumbs = precompute_static_thumbnails()
 st.pyplot(fig_thumbs)
 
 st.markdown("""
-Each axis now selects one of the **16 canonical Chladni patterns**, labeled by `(l, r)` mode pairs.
-
-The thumbnails are static and represent the canonical patterns. Use these as a visual guide when selecting modes for the 3D isosurface.
+The **static Chladni mode thumbnails** are displayed as a fixed reference. 
+The **3D isosurface plot** updates dynamically based on the selected frequency and phase.
 """)
