@@ -33,11 +33,38 @@ Theta_yz = np.arctan2(Zg, Yg)
 R_zx = np.sqrt(Zg**2 + Xg**2)
 Theta_zx = np.arctan2(Xg, Zg)
 
-# Chladni mode list
+# Precompute all 16 Chladni waveforms in 2D (Static)
 modes = [(l, r) for l in range(4) for r in range(4)]
 mode_labels = [f"l{l}r{r}" for l in range(4) for r in range(4)]
 
-# Chladni pattern generator
+@st.cache_resource
+def precompute_static_thumbnails():
+    fig_thumbs, axs = plt.subplots(4, 4, figsize=(10, 10))
+    r = np.linspace(0, 1, 100)
+    theta = np.linspace(0, 2 * np.pi, 100)
+    R, T = np.meshgrid(r, theta)
+    X = R * np.cos(T)
+    Y = R * np.sin(T)
+
+    def chladni_static_pattern(R, Theta, l, r):
+        n = r + 1
+        zeros = jn_zeros(l, n)
+        k_ln = zeros[-1] if len(zeros) > 0 else 1.0
+        Z = np.cos(l * Theta) * jn(l, np.clip(R, 0, 1) * k_ln)
+        return Z
+
+    for idx, (l, r) in enumerate(modes):
+        ax = axs[idx // 4][idx % 4]
+        Z = chladni_static_pattern(R, T, l, r)
+        ax.contourf(X, Y, Z, levels=500, cmap='plasma')
+        ax.contour(X, Y, Z, levels=[0], colors='red', linewidths=1.6)
+        ax.set_title(f"l{l}r{r}", fontsize=10)
+        ax.axis('off')
+
+    plt.tight_layout()
+    return fig_thumbs
+
+# Dynamic frequency-driven pattern
 def chladni_pattern(R, Theta, l, r, freq, phase):
     n = r + 1
     zeros = jn_zeros(l, n)
@@ -64,7 +91,6 @@ except ValueError:
     freq = (freq_min + freq_max) / 2
 
 phase = st.sidebar.slider("Phase (degrees)", 0, 360, 0, step=45)
-domain_size = st.sidebar.slider("Domain Display Size", 1.0, 10.0, 2.0, step=0.5)
 
 x_index = st.sidebar.selectbox("X Axis Mode (l,r)", list(range(16)), format_func=lambda i: f"{i+1}. {mode_labels[i]}")
 y_index = st.sidebar.selectbox("Y Axis Mode (l,r)", list(range(16)), format_func=lambda i: f"{i+1}. {mode_labels[i]}")
@@ -88,7 +114,7 @@ W /= np.max(np.abs(W)) + 1e-9
 
 # Plotly isosurface rendering
 fig = go.Figure(data=go.Isosurface(
-    x=(Xg * domain_size).flatten(), y=(Yg * domain_size).flatten(), z=(Zg * domain_size).flatten(),
+    x=Xg.flatten(), y=Yg.flatten(), z=Zg.flatten(),
     value=W.flatten(),
     isomin=0.5, isomax=0.9,
     surface_count=4,
@@ -100,3 +126,13 @@ fig = go.Figure(data=go.Isosurface(
 fig.update_layout(title="3D Isosurface of Frequency-Driven Chladni Modes",
                   scene=dict(xaxis_title='X', yaxis_title='Y', zaxis_title='Z'))
 st.plotly_chart(fig, use_container_width=True)
+
+# Display precomputed static thumbnails
+st.markdown("## Static Mode Legend Thumbnails")
+fig_thumbs = precompute_static_thumbnails()
+st.pyplot(fig_thumbs)
+
+st.markdown("""
+The **static Chladni mode thumbnails** are displayed as a fixed reference. 
+The **3D isosurface plot** updates dynamically based on the selected frequency and phase.
+""")
