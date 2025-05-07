@@ -120,6 +120,17 @@ render_zone = (np.abs(overlap)**2 > fp_scaled)
 # --- Visualization ---
 fig = go.Figure()
 
+def add_transparent_sphere(fig, center, radius=30, opacity=0.8, color="blue"):
+    phi = np.linspace(0, np.pi, 20)
+    theta = np.linspace(0, 2 * np.pi, 40)
+    phi, theta = np.meshgrid(phi, theta)
+
+    x = center[0] + radius * np.sin(phi) * np.cos(theta)
+    y = center[1] + radius * np.sin(phi) * np.sin(theta)
+    z = center[2] + radius * np.cos(phi)
+
+    fig.add_trace(go.Surface(x=x, y=y, z=z, opacity=opacity, colorscale=[[0, color], [1, color]], showscale=False))
+
 if view_mode == "3D Points":
     xv, yv, zv = X[render_zone], Y[render_zone], Z[render_zone]
     if xv.size > 0:
@@ -151,4 +162,5 @@ fig.update_layout(scene=dict(aspectmode="cube"),
                   margin=dict(l=0, r=0, t=40, b=0),
                   title="Plasma-Constrained Resonance Geometry")
 st.plotly_chart(fig, use_container_width=True)
+
 
