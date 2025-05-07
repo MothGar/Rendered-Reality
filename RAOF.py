@@ -6,7 +6,7 @@ from scipy.special import jn, jn_zeros
 
 # Streamlit setup
 st.set_page_config(layout="wide")
-st.title("3D Isosurface Viewer: Canonical Chladni Modes with Frequency")
+st.title("3D Isosurface Viewer: Frequency-Driven Chladni Modes")
 
 # Frequency Ranges
 freq_ranges = {
@@ -42,10 +42,10 @@ def chladni_pattern(R, Theta, l, r, freq, phase):
     zeros = jn_zeros(l, n)
     k_ln = zeros[-1] if len(zeros) > 0 else 1.0
     omega = 2 * np.pi * freq
-    # Corrected: Removing the angular distortion and spiral effect
-    wave = np.cos(l * Theta + np.radians(phase)) * jn(l, np.clip(R, 0, 1) * k_ln)
+    # Properly scaling the radial term with frequency to avoid spiraling
+    scaled_R = np.clip(R, 0, 1) * (k_ln * (freq / 1000)**0.5)
+    wave = np.cos(l * Theta + omega * scaled_R + np.radians(phase)) * jn(l, scaled_R)
     return wave
-
 
 # Sidebar controls
 st.sidebar.title("Mode Selection and Frequency")
@@ -87,7 +87,7 @@ fig = go.Figure(data=go.Isosurface(
     caps=dict(x_show=False, y_show=False, z_show=False)
 ))
 
-fig.update_layout(title="3D Isosurface of Combined Chladni Modes",
+fig.update_layout(title="3D Isosurface of Frequency-Driven Chladni Modes",
                   scene=dict(xaxis_title='X', yaxis_title='Y', zaxis_title='Z'))
 st.plotly_chart(fig, use_container_width=True)
 
@@ -102,9 +102,9 @@ Y = R * np.sin(T)
 
 for idx, (l, r) in enumerate(modes):
     ax = axs[idx // 4][idx % 4]
-    Z = chladni_pattern(R, T, l, r, 1, 0)  # Static frequency and phase
+    Z = chladni_pattern(R, T, l, r, 1000, 0)  # Static reference frequency
     cf = ax.contourf(X, Y, Z, levels=500, cmap='plasma')
-    ax.contour(X, Y, Z, levels=[0], colors='red', linewidths=1.6)  # thin nodal lines
+    ax.contour(X, Y, Z, levels=[0], colors='red', linewidths=1.6)
     ax.set_title(f"l{l}r{r}", fontsize=10)
     ax.axis('off')
 
