@@ -14,23 +14,26 @@ def generate_field(center, freq, phase, grid, radius=60, mode="radial", helicity
     cx, cy, cz = center
     phase_rad = np.radians(phase)
 
+    # Convert frequency to radians per second for sine wave calculation
+    omega = 2 * np.pi * freq
+
     if mode == "radial":
         r = np.sqrt((X - cx)**2 + (Y - cy)**2 + (Z - cz)**2) + 1e-5
-        wave = np.sin(freq * r + phase_rad)
+        wave = np.sin(omega * r + phase_rad)
 
     elif mode == "linear":
         if kvec is None:
             kvec = np.array([1.0, 0.0, 0.0])
         kx, ky, kz = kvec
         kdotr = kx * X + ky * Y + kz * Z
-        wave = np.sin(freq * kdotr + phase_rad)
+        wave = np.sin(omega * kdotr + phase_rad)
 
     elif mode == "helical":
         dx = X - cx
         dy = Y - cy
         dz = Z - cz
         theta = np.arctan2(dy, dx)
-        helix_phase = helicity * theta + freq * dz
+        helix_phase = helicity * theta + omega * dz
         wave = np.sin(helix_phase + phase_rad)
 
     else:
@@ -49,14 +52,16 @@ extent = 60
 lin = np.linspace(-extent, extent, grid_size)
 X, Y, Z = np.meshgrid(lin, lin, lin, indexing='xy')
 
-
+st.sidebar.write(f"Frequency A: {freqA:.2e} Hz")
+st.sidebar.write(f"Frequency B: {freqB:.2e} Hz")
+st.sidebar.write(f"Frequency C: {freqC:.2e} Hz")
 
 # --- Sidebar Controls ---
 st.sidebar.header("Sphere A")
 xA = st.sidebar.slider("A - X", -60.0, 60.0, -15.0)
 yA = st.sidebar.slider("A - Y", -60.0, 60.0, 0.0)
 zA = st.sidebar.slider("A - Z", -60.0, 60.0, 0.0)
-freqA = st.sidebar.slider("A - Frequency", 0.1, 500.0, 14.6)
+freqA = st.sidebar.slider("A - Frequency (Hz)", 0.01, 1e16, 1.8e3)
 phaseA = st.sidebar.slider("A - Phase", 0, 360, 0)
 mode_A = st.sidebar.selectbox("A - Mode", ["radial", "linear", "helical"])
 kvec_A = np.array([st.sidebar.slider("A - kx", -1.0, 1.0, 1.0),
@@ -69,7 +74,7 @@ include_B = st.sidebar.checkbox("Include Sphere B", value=True)
 xB = st.sidebar.slider("B - X", -60.0, 60.0, 15.0)
 yB = st.sidebar.slider("B - Y", -60.0, 60.0, 0.0)
 zB = st.sidebar.slider("B - Z", -60.0, 60.0, 0.0)
-freqB = st.sidebar.slider("B - Frequency", 0.1, 500.0, 14.6)
+freqB = st.sidebar.slider("B - Frequency (Hz)", 0.01, 1e16, 1.8e3)
 phaseB = st.sidebar.slider("B - Phase", 0, 360, 120)
 mode_B = st.sidebar.selectbox("B - Mode", ["radial", "linear", "helical"])
 kvec_B = np.array([st.sidebar.slider("B - kx", -1.0, 1.0, 0.0),
@@ -83,7 +88,7 @@ include_C = st.sidebar.checkbox("Include Sphere C", value=True)
 xC = st.sidebar.slider("C - X", -60.0, 60.0, 0.0)
 yC = st.sidebar.slider("C - Y", -60.0, 60.0, 20.0)
 zC = st.sidebar.slider("C - Z", -60.0, 60.0, 0.0)
-freqC = st.sidebar.slider("C - Frequency", 0.1, 500.0, 14.6)
+freqC = st.sidebar.slider("C - Frequency (Hz)", 0.01, 1e16, 1.8e3)
 phaseC = st.sidebar.slider("C - Phase", 0, 360, 240)
 mode_C = st.sidebar.selectbox("C - Mode", ["radial", "linear", "helical"])
 kvec_C = np.array([st.sidebar.slider("C - kx", -1.0, 1.0, 0.0),
