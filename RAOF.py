@@ -42,8 +42,10 @@ def chladni_pattern(R, Theta, l, r, freq, phase):
     zeros = jn_zeros(l, n)
     k_ln = zeros[-1] if len(zeros) > 0 else 1.0
     omega = 2 * np.pi * freq
-    wave = np.cos(l * Theta + omega * R + np.radians(phase)) * jn(l, np.clip(R, 0, 1) * k_ln)
+    # Corrected: Removing the angular distortion and spiral effect
+    wave = np.cos(l * Theta + np.radians(phase)) * jn(l, np.clip(R, 0, 1) * k_ln)
     return wave
+
 
 # Sidebar controls
 st.sidebar.title("Mode Selection and Frequency")
